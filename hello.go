@@ -39,6 +39,7 @@ func testEmailTracker() {
 }
 
 func HandleFavicon(w http.ResponseWriter, r *http.Request) {
+	// todo: make this configurable
 	favIconUrl := "http://static.softsideoftech.com/favicon.ico"
 	http.Redirect(w, r, favIconUrl, http.StatusTemporaryRedirect)
 }

@@ -35,9 +35,9 @@ var extractSentEmailIdFromUrlEnd = regexp.MustCompile("/.*/(.*)")
 const trackingSubDomain = "www"
 const unsubscribeTemplate = "/Users/vlad/go/src/softside/unsubscribe.txt"
 const resubscribeTemplate = "/Users/vlad/go/src/softside/resubscribe.txt"
+const cssFile = "/Users/vlad/go/src/softside/style.css"
 const owner = "Vlad"
 
-// todo: this is nearly identical to Unsubscribe, so maybe refactor it
 func (ctx *RequestContext) someScribe(w http.ResponseWriter, r *http.Request, templateFile string, pageTitle string) *ListMember {
 
 	// Find the SentEmailId in the url
@@ -68,12 +68,26 @@ func (ctx *RequestContext) someScribe(w http.ResponseWriter, r *http.Request, te
 	markdownEmailBody = templatizeParams(markdownEmailBody, listMember, EncodeId(sentEmailId))
 
 	// Run the template
-	htmlEmailBytes := blackfriday.Run([]byte(markdownEmailBody))
+	templateBytes := blackfriday.Run([]byte(markdownEmailBody))
+
+	// Load the template file
+	cssFileBytes, err := ioutil.ReadFile(cssFile)
+	cssFileString := string(cssFileBytes)
+	if err != nil {
+		sendUserFacingError("Error reading css file: %v", err, w)
+		return nil
+	}
+
+	buffer := &bytes.Buffer{}
+	fmt.Fprintf(
+		buffer,
+		"<html><head><title>%s</title><meta charset='UTF-8'><style>%s</style><body>%s</body></html>",
+		pageTitle, cssFileString, string(templateBytes))
 
 	// todo: set a nice tile via a header?
 	// todo: set the correct content type
 	w.Header().Add("Content-Type", "html")
-	http.ServeContent(w, r, "foo bar!", time.Now(), bytes.NewReader(htmlEmailBytes))
+	http.ServeContent(w, r, "foo bar!", time.Now(), bytes.NewReader(buffer.Bytes()))
 
 	return listMember
 }

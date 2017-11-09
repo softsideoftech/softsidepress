@@ -1,0 +1,9 @@
+body {
+    margin: 0 auto;
+    width: 744px;
+    font-family: Source Serif Pro, serif;
+    line-height: 32px;
+    font-weight: 400;
+    color: rgba(0, 0, 0, 0.7);
+    font-size: 21px;
+}
