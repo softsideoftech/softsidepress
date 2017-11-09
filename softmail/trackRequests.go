@@ -33,11 +33,19 @@ func EncodeId(sentEmailId uint32) string {
 	buf[2] = byte(sentEmailId >> 8)
 	buf[3] = byte(sentEmailId)
 	str := URLEncoding.EncodeToString(buf[:])
+
+	// Strip out the leading A's so we have nice short ids in the url
+	str = strings.TrimLeft(str, "A")
 	return str
 }
 
-// TODO: Move to util
 func DecodeId(idString string) (uint32, error) {
+
+	// Add back the leading A's that were stripped out in EncodeId().
+	if len(idString) < 6 {
+		idString = strings.Repeat("A", 6-len(idString)) + idString
+	}
+
 	buf, err := URLEncoding.DecodeString(idString)
 	if err != nil {
 		return 0, err

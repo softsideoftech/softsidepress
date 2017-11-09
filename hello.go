@@ -12,7 +12,6 @@ type Page struct {
 }
 
 func main() {
-	 //print(softmail.EncodeId(5))
 	//print(url.QueryEscape("http://fake-domain.com/dummy-path?param=val"))
 	//print(softmail.UrlToId("/asdf2"))
 	testEmailTracker()
