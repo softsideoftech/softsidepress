@@ -12,7 +12,7 @@ type Page struct {
 }
 
 func main() {
-
+	 //print(softmail.EncodeId(5))
 	//print(url.QueryEscape("http://fake-domain.com/dummy-path?param=val"))
 	//print(softmail.UrlToId("/asdf2"))
 	testEmailTracker()
@@ -31,6 +31,8 @@ func testSendMail() {
 }
 
 func testEmailTracker() {
+	http.HandleFunc("/yes-please/", softmail.Resubscribe)
+	http.HandleFunc("/bye/", softmail.Unsubscribe)
 	http.HandleFunc("/favicon.ico", HandleFavicon)
 	http.HandleFunc("/gen_link", softmail.GenerateTrackingLink)
 	http.HandleFunc("/", softmail.TrackRequest)

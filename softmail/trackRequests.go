@@ -32,13 +32,14 @@ func EncodeId(sentEmailId uint32) string {
 	buf[1] = byte(sentEmailId >> 16)
 	buf[2] = byte(sentEmailId >> 8)
 	buf[3] = byte(sentEmailId)
-	return URLEncoding.EncodeToString(buf[:])
+	str := URLEncoding.EncodeToString(buf[:])
+	return str
 }
 
 // TODO: Move to util
 func DecodeId(idString string) (uint32, error) {
 	buf, err := URLEncoding.DecodeString(idString)
-	if (err != nil) {
+	if err != nil {
 		return 0, err
 	}
 	decodedId := uint32(0)
@@ -77,9 +78,9 @@ func GenerateTrackingLink(w http.ResponseWriter, r *http.Request) {
 	for len(url) == 0 {
 		curUrl, err := ctx.tryToCreateShortTrackedUrl(targetUrl)
 
-		if (err != nil) {
+		if err != nil {
 			panic(fmt.Errorf("Failed to generate tracking url for link: %s, err: $v", targetUrl, err))
-			http.StatusText(http.StatusInternalServerError)
+			http.Error(w, "Something went wrong generating the link.", http.StatusInternalServerError)
 			return
 		}
 
@@ -96,12 +97,12 @@ func (ctx *RequestContext) tryToCreateShortTrackedUrl(targetUrl string) (string,
 	// Check if we accidentally generated an existing url
 	err := ctx.db.Select(trackedUrl)
 	// todo: refactor checking for no results in select
-	if (err != nil ) {
-		if (strings.Contains(err.Error(), "no rows in result set")) {
+	if err != nil {
+		if strings.Contains(err.Error(), "no rows in result set") {
 			trackedUrl.Url = url
 			trackedUrl.TargetUrl = targetUrl
 			err := ctx.db.Insert(trackedUrl)
-			if (err != nil) {
+			if err != nil {
 				panic(fmt.Errorf("failed to insert TrackedUrl: %s, err: %v", trackedUrl.Url, err))
 				return "", err
 			}
@@ -155,12 +156,12 @@ func TrackRequest(w http.ResponseWriter, r *http.Request) {
 		ListMemberId: memberCookie.ListMemberId,
 	}
 	err = ctx.db.Insert(&trackingHit)
-	if (err != nil) {
+	if err != nil {
 		panic(fmt.Errorf("Problem inserting TrackingHit record. ListMemberId: : %d, Remote IP Address: %s, ReferrerURL: %s DB error: %v\n", memberCookie.ListMemberId, r.RemoteAddr, r.Referer(), err))
 	}
 
 	// If the request is a redirect-tracking link, then redirect the request now
-	if (len(trackedUrl.TargetUrl) > 0) {
+	if len(trackedUrl.TargetUrl) > 0 {
 		http.Redirect(w, r, trackedUrl.TargetUrl, http.StatusTemporaryRedirect)
 	}
 }
@@ -168,15 +169,15 @@ func TrackRequest(w http.ResponseWriter, r *http.Request) {
 func (ctx *RequestContext) obtainOrCreateTrackedUrl(sentEmailId SentEmailId, urlPath string) *TrackedUrl {
 	trackedUrl := &TrackedUrl{Id: 0}
 	// Default linkId for email tracking pixel
-	if (sentEmailId == 0) {
+	if sentEmailId == 0 {
 		trackedUrl.Id = UrlToId(urlPath)
 		err := ctx.db.Select(trackedUrl)
-		if (err != nil) {
+		if err != nil {
 			// todo: refactor checking for no results in select
-			if (strings.Contains(err.Error(), "no rows in result set")) {
+			if strings.Contains(err.Error(), "no rows in result set") {
 				trackedUrl.Url = urlPath
 				err = ctx.db.Insert(trackedUrl)
-				if (err != nil) {
+				if err != nil {
 					panic(fmt.Errorf("failed to insert tracked url: %s, err: %v", urlPath, err))
 				}
 			} else {
@@ -189,11 +190,11 @@ func (ctx *RequestContext) obtainOrCreateTrackedUrl(sentEmailId SentEmailId, url
 
 func decodeSendMailIdFromUri(path string) SentEmailId {
 	submatch := extractSentEmailIdFromImgPixel.FindStringSubmatch(path)
-	if (submatch == nil) {
+	if submatch == nil {
 		return 0
 	}
 	sentEmailId, err := DecodeId(submatch[1])
-	if (err != nil) {
+	if err != nil {
 		fmt.Printf("Problem parsing SentEmailId from url: %s, error message: %s", path, err)
 		// Keep going anyway so we could set the cookie and retroactive track this user later if we obtain a ListMemberId
 	}
@@ -202,7 +203,7 @@ func decodeSendMailIdFromUri(path string) SentEmailId {
 
 func decodeIpAddress(remoteAddr string) string {
 	submatch := extractIpAddress.FindStringSubmatch(remoteAddr)
-	if (submatch == nil) {
+	if submatch == nil {
 		return ""
 	} else {
 		return submatch[1]
@@ -210,13 +211,13 @@ func decodeIpAddress(remoteAddr string) string {
 }
 
 func (ctx *RequestContext) getListMemberIdFromSentEmail(sentEmailId SentEmailId) ListMemberId {
-	if (sentEmailId == 0) {
+	if sentEmailId == 0 {
 		return 0
 	}
 	// Get the sent email from the db so we could find the list_member_id
 	sentEmail := SentEmail{Id: sentEmailId}
 	err := ctx.db.Select(&sentEmail)
-	if (err != nil) {
+	if err != nil {
 		fmt.Printf("Problem retrieving SentEmail record with id: : %d, DB message: %s\n", sentEmailId, err)
 	}
 	return sentEmail.ListMemberId
@@ -225,30 +226,30 @@ func (ctx *RequestContext) getListMemberIdFromSentEmail(sentEmailId SentEmailId)
 func (ctx *RequestContext) obtainOrCreateMemberCookie(listMemberId ListMemberId, httpCookie *http.Cookie) *MemberCookie {
 	// Retrieve the MemberCookie if it exists
 	var memberCookie *MemberCookie = nil
-	if (httpCookie != nil) {
+	if httpCookie != nil {
 		encodedCookieId := httpCookie.Value
 		memberCookieId, err := DecodeMemberCookieId(encodedCookieId)
-		if (err != nil) {
+		if err != nil {
 			fmt.Printf("Problem parsing MemberCookieId from httpCookie: %s, error message: %s", encodedCookieId, err)
 		} else {
 			memberCookie = &MemberCookie{Id: memberCookieId}
 			err := ctx.db.Select(memberCookie)
-			if (err != nil) {
+			if err != nil {
 				fmt.Printf("Problem retrieving MemberCookie record with id: : %d, DB message: %s\n", memberCookieId, err)
 			}
 		}
 	}
-	if (memberCookie != nil) {
-		if (listMemberId == 0) {
+	if memberCookie != nil {
+		if listMemberId == 0 {
 			// If we didn't find a ListMemberId in the url and we have a httpCookie, then initialize the id from the httpCookie
 			listMemberId = memberCookie.ListMemberId
 
-		} else if (memberCookie.ListMemberId == 0 || memberCookie.ListMemberId != listMemberId) {
+		} else if memberCookie.ListMemberId == 0 || memberCookie.ListMemberId != listMemberId {
 			// If we already had a httpCookie that didn't have a list member id or the member id has changed, then update the httpCookie
 			memberCookie.ListMemberId = listMemberId
 			memberCookie.Updated = time.Now()
 			err := ctx.db.Update(memberCookie)
-			if (err != nil) {
+			if err != nil {
 				fmt.Printf("Problem updating MemberCookie record with id: %d, ListMemberId: %d, DB message: %s\n", memberCookie.Id, listMemberId, err)
 			}
 		}
@@ -256,7 +257,7 @@ func (ctx *RequestContext) obtainOrCreateMemberCookie(listMemberId ListMemberId,
 		// Sicne we don't have a MemberCookie yet we should create one
 		memberCookie = &MemberCookie{ListMemberId: listMemberId}
 		err := ctx.db.Insert(memberCookie)
-		if (err != nil) {
+		if err != nil {
 			fmt.Printf("Problem inserting MemberCookie record for ListMemberId: : %d, DB message: %s\n", listMemberId, err)
 		}
 	}

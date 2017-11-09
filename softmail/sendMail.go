@@ -10,6 +10,9 @@ import (
 	"github.com/go-pg/pg"
 	"strings"
 	"regexp"
+	"net/http"
+	"bytes"
+	"time"
 )
 
 func emailTemplateToId(subject string, body []byte) int64 {
@@ -23,11 +26,112 @@ func emailTemplateToId(subject string, body []byte) int64 {
 }
 
 var firstNameRegex = regexp.MustCompile("(\\{\\{first_name\\}\\})")
+var sentEmailIdRegex = regexp.MustCompile("(\\{\\{sent_email_id\\}\\})")
 
 var linkRegex = regexp.MustCompile("\\((https://)(.+?)\\)")
+var extractSentEmailIdFromUrlEnd = regexp.MustCompile("/.*/(.*)")
 
-// todo: make this configurable
+// todo: make these configurable
 const trackingSubDomain = "www"
+const unsubscribeTemplate = "/Users/vlad/go/src/softside/unsubscribe.txt"
+const resubscribeTemplate = "/Users/vlad/go/src/softside/resubscribe.txt"
+const owner = "Vlad"
+
+// todo: this is nearly identical to Unsubscribe, so maybe refactor it
+func (ctx *RequestContext) someScribe(w http.ResponseWriter, r *http.Request, templateFile string, pageTitle string) *ListMember {
+
+	// Find the SentEmailId in the url
+	sentEmailId := decodeSendMailIdFromUriEnd(r.URL.Path)
+	if sentEmailId == 0 {
+		sendUserFacingError("Couldn't find SentEmailId in url: %v", nil, w)
+		return nil
+	}
+
+	// Load the ListMember from the DB
+	listMemberId := ctx.getListMemberIdFromSentEmail(sentEmailId)
+	listMember := &ListMember{Id: listMemberId}
+	err := ctx.db.Select(listMember)
+	if err != nil {
+		sendUserFacingError("Couldn't find list member in url: %v", err, w)
+		return nil
+	}
+
+	// Load the template file
+	markdownEmailBodyBytes, err := ioutil.ReadFile(templateFile)
+	markdownEmailBody := string(markdownEmailBodyBytes)
+	if err != nil {
+		sendUserFacingError("Error reading template: %v", err, w)
+		return nil
+	}
+
+	// Plug in the first name and sent email id
+	markdownEmailBody = templatizeParams(markdownEmailBody, listMember, EncodeId(sentEmailId))
+
+	// Run the template
+	htmlEmailBytes := blackfriday.Run([]byte(markdownEmailBody))
+
+	// todo: set a nice tile via a header?
+	// todo: set the correct content type
+	w.Header().Add("Content-Type", "html")
+	http.ServeContent(w, r, "foo bar!", time.Now(), bytes.NewReader(htmlEmailBytes))
+
+	return listMember
+}
+
+func Resubscribe(w http.ResponseWriter, r *http.Request) {
+	// Connect to the DB
+	// TODO: Replace the naive DB connection with connection pooling and a config driven connection string
+	ctx := &RequestContext{
+		db: pg.Connect(&pg.Options{
+			User: "vlad",
+		}),
+	}
+
+	listMember := ctx.someScribe(w, r, resubscribeTemplate, "Welcome back :)")
+
+	// Update the unsubscribe status
+	if (listMember != nil) {
+		listMember.Unsubscribed = nil
+		ctx.db.Update(listMember)
+	}
+}
+
+func Unsubscribe(w http.ResponseWriter, r *http.Request) {
+	// Connect to the DB
+	// TODO: Replace the naive DB connection with connection pooling and a config driven connection string
+	ctx := &RequestContext{
+		db: pg.Connect(&pg.Options{
+			User: "vlad",
+		}),
+	}
+
+	listMember := ctx.someScribe(w, r, unsubscribeTemplate, "Have a good one!")
+
+	// Update the unsubscribe status
+	if (listMember != nil) {
+		now := time.Now()
+		listMember.Unsubscribed = &now
+		ctx.db.Update(listMember)
+		// todo: send an email to unsubscribers to let them they're off
+	}
+}
+
+func decodeSendMailIdFromUriEnd(path string) SentEmailId {
+	submatch := extractSentEmailIdFromUrlEnd.FindStringSubmatch(path)
+	if submatch == nil {
+		return 0
+	}
+	sentEmailId, err := DecodeId(submatch[1])
+	if err != nil {
+		fmt.Printf("Problem parsing SentEmailId from url: %s, error: %v", path, err)
+		return 0
+	}
+	return sentEmailId
+}
+
+func sendUserFacingError(logMessage string, err error, w http.ResponseWriter) {
+	http.Error(w, "Hey, looks like something went wrong. I've logged this error and will take a look at the issue soon. -"+owner, http.StatusInternalServerError)
+}
 
 func Sendmail(subject string, templateFile string, fromEmail string) error {
 
@@ -49,12 +153,12 @@ func Sendmail(subject string, templateFile string, fromEmail string) error {
 	emailTemplateId := emailTemplateToId(subject, markdownEmailBodyBytes)
 	emailTemplate := EmailTemplate{Id: emailTemplateId}
 	err = db.Select(&emailTemplate)
-	if (err != nil) {
-		if (strings.Contains(err.Error(), "no rows in result set")) {
+	if err != nil {
+		if strings.Contains(err.Error(), "no rows in result set") {
 			emailTemplate.Subject = subject
 			emailTemplate.Body = markdownEmailBody
 			err = db.Insert(&emailTemplate)
-			if (err != nil) {
+			if err != nil {
 				return err
 			}
 		} else {
@@ -83,15 +187,15 @@ func Sendmail(subject string, templateFile string, fromEmail string) error {
 			ListMemberId:    listMember.Id,
 		}
 		err := db.Insert(sentEmail)
-		if (err != nil) {
+		if err != nil {
 			return err
 		}
 
-		// Templatize the first name
-		markdownEmailBody = firstNameRegex.ReplaceAllString(markdownEmailBody, listMember.FirstName)
-
 		// Base64 encode the SentEmail id
 		encodedSentEmailId := EncodeId(sentEmail.Id)
+
+		// Templatize the first name and sent email id
+		markdownEmailBody = templatizeParams(markdownEmailBody, &listMember, encodedSentEmailId)
 
 		// Templatize the links
 		markdownEmailBody := linkRegex.ReplaceAllString(markdownEmailBody, "($1$2-"+encodedSentEmailId+")")
@@ -110,8 +214,14 @@ func Sendmail(subject string, templateFile string, fromEmail string) error {
 			fmt.Printf("Error sending email: %s\n", err)
 		}
 
-		// TODO: Save id that comes back from SES
+		// TODO: Save id that comes back from SES so we could track bounces and complaints
+		// TODO: Return an actual image so email clients don't keep re-requesting
 	}
 
 	return nil
+}
+
+func templatizeParams(markdownEmailBody string, listMember *ListMember, encodedSentEmailId string) string {
+	markdownEmailBody = firstNameRegex.ReplaceAllString(markdownEmailBody, listMember.FirstName)
+	return sentEmailIdRegex.ReplaceAllString(markdownEmailBody, encodedSentEmailId)
 }

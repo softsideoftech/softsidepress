@@ -12,6 +12,7 @@ type ListMember struct {
 	Email        string
 	PersonalRole uint32
 	Created      time.Time
+	Unsubscribed *time.Time
 }
 
 type EmailTemplateId = int64
