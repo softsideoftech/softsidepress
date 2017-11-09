@@ -94,13 +94,13 @@ func Sendmail(subject string, templateFile string, fromEmail string) error {
 		encodedSentEmailId := EncodeId(sentEmail.Id)
 
 		// Templatize the links
-		markdownEmailBody := linkRegex.ReplaceAllString(markdownEmailBody, "(http://www.$2-"+encodedSentEmailId+")")
+		markdownEmailBody := linkRegex.ReplaceAllString(markdownEmailBody, "($1$2-"+encodedSentEmailId+")")
 
 		// Generate the html body
 		htmlEmailString := string(blackfriday.Run([]byte(markdownEmailBody)))
 
 		// Append the tracking pixel
-		htmlEmailString += "<img src='http://" + trackingSubDomain + "." + trackingDomain + "/" + encodedSentEmailId + ".jpg'/>"
+		htmlEmailString += "<img src='http://" + trackingSubDomain + "." + siteDomain + "/" + encodedSentEmailId + ".jpg'/>"
 
 		// Send the email
 		res, err := ses.EnvConfig.SendEmailHTML(fromEmail, listMember.Email, subject, markdownEmailBody, htmlEmailString)

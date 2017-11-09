@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"net/http"
 	"softside/softmail"
-	"strings"
 )
 
 type Page struct {
@@ -13,10 +12,9 @@ type Page struct {
 }
 
 func main() {
-	//db := pg.Connect(&pg.Options{
-	//	User: "vlad",
-	//})
 
+	//print(url.QueryEscape("http://fake-domain.com/dummy-path?param=val"))
+	//print(softmail.UrlToId("/asdf2"))
 	testEmailTracker()
 
 	//testSendMail()
@@ -33,17 +31,13 @@ func testSendMail() {
 }
 
 func testEmailTracker() {
-	http.HandleFunc("/", HandleRequest)
+	http.HandleFunc("/favicon.ico", HandleFavicon)
+	http.HandleFunc("/gen_link", softmail.GenerateTrackingLink)
+	http.HandleFunc("/", softmail.TrackRequest)
 	http.ListenAndServe(":8080", nil)
 }
 
-func HandleRequest(w http.ResponseWriter, r *http.Request) {
-	fmt.Printf("Processing request: &s", r.RequestURI)
-	if (strings.HasSuffix(r.RequestURI, "/favicon.ico")) {
-		// TODO: make this configurable?
-		favIconUrl := "http://static.softsideoftech.com/favicon.ico"
-		http.Redirect(w, r, favIconUrl, http.StatusTemporaryRedirect)
-	} else {
-		softmail.HandleEmailOpen(w, r)
-	}
+func HandleFavicon(w http.ResponseWriter, r *http.Request) {
+	favIconUrl := "http://static.softsideoftech.com/favicon.ico"
+	http.Redirect(w, r, favIconUrl, http.StatusTemporaryRedirect)
 }
