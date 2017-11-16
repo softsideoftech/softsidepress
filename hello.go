@@ -25,7 +25,7 @@ func main() {
 }
 
 type EmailTemplate struct {
-	Id     int64
+	Id     uint32
 	Subject   string
 	Body string
 }
