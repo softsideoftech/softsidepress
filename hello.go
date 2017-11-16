@@ -8,6 +8,8 @@ import (
 	"os"
 	"net/http"
 	"regexp"
+	"github.com/go-pg/pg"
+	"time"
 )
 
 
@@ -17,8 +19,50 @@ type Page struct {
 }
 
 func main() {
+	testDB()
+	//testRedirect()
+	//testEmail()
+}
 
-	testRedirect()
+type EmailTemplate struct {
+	Id     int64
+	Subject   string
+	Body string
+}
+func (u EmailTemplate) String() string {
+	return fmt.Sprintf("EmailTemplate<%d %s %v>", u.Id, u.Subject, u.Body)
+}
+
+func testDB() {
+	db := pg.Connect(&pg.Options{
+		User: "vlad",
+	})
+
+	emailTemplate1 := &EmailTemplate{
+		Subject:   "test subject" + time.Now().String(),
+		Body: "this is a test body",
+	}
+	err := db.Insert(emailTemplate1)
+	if err != nil {
+		panic(err)
+	}
+
+
+	emailTemplate := EmailTemplate{Id: emailTemplate1.Id}
+	err = db.Select(&emailTemplate)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(emailTemplate)
+
+
+	// Select all email templates.
+	var emailTemplates []EmailTemplate
+	err = db.Model(&emailTemplates).Select()
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(emailTemplates)
 }
 
 
