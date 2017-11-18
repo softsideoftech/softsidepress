@@ -10,10 +10,7 @@ import (
 	"regexp"
 	"github.com/go-pg/pg"
 	"time"
-	"github.com/h2ik/go-sqs-poller/worker"
-	"github.com/aws/aws-sdk-go/service/sqs"
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
+	"softside/softmail"
 )
 
 
@@ -25,28 +22,10 @@ type Page struct {
 func main() {
 	//testDB()
 	//testRedirect()
-	testEmail()
-	testSqs()
+	//testEmail()
+	softmail.StartSqs()
 }
 
-func testSqs() {
-
-	sess, err := session.NewSession(&aws.Config{Region: aws.String("us-west-2")})
-
-	if (err != nil) {
-		fmt.Println(err)
-	}
-
-	svc := sqs.New(sess)
-
-	// set the queue url
-	worker.QueueURL = "https://sqs.us-west-2.amazonaws.com/249869178481/softside-ses-q"
-	// start the worker
-	worker.Start(svc, worker.HandlerFunc(func (msg *sqs.Message) error {
-		fmt.Println(aws.StringValue(msg.Body))
-		return nil
-	}))
-}
 
 type EmailTemplate struct {
 	Id     uint32
