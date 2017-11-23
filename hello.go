@@ -13,7 +13,6 @@ import (
 	"softside/softmail"
 )
 
-
 type Page struct {
 	Title string
 	Body  []byte
@@ -26,48 +25,39 @@ func main() {
 	softmail.StartSqs()
 }
 
-
-type EmailTemplate struct {
-	Id     uint32
-	Subject   string
-	Body string
-}
-func (u EmailTemplate) String() string {
-	return fmt.Sprintf("EmailTemplate<%d %s %v>", u.Id, u.Subject, u.Body)
-}
+//func (u softmail.EmailTemplate) String() string {
+//	return fmt.Sprintf("EmailTemplate<%d %s %v>", u.Id, u.Subject, u.Body)
+//}
 
 func testDB() {
 	db := pg.Connect(&pg.Options{
 		User: "vlad",
 	})
 
-	emailTemplate1 := &EmailTemplate{
-		Subject:   "test subject" + time.Now().String(),
-		Body: "this is a test body",
+	emailTemplate1 := &softmail.EmailTemplate{
+		Subject: "test subject" + time.Now().String(),
+		Body:    "this is a test body",
 	}
 	err := db.Insert(emailTemplate1)
 	if err != nil {
 		panic(err)
 	}
 
-
-	emailTemplate := EmailTemplate{Id: emailTemplate1.Id}
+	emailTemplate := softmail.EmailTemplate{Id: emailTemplate1.Id}
 	err = db.Select(&emailTemplate)
 	if err != nil {
 		panic(err)
 	}
 	fmt.Println(emailTemplate)
 
-
 	// Select all email templates.
-	var emailTemplates []EmailTemplate
+	var emailTemplates []softmail.EmailTemplate
 	err = db.Model(&emailTemplates).Select()
 	if err != nil {
 		panic(err)
 	}
 	fmt.Println(emailTemplates)
 }
-
 
 func testRedirect() {
 	http.HandleFunc("/redirect/", makeHandler(handleRedirect))
@@ -87,7 +77,7 @@ func handleRedirect(w http.ResponseWriter, r *http.Request, title string) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	http.Redirect(w, r, "https://softsideoftech.com?t=" + title, http.StatusFound)
+	http.Redirect(w, r, "https://softsideoftech.com?t="+title, http.StatusFound)
 }
 
 var validPath = regexp.MustCompile("^/(redirect)/([a-zA-Z0-9]+)$")
