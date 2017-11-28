@@ -27,7 +27,7 @@ var firstNameRegex = regexp.MustCompile("(\\{\\{first_name\\}\\})")
 var linkRegex = regexp.MustCompile("\\((https://)(.+?)\\)")
 
 // todo: make this configurable
-const trackingUrl = "http://www.softsideoftech.com/"
+const trackingSubDomain = "www"
 
 func Sendmail(subject string, templateFile string, fromEmail string) error {
 
@@ -100,7 +100,7 @@ func Sendmail(subject string, templateFile string, fromEmail string) error {
 		htmlEmailString := string(blackfriday.Run([]byte(markdownEmailBody)))
 
 		// Append the tracking pixel
-		htmlEmailString += "<img src='" + trackingUrl + "" + encodedSentEmailId + ".jpg'/>"
+		htmlEmailString += "<img src='http://" + trackingSubDomain + "." + trackingDomain + "/" + encodedSentEmailId + ".jpg'/>"
 
 		// Send the email
 		res, err := ses.EnvConfig.SendEmailHTML(fromEmail, listMember.Email, subject, markdownEmailBody, htmlEmailString)
