@@ -8,14 +8,17 @@ So how'd I do at my last job--at Clara? I wish I could say that I lived up to th
 
 ## My Motivation
 
-I talked about how it's easier for me to hire for motivation then it is to make people motivated after the fact. Before I joined Clara, I had a few things that I was looking for in the ideal job. M
+I've talked about how it's easier for me to hire people for motivation from the start then to make them motivated after-the-fact. I actually had a pretty good sense of what I was looking for before I joined Clara. Like most people, my motivations consisted of a combination of mastery, purpose, autonomy, and financial security.
+
+### Mastery in Management
+Prior to Clara, I was a Director of Software at Workday leading more than 50 people, mostly engineers. I felt like I leader, but I didn't feel like a manager. For various reasons, I had delegated most of my day-to-day management responsibilities to my friend, [Barzel](https://www.linkedin.com/in/barzelsegal/). He was my only report and as far as I could tell, he was doing a great job. People on our team were generally happy and the ones he worked most closely with admired him and appreciated his support in their personal development. Theoretically, this was great. I had hired Barzel a few years earlier when I became the CTO at Identified. This was my first pure management gig and I believed I needed someone better with people and with "real" management experience to help run the team. 
+
+At first, I was happy with this arrangement as I didn't care that much about management. I mainly wanted to move the business forward as a way to advance my own career. But after a couple years of seeing how well people responded to Barzel and the skill he had with relationships, I started to develop an appreciation of management. I wanted to be good at it too. It was mostly an ego-driven thing for me, as effectively leveraging other people seemed to be the best way to have ever-increasing achievements. And high achievement was my preferred way of coping with my feelings lack of self-worth that I had since early childhood.
 
 
 
 
 
-
-
-
+https://www.linkedin.com/in/adeyemiajao/
 
 [lead-image-jpg]: https://github.com/adam-p/markdown-here/raw/master/src/common/images/icon48.png
