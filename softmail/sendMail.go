@@ -35,8 +35,13 @@ var extractSentEmailIdFromUrlEnd = regexp.MustCompile("/.*/(.*)")
 const trackingSubDomain = "www"
 const unsubscribeTemplate = "/Users/vlad/go/src/softside/unsubscribe.txt"
 const resubscribeTemplate = "/Users/vlad/go/src/softside/resubscribe.txt"
-const cssFile = "/Users/vlad/go/src/softside/style.css"
+const baseHtmlTemplate = "/Users/vlad/go/src/softside/base.html"
 const owner = "Vlad"
+
+type ListMemberParams struct {
+	FirstName string
+	EncodedId string
+}
 
 func (ctx *RequestContext) someScribe(w http.ResponseWriter, r *http.Request, templateFile string, pageTitle string) *ListMember {
 
@@ -56,37 +61,12 @@ func (ctx *RequestContext) someScribe(w http.ResponseWriter, r *http.Request, te
 		return nil
 	}
 
-	// Load the template file
-	markdownEmailBodyBytes, err := ioutil.ReadFile(templateFile)
-	markdownEmailBody := string(markdownEmailBodyBytes)
-	if err != nil {
-		sendUserFacingError("Error reading template: %v", err, w)
-		return nil
-	}
-
-	// Plug in the first name and sent email id
-	markdownEmailBody = templatizeParams(markdownEmailBody, listMember, EncodeId(sentEmailId))
-
 	// Run the template
-	templateBytes := blackfriday.Run([]byte(markdownEmailBody))
-
-	// Load the template file
-	cssFileBytes, err := ioutil.ReadFile(cssFile)
-	cssFileString := string(cssFileBytes)
-	if err != nil {
-		sendUserFacingError("Error reading css file: %v", err, w)
-		return nil
-	}
-
 	buffer := &bytes.Buffer{}
-	fmt.Fprintf(
-		buffer,
-		"<html><head><title>%s</title><meta charset='UTF-8'><style>%s</style><body>%s</body></html>",
-		pageTitle, cssFileString, string(templateBytes))
+	renderMarkdownToHtmlTemplate(buffer, baseHtmlTemplate, pageTitle, templateFile, ListMemberParams{listMember.FirstName, EncodeId(sentEmailId)})
 
-	// todo: set a nice tile via a header?
-	// todo: set the correct content type
-	w.Header().Add("Content-Type", "html")
+
+	w.Header().Add("Content-Type", "text/html")
 	http.ServeContent(w, r, "foo bar!", time.Now(), bytes.NewReader(buffer.Bytes()))
 
 	return listMember
