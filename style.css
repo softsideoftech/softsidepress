@@ -1,9 +1,41 @@
 body {
     margin: 0 auto;
-    width: 744px;
+    max-width: 650px;
     font-family: Source Serif Pro, serif;
     line-height: 32px;
     font-weight: 400;
-    color: rgba(0, 0, 0, 0.7);
-    font-size: 21px;
+    color: rgba(0, 0, 0, 0.75);
+    font-size: 19px;
+    padding: 15px;
+}
+
+h1, h2, h3, h4, h4 {
+    font-family: "Lucida Grande","Lucida Sans Unicode","Lucida Sans",Geneva,Arial,sans-serif;;
+}
+
+a {
+    color: rgba(0, 0, 0, 0.75);
+}
+
+a:hover {
+    color: rgba(0, 0, 0, 0.6);
+}
+
+h1 {
+    font-size: 34px;
+    font-weight: 600;
+}
+
+h2 {
+    font-size: 28px;
+    margin-top: 34px;
+}
+
+h3 {
+    font-size: 23px;
+    margin: 23px 0 0 0;
+}
+
+p {
+    margin: 0 0 19px 0;
 }

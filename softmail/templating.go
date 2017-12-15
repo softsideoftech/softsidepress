@@ -22,8 +22,6 @@ type BodyParams interface {
 
 // Load the css file
 const cssFile = "/Users/vlad/go/src/softside/style.css" // TODO: make this a relative path
-var cssFileBytes, err = ioutil.ReadFile(cssFile)
-var cssFileString = string(cssFileBytes)
 var templateCache = sync.Map{}
 
 // TODO: figure out how to load and cache all the template files
@@ -32,6 +30,10 @@ func renderMarkdownToHtmlTemplate(writer io.Writer, baseHtmlFile string, title s
 
 	// Get the template from the cache to avoid constantly reading and parsing files from disk
 	fullPageTemplate, ok := templateCache.Load(templateName)
+
+	// todo: turning off caching for development purposes
+	ok = false
+
 	if !ok {
 		// Load the markdown template file
 		markdownTemplateBytes, err := ioutil.ReadFile(markdownFile)
@@ -48,6 +50,14 @@ func renderMarkdownToHtmlTemplate(writer io.Writer, baseHtmlFile string, title s
 			return err
 		}
 		buffer := &bytes.Buffer{}
+
+		// Load the css file
+		cssFileBytes, err := ioutil.ReadFile(cssFile)
+		if err != nil {
+			return err
+		}
+		var cssFileString = string(cssFileBytes)
+
 		baseHtmlTemplate.Execute(buffer, HtmlPageParams{Title: title, Css: cssFileString, Body: bodyHtml})
 
 		// Render the parameters into the full template.

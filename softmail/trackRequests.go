@@ -172,6 +172,10 @@ func TrackRequest(w http.ResponseWriter, r *http.Request) {
 	// If the request is a redirect-tracking link, then redirect the request now
 	if len(trackedUrl.TargetUrl) > 0 {
 		http.Redirect(w, r, trackedUrl.TargetUrl, http.StatusTemporaryRedirect)
+
+	} else {
+		// Otherwise this might be a website page, so look for that.
+		renderMarkdownToHtmlTemplate(w, baseHtmlTemplate, "", "src/softside/pages" + r.URL.Path + ".md", nil)
 	}
 }
 
