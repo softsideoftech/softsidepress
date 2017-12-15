@@ -33,10 +33,10 @@ var extractSentEmailIdFromUrlEnd = regexp.MustCompile("/.*/(.*)")
 
 // todo: make these configurable
 const trackingSubDomain = "www"
-const unsubscribeTemplate = "/Users/vlad/go/src/softside/mgmt-pages/unsubscribe.md"
-const resubscribeTemplate = "/Users/vlad/go/src/softside/mgmt-pages/resubscribe.md"
-const errorTemplate = "/Users/vlad/go/src/softside/mgmt-pages/error.md"
-const baseHtmlTemplate = "/Users/vlad/go/src/softside/base.html"
+const unsubscribeTemplate = "src/softside/mgmt-pages/unsubscribe.md"
+const resubscribeTemplate = "src/softside/mgmt-pages/resubscribe.md"
+const errorTemplate = "src/softside/mgmt-pages/error.md"
+const baseHtmlTemplate = "src/softside/html/base.html"
 const owner = "Vlad"
 
 type ListMemberParams struct {

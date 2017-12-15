@@ -175,7 +175,11 @@ func TrackRequest(w http.ResponseWriter, r *http.Request) {
 
 	} else {
 		// Otherwise this might be a website page, so look for that.
-		renderMarkdownToHtmlTemplate(w, baseHtmlTemplate, "", "src/softside/pages" + r.URL.Path + ".md", nil)
+		err:= renderMarkdownToHtmlTemplate(w, baseHtmlTemplate, "", "src/softside/pages"+r.URL.Path+".md", nil)
+		if err != nil {
+			sendUserFacingError("", err, w)
+		}
+
 	}
 }
 
