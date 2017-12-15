@@ -50,7 +50,13 @@ img {
     color: rgba(0, 0, 0, 0.9);
     text-align: center;
     max-width: 500px;
-    margin: 0 auto;
+    margin: 50px auto;
+}
+
+.signup-item {
+    margin: 20px auto;
+    display: block;
+    font-size: 18px;
 }
 
 input {
@@ -58,7 +64,6 @@ input {
     border-right: none;
     border-left: none;
     border-bottom: #cccccc 1px solid;
-    font-size: 18px;
     padding: 5px;
     display: block;
     margin: 20px auto;
@@ -68,4 +73,15 @@ input {
 input::placeholder {
     color: #cccccc;
     text-align: center;
+    padding: 5px;
+}
+
+button {
+    background-color: #545589;
+    border: none;
+    color: #FFFFFF;
+    padding: 10px;
+    width: 200px;
+    border-radius: 50px;
+    font-weight: 500;
 }

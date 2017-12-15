@@ -31,7 +31,6 @@ In my first few months at Clara, I found a comfortable rapport with all of the e
 
 I had some rough times too. I got into an argument with our new head recruiter, Bryce, where I said some unfairly harsh things. The co-founder/Head of Product, Lukasz, felt roughly handled from how hard I pushed Scrum onto the team and how he felt left out of the process. And I have a vague there were some other inter-personal conflicts that I had 
 
-## My Accountability
 
 
 
