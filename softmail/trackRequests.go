@@ -134,7 +134,8 @@ func TrackRequest(w http.ResponseWriter, r *http.Request) {
 
 	// Try to obtain the ListMemberId using the encoded SendEmailId in the url path if it exists.
 	sentEmailId := decodeSendMailIdFromUri(r.URL.Path)
-	listMemberId := ctx.getListMemberIdFromSentEmail(sentEmailId)
+	listMemberId, err := ctx.getListMemberIdFromSentEmail(sentEmailId)
+	// ignore any error and keep going
 
 	// Get the cookie from the request so we could look it up in the
 	// database and create a new record if it doesn't already exist
@@ -218,17 +219,17 @@ func decodeIpAddress(remoteAddr string) string {
 	}
 }
 
-func (ctx *RequestContext) getListMemberIdFromSentEmail(sentEmailId SentEmailId) ListMemberId {
+func (ctx *RequestContext) getListMemberIdFromSentEmail(sentEmailId SentEmailId) (ListMemberId, error) {
 	if sentEmailId == 0 {
-		return 0
+		return 0, nil
 	}
 	// Get the sent email from the db so we could find the list_member_id
 	sentEmail := SentEmail{Id: sentEmailId}
 	err := ctx.db.Select(&sentEmail)
 	if err != nil {
-		fmt.Printf("Problem retrieving SentEmail record with id: : %d, DB message: %s\n", sentEmailId, err)
+		return 0, fmt.Errorf("Problem retrieving SentEmail record with id: : %d, DB error: %s\v", sentEmailId, err)
 	}
-	return sentEmail.ListMemberId
+	return sentEmail.ListMemberId, nil
 }
 
 func (ctx *RequestContext) obtainOrCreateMemberCookie(listMemberId ListMemberId, httpCookie *http.Cookie) *MemberCookie {

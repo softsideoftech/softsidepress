@@ -33,14 +33,19 @@ var extractSentEmailIdFromUrlEnd = regexp.MustCompile("/.*/(.*)")
 
 // todo: make these configurable
 const trackingSubDomain = "www"
-const unsubscribeTemplate = "/Users/vlad/go/src/softside/unsubscribe.txt"
-const resubscribeTemplate = "/Users/vlad/go/src/softside/resubscribe.txt"
+const unsubscribeTemplate = "/Users/vlad/go/src/softside/mgmt-pages/unsubscribe.md"
+const resubscribeTemplate = "/Users/vlad/go/src/softside/mgmt-pages/resubscribe.md"
+const errorTemplate = "/Users/vlad/go/src/softside/mgmt-pages/error.md"
 const baseHtmlTemplate = "/Users/vlad/go/src/softside/base.html"
 const owner = "Vlad"
 
 type ListMemberParams struct {
 	FirstName string
 	EncodedId string
+}
+
+type SiteOwner struct {
+	OwnerName string
 }
 
 func (ctx *RequestContext) someScribe(w http.ResponseWriter, r *http.Request, templateFile string, pageTitle string) *ListMember {
@@ -53,9 +58,13 @@ func (ctx *RequestContext) someScribe(w http.ResponseWriter, r *http.Request, te
 	}
 
 	// Load the ListMember from the DB
-	listMemberId := ctx.getListMemberIdFromSentEmail(sentEmailId)
+	listMemberId, err := ctx.getListMemberIdFromSentEmail(sentEmailId)
+	if (err != nil) {
+		sendUserFacingError("", err, w)
+		return nil
+	}
 	listMember := &ListMember{Id: listMemberId}
-	err := ctx.db.Select(listMember)
+	err = ctx.db.Select(listMember)
 	if err != nil {
 		sendUserFacingError("Couldn't find list member in url: %v", err, w)
 		return nil
@@ -66,7 +75,7 @@ func (ctx *RequestContext) someScribe(w http.ResponseWriter, r *http.Request, te
 	renderMarkdownToHtmlTemplate(buffer, baseHtmlTemplate, pageTitle, templateFile, ListMemberParams{listMember.FirstName, EncodeId(sentEmailId)})
 
 
-	w.Header().Add("Content-Type", "text/html")
+	w.Header().Add("Content-Type", "text/html; charset=utf-8")
 	http.ServeContent(w, r, "foo bar!", time.Now(), bytes.NewReader(buffer.Bytes()))
 
 	return listMember
@@ -124,7 +133,11 @@ func decodeSendMailIdFromUriEnd(path string) SentEmailId {
 }
 
 func sendUserFacingError(logMessage string, err error, w http.ResponseWriter) {
-	http.Error(w, "Hey, looks like something went wrong. I've logged this error and will take a look at the issue soon. -"+owner, http.StatusInternalServerError)
+	fmt.Printf(logMessage + "err: %v", err)
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	w.Header().Set("X-Content-Type-Options", "nosniff")
+	w.WriteHeader(http.StatusInternalServerError)
+	renderMarkdownToHtmlTemplate(w, baseHtmlTemplate, "Something isn't right...", errorTemplate, SiteOwner{owner})
 }
 
 func Sendmail(subject string, templateFile string, fromEmail string) error {
