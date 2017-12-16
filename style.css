@@ -64,7 +64,7 @@ input {
     border-right: none;
     border-left: none;
     border-bottom: #cccccc 1px solid;
-    padding: 5px;
+    padding: 5px 20px;
     display: block;
     margin: 20px auto;
     width: 250px;
@@ -74,6 +74,13 @@ input::placeholder {
     color: #cccccc;
     text-align: center;
     padding: 5px;
+}
+
+input:focus,
+select:focus,
+textarea:focus,
+button:focus {
+    outline: none;
 }
 
 button {
