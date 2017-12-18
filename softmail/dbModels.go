@@ -12,6 +12,8 @@ type ListMember struct {
 	Email        string
 	PersonalRole uint32
 	Created      time.Time
+	Updated      time.Time
+	Subscribed   *time.Time
 	Unsubscribed *time.Time
 }
 

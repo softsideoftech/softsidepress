@@ -31,7 +31,6 @@ var extractSentEmailIdFromUrlEnd = regexp.MustCompile("/.*/(.*)")
 // todo: make these configurable
 const trackingSubDomain = "www"
 
-
 func decodeSendMailIdFromUriEnd(path string) SentEmailId {
 	submatch := extractSentEmailIdFromUrlEnd.FindStringSubmatch(path)
 	if submatch == nil {
@@ -44,8 +43,6 @@ func decodeSendMailIdFromUriEnd(path string) SentEmailId {
 	}
 	return sentEmailId
 }
-
-
 
 func Sendmail(subject string, templateFile string, fromEmail string) error {
 

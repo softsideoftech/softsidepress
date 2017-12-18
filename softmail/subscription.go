@@ -6,20 +6,16 @@ import (
 	"github.com/go-pg/pg"
 	"net/http"
 	"fmt"
+	"strings"
 )
 
-const unsubscribeTemplate = "src/softside/mgmt-pages/unsubscribe.md"
-const resubscribeTemplate = "src/softside/mgmt-pages/resubscribe.md"
 const errorTemplate = "src/softside/mgmt-pages/error.md"
 const baseHtmlTemplate = "src/softside/html/base.html"
 const owner = "Vlad"
 
-type ListMemberParams struct {
+type SubscriptionTemplateParams struct {
 	FirstName string
 	EncodedId string
-}
-
-type SiteOwner struct {
 	OwnerName string
 }
 
@@ -28,7 +24,7 @@ func sendUserFacingError(logMessage string, err error, w http.ResponseWriter) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.Header().Set("X-Content-Type-Options", "nosniff")
 	w.WriteHeader(http.StatusInternalServerError)
-	renderMarkdownToHtmlTemplate(w, baseHtmlTemplate, "Something isn't right...", errorTemplate, SiteOwner{owner})
+	renderMarkdownToHtmlTemplate(w, baseHtmlTemplate, "Something isn't right...", errorTemplate, SubscriptionTemplateParams{OwnerName: owner})
 }
 
 func (ctx *RequestContext) someScribe(w http.ResponseWriter, r *http.Request, templateFile string, pageTitle string) *ListMember {
@@ -53,15 +49,20 @@ func (ctx *RequestContext) someScribe(w http.ResponseWriter, r *http.Request, te
 		return nil
 	}
 
+	renderMgmtPage(w, r, templateFile, pageTitle, sentEmailId, listMember)
+
+	return listMember
+}
+
+func renderMgmtPage(w http.ResponseWriter, r *http.Request, templateName string, pageTitle string, sentEmailId SentEmailId, listMember *ListMember) {
 	// Run the template
 	buffer := &bytes.Buffer{}
-	renderMarkdownToHtmlTemplate(buffer, baseHtmlTemplate, pageTitle, templateFile, ListMemberParams{listMember.FirstName, EncodeId(sentEmailId)})
+	listMemberParams := SubscriptionTemplateParams{listMember.FirstName, EncodeId(sentEmailId), owner}
+	renderMarkdownToHtmlTemplate(buffer, baseHtmlTemplate, pageTitle, "src/softside/mgmt-pages/" +templateName + ".md", listMemberParams)
 
 
 	w.Header().Add("Content-Type", "text/html; charset=utf-8")
-	http.ServeContent(w, r, "foo bar!", time.Now(), bytes.NewReader(buffer.Bytes()))
-
-	return listMember
+	http.ServeContent(w, r, "", time.Now(), bytes.NewReader(buffer.Bytes()))
 }
 
 func Resubscribe(w http.ResponseWriter, r *http.Request) {
@@ -73,7 +74,7 @@ func Resubscribe(w http.ResponseWriter, r *http.Request) {
 		}),
 	}
 
-	listMember := ctx.someScribe(w, r, resubscribeTemplate, "Welcome back :)")
+	listMember := ctx.someScribe(w, r, "resubscribe", "Welcome back :)")
 
 	// Update the unsubscribe status
 	if (listMember != nil) {
@@ -91,7 +92,7 @@ func Unsubscribe(w http.ResponseWriter, r *http.Request) {
 		}),
 	}
 
-	listMember := ctx.someScribe(w, r, unsubscribeTemplate, "Have a good one!")
+	listMember := ctx.someScribe(w, r, "unsubscribe", "Goodbye, {{.FirstName}}")
 
 	// Update the unsubscribe status
 	if (listMember != nil) {
@@ -99,5 +100,52 @@ func Unsubscribe(w http.ResponseWriter, r *http.Request) {
 		listMember.Unsubscribed = &now
 		ctx.db.Update(listMember)
 		// todo: send an email to unsubscribers to let them they're off
+	}
+}
+
+func Join(w http.ResponseWriter, r *http.Request) {
+	// Connect to the DB
+	// TODO: Replace the naive DB connection with connection pooling and a config driven connection string
+	ctx := &RequestContext{
+		db: pg.Connect(&pg.Options{
+			User: "vlad",
+		}),
+	}
+
+	firstName := r.FormValue("first-name")
+	email := r.FormValue("email")
+
+	// todo: validate the input params
+
+	listMember := &ListMember{}
+	err := ctx.db.Model(listMember).Column("list_member.*").Where("list_member.email = ?", email).Select()
+
+	// If it's an error other than no rows returned, then log it
+	if (err != nil && !strings.Contains(err.Error(), "no rows in result set")) {
+		fmt.Printf("Selecting member from list. FirstName: %s, Email: %s, err: %v", firstName, email, err)
+	}
+
+	// Update all the fields whether or not the record exists. Updating email is idempotent.
+	listMember.Email = email
+	listMember.FirstName = firstName
+	now := time.Now()
+	if (listMember.Subscribed == nil) {
+		listMember.Subscribed = &now
+	}
+	if (listMember.Unsubscribed != nil) {
+		listMember.Unsubscribed = nil
+	}
+	listMember.Updated = now
+
+	if (listMember.Id > 0) {
+		err = ctx.db.Update(listMember)
+	} else {
+		err = ctx.db.Insert(listMember)
+	}
+
+	if (err != nil) {
+		sendUserFacingError(fmt.Sprintf("Problem adding member to list. FirstName: %s, Email: %s", firstName, email), err, w)
+	} else {
+		renderMgmtPage(w,r, "join", "Welcome, {{.FirstName}}", SentEmailId(0), listMember)
 	}
 }

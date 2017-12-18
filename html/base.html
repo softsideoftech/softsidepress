@@ -6,10 +6,10 @@
     </head>
     <body>
     {{.Body}}
-    <form id="signup-box" action="/join">
+    <form id="signup-box" action="/join/" method="post">
         <h2 id="signup-heading">Sign up and I'll send you more strategies on effective tech leadership</h2>
-        <input class="signup-item" placeholder="your first name"/>
-        <input class="signup-item" type="email" placeholder="email@example.com"/>
+        <input class="signup-item" name="first-name" placeholder="your first name"/>
+        <input class="signup-item" name="email" type="email" placeholder="email@example.com"/>
 
         <button class="signup-item" type="submit">Sign Up</button>
     </form>

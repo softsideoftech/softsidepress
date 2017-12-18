@@ -32,6 +32,7 @@ func testSendMail() {
 func testEmailTracker() {
 	http.HandleFunc("/yes-please/", softmail.Resubscribe)
 	http.HandleFunc("/bye/", softmail.Unsubscribe)
+	http.HandleFunc("/join/", softmail.Join)
 	http.HandleFunc("/favicon.ico", HandleFavicon)
 	http.HandleFunc("/gen_link", softmail.GenerateTrackingLink)
 	http.HandleFunc("/", softmail.TrackRequest)
