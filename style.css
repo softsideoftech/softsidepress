@@ -2,15 +2,17 @@ body {
     margin: 0 auto;
     max-width: 650px;
     font-family: Source Serif Pro, serif;
-    line-height: 32px;
+    line-height: 29px;
     font-weight: 400;
     color: rgba(0, 0, 0, 0.75);
     font-size: 19px;
     padding: 0 15px 15px 15px;
+
 }
 
 h1, h2, h3, h4, h4 {
     font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+    line-height: 40px;
 }
 
 a {
@@ -74,6 +76,7 @@ input::placeholder {
     color: #cccccc;
     text-align: center;
     padding: 5px;
+    font-family: Source Serif Pro, serif;
 }
 
 input:focus,
@@ -91,4 +94,12 @@ button {
     width: 200px;
     border-radius: 50px;
     font-weight: 500;
+}
+
+b {
+    font-size: 68px;
+    display: block;
+    float: left;
+    padding-top: 14px;
+    padding-right: 5px;
 }
