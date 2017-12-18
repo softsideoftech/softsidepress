@@ -1,17 +1,24 @@
 <html>
-    <head>
-        <title>{{.Title}}</title>
-        <meta charset='UTF-8'>
-        <style>{{.Css}}</style>
-    </head>
-    <body>
-    {{.Body}}
+<head>
+    <title>{{.Title}}</title>
+    <meta charset='UTF-8'>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>{{.Css}}</style>
+</head>
+<body>
+<div id="header">
+    {{/*<img src="http://static.softsideoftech.com/softside-header.png"/>*/}}
+</div>
+<div id="column-body">
+
+{{.Body}}
     <form id="signup-box" action="/join/" method="post">
         <h2 id="signup-heading">Sign up and I'll send you more strategies on effective tech leadership</h2>
-        <input class="signup-item" name="first-name" placeholder="your first name"/>
+        <input class="signup-item" name="first-name" placeholder="Your first name"/>
         <input class="signup-item" name="email" type="email" placeholder="email@example.com"/>
 
         <button class="signup-item" type="submit">Sign Up</button>
     </form>
-    </body>
+</div>
+</body>
 </html>
