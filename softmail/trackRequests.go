@@ -185,6 +185,7 @@ func TrackRequest(w http.ResponseWriter, r *http.Request) {
 			title := strings.Title(strings.Join(words, " "))
 			err = renderMarkdownToHtmlTemplate(w, pagesHtmlTemplate, title, templateFile, nil)
 		} else {
+			// Didn't find a regular page so load the home page
 			err = renderMarkdownToHtmlTemplate(w, homePageHtmlTemplate, "Soft Side of Tech", homePageMdTemplate, nil)
 		}
 		if err != nil {

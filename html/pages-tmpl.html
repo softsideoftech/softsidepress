@@ -7,15 +7,23 @@
 </head>
 <body>
 <div id="header">
-    {{/*<img src="http://static.softsideoftech.com/softside-header.png"/>*/}}
+    <a id="logo" href="/">
+        <div id="bear-img" class="bear-img"></div>
+        <div id="logo-txt">Soft Side of Tech</div>
+    </a>
+    <hr>
 </div>
 <div id="column-body">
 
 {{.Body}}
+    <hr>
     <form id="signup-box" action="/join/" method="post">
-        <h2 id="signup-heading">Sign up and I'll send you more strategies on effective tech leadership</h2>
-        <input class="signup-item" name="first-name" placeholder="Your first name"/>
-        <input class="signup-item" name="email" type="email" placeholder="email@example.com"/>
+        <div id="signup-heading">
+            <h2>Sign up and I'll send you more strategies on effective tech leadership</h2>
+        </div>
+        <div id="signup-logo" class="bear-img"></div>
+        <div class="input"><input class="signup-item" name="first-name" placeholder="Your first name"/></div>
+        <div class="input"><input class="signup-item" name="email" type="email" placeholder="email@example.com"/></div>
 
         <button class="signup-item" type="submit">Sign Up</button>
     </form>

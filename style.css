@@ -7,17 +7,48 @@ body {
     font-size: 19px;
     background-color: rgba(217, 217, 217, 0.3);
 }
+
 #header {
-    max-width: 600px;
+    max-width: 630px;
     margin: 0 auto;
     background-color: #FFFFFF;
-    padding: 20px;
+    padding: 15px 5px 5px 5px;
 }
 
-#header img {
-    max-width: 600px;
+#logo {
+    text-decoration: none;
+    margin: auto;
+    display: block;
+    width: 250px;
 }
 
+div#logo-txt {
+    font-family: "Courier New", serif;
+    font-weight: 600;
+    font-size: 20px;
+    color: #545589;
+    float: left;
+    line-height: 30px;
+}
+
+hr {
+    clear: both;
+    width: 100px;
+    border-color: rgba(217, 217, 217, 0.5);
+    margin-top: 60px;
+    border-bottom: 1px;
+}
+
+.bear-img {
+    background-image: url("data:image/svg+xml;utf8,<svg width='345px' height='345px' viewBox='0 0 345 345' version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'>  <title>FB Logo Bear</title>  <desc>Created with Sketch.</desc>  <defs></defs>  <g id='Page-1' stroke='none' stroke-width='1' fill='none' fill-rule='evenodd'>    <g id='Group' transform='translate(32.000000, 22.000000)' fill='%237271B3'>      <ellipse id='Head' cx='140.5' cy='77.5' rx='72.5' ry='57.5'></ellipse>      <ellipse id='Body' cx='141' cy='192.5' rx='82' ry='83.5'></ellipse>      <circle id='Left-Ear' cx='82' cy='27' r='27'></circle>      <circle id='Right-Ear' cx='199' cy='27' r='27'></circle>      <rect id='Right-Arm' transform='translate(225.323543, 126.445111) rotate(55.000000) translate(-225.323543, -126.445111) ' x='198.323543' y='76.4451112' width='54' height='100' rx='27'></rect>      <rect id='Left-Arm' transform='translate(65.788810, 162.457719) rotate(65.000000) translate(-65.788810, -162.457719) ' x='38.7888099' y='102.771357' width='54' height='119.372724' rx='27'></rect>      <rect id='Left-Leg' transform='translate(82.574614, 257.463395) rotate(50.000000) translate(-82.574614, -257.463395) ' x='51.0212912' y='208.781456' width='63.1066459' height='97.3638787' rx='31.553323'></rect>      <rect id='Right-Leg' transform='translate(198.574614, 257.463395) scale(1, -1) rotate(50.000000) translate(-198.574614, -257.463395) ' x='167.021291' y='208.781456' width='63.1066459' height='97.3638787' rx='31.553323'></rect></g></g></svg>");
+}
+
+#bear-img {
+    width: 30px;
+    height: 30px;
+    background-size: 30px 30px;
+    float: left;
+}
 
 #column-body {
     max-width: 600px;
@@ -27,7 +58,7 @@ body {
 }
 
 h1, h2, h3, h4, h4 {
-    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     line-height: 40px;
     /*color: #545589;*/
     font-weight: 500;
@@ -45,7 +76,7 @@ a:hover {
 h1 {
     font-size: 34px;
     /*font-weight: 600;*/
-    margin: 30px 0  15px 0;
+    margin: 0 0 15px 0;
     text-align: center;
 }
 
@@ -63,28 +94,47 @@ p {
     margin: 0 0 19px 0;
 }
 
+/* ---- Sign up ----*/
 
 #signup-heading {
+    max-width: 450px;
+    margin: 0 auto;
+}
+
+#signup-heading h2 {
     font-size: 22px;
     color: rgba(0, 0, 0, 0.9);
+    /*line-height: 26px;*/
+    display: block;
+    margin: auto;
     text-align: center;
-    max-width: 500px;
-    margin: 50px auto;
+}
+
+#signup-box {
+    margin: 0 auto 50px auto;
+    padding-top: 50px;
+}
+
+#signup-logo {
+    width: 60px;
+    height: 60px;
+    background-size: 60px 60px;
+    margin: 20px auto;
 }
 
 .signup-item {
-    margin: 20px auto;
+    margin: 35px auto 0 auto;
     display: block;
     font-size: 18px;
 }
 
 input {
-    border-top: none;
-    border-right: none;
-    border-left: none;
-    border-bottom: #cccccc 1px solid;
+    border: none;
     padding: 5px 20px;
     display: block;
+}
+.input {
+    border-bottom: #cccccc 1px solid;
     margin: 20px auto;
     width: 250px;
 }
