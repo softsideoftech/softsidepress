@@ -11,6 +11,7 @@ import (
 	"hash/fnv"
 	"strings"
 	"math/rand"
+	"os"
 )
 
 var extractSentEmailIdFromImgPixel = regexp.MustCompile("/(.*?)\\.jpg")
@@ -175,7 +176,17 @@ func TrackRequest(w http.ResponseWriter, r *http.Request) {
 
 	} else {
 		// Otherwise this might be a website page, so look for that.
-		err:= renderMarkdownToHtmlTemplate(w, baseHtmlTemplate, "", "src/softside/pages"+r.URL.Path+".md", nil)
+		templateFile := "src/softside/pages" + r.URL.Path + ".md"
+		fileInfo, err := os.Stat(templateFile)
+
+		// Check if we should load a regular page or the home page
+		if fileInfo != nil && !strings.Contains(templateFile, "index.html") {
+			words := strings.Split(fileInfo.Name(), "-")
+			title := strings.Title(strings.Join(words, " "))
+			err = renderMarkdownToHtmlTemplate(w, pagesHtmlTemplate, title, templateFile, nil)
+		} else {
+			err = renderMarkdownToHtmlTemplate(w, homePageHtmlTemplate, "Soft Side of Tech", homePageMdTemplate, nil)
+		}
 		if err != nil {
 			sendUserFacingError("", err, w)
 		}

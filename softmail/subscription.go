@@ -10,7 +10,10 @@ import (
 )
 
 const errorTemplate = "src/softside/mgmt-pages/error.md"
-const baseHtmlTemplate = "src/softside/html/base.html"
+const pagesHtmlTemplate = "src/softside/html/pages-tmpl.html"
+const homePageHtmlTemplate = "src/softside/html/home-page-tmpl.html"
+const homePageMdTemplate = "src/softside/pages/index.md"
+const mgmtPagesHtmlTemplate = "src/softside/html/mgmt-pages-tmpl.html"
 const owner = "Vlad"
 
 type SubscriptionTemplateParams struct {
@@ -24,7 +27,7 @@ func sendUserFacingError(logMessage string, err error, w http.ResponseWriter) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.Header().Set("X-Content-Type-Options", "nosniff")
 	w.WriteHeader(http.StatusInternalServerError)
-	renderMarkdownToHtmlTemplate(w, baseHtmlTemplate, "Something isn't right...", errorTemplate, SubscriptionTemplateParams{OwnerName: owner})
+	renderMarkdownToHtmlTemplate(w, mgmtPagesHtmlTemplate, "Something isn't right...", errorTemplate, SubscriptionTemplateParams{OwnerName: owner})
 }
 
 func (ctx *RequestContext) someScribe(w http.ResponseWriter, r *http.Request, templateFile string, pageTitle string) *ListMember {
@@ -58,7 +61,7 @@ func renderMgmtPage(w http.ResponseWriter, r *http.Request, templateName string,
 	// Run the template
 	buffer := &bytes.Buffer{}
 	listMemberParams := SubscriptionTemplateParams{listMember.FirstName, EncodeId(sentEmailId), owner}
-	renderMarkdownToHtmlTemplate(buffer, baseHtmlTemplate, pageTitle, "src/softside/mgmt-pages/" +templateName + ".md", listMemberParams)
+	renderMarkdownToHtmlTemplate(buffer, pagesHtmlTemplate, pageTitle, "src/softside/mgmt-pages/" +templateName + ".md", listMemberParams)
 
 
 	w.Header().Add("Content-Type", "text/html; charset=utf-8")
