@@ -30,7 +30,7 @@ hr {
     clear: both;
     width: 100px;
     border-color: rgba(217, 217, 217, 0.5);
-    margin-top: 60px;
+    margin: 60px auto;
     border-bottom: 1px;
 }
 
@@ -118,7 +118,7 @@ h1 {
 
 h2 {
     font-size: 28px;
-    margin: 34px 0 5px 0;
+    margin: 34px 0 15px 0;
 }
 
 h3 {
@@ -148,7 +148,6 @@ p {
 
 #signup-box {
     margin: 0 auto 50px auto;
-    padding-top: 50px;
 }
 
 #medium-logo {
