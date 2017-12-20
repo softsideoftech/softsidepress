@@ -1,5 +1,5 @@
 # What does it mean to be an accountable leader?
-_*As an accountable leader I need to stay strategically engaged, make realistic estimates, escalate issues in a timely manner, plug the holes in my team, and when necessary, work harder to be reliable.*_
+> _*As an accountable leader I need to stay strategically engaged, make realistic estimates, escalate issues in a timely manner, plug the holes in my team, and when necessary, work harder to be reliable.*_
 
 <b>I’</b>ve been meaning to write about accountability for a while now. Back in early 2016, I joined Clara Lending as their CTO and started hearing the term “accountability” getting thrown around in leadership meetings. It was usually associated with missed deadlines or uncompleted tasks and that the company didn’t have enough of it. A lot of the talk was about engineering projects that were taking too long. Some people were implying that — maybe — we need to institute rewards and punishment to “fix” the problem. This scared me fast. I didn’t want any kind of “solution” imposed on me or my team just as I was starting out at the company. I didn’t even understand what the problem was. After the third time that this came up in a leadership meeting, I went online as soon as I got out and looked up accountability on Google. Here’s what it says right now:
 
@@ -53,8 +53,7 @@ So what’s Adam to do? Well, if changing the plan isn’t an option, he can try
 
 
 ---
-## What I Could Do
-To summarize, here’s what I could have done at Clara to really be accountable:
+<b>S</b>o here’s what I could have done at Clara if I really wanted be an accountable leader:
 
 > _**Engage strategically**_ to understand the larger context around my projects.
 
@@ -66,4 +65,4 @@ To summarize, here’s what I could have done at Clara to really be accountable:
 
 > And if really necessary, I'd _**work harder to stay reliable**_. 
 
-And how did I actually do at Clara? On a scale of one to ten, I’d give myself a six or seven. I have some regret looking back and wish I had done some things differently. I think I did well with estimating and escalating, just OK with with plugging holes and working harder when necessary, and sometimes I was mediocre at engaging strategically. I’ll do a whole post-mortem on my time at Clara in another post.
+And how did I actually do at Clara? On a scale of one to ten, I’d give myself a six or seven. I have some regret looking back and wish I had done some things differently. I did well with estimating and escalating, just OK with with plugging holes and working harder when necessary, and at times, I did a mediocre job of engaging strategically. I’ll do a whole post-mortem on my time at Clara in another essay.
