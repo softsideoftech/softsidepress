@@ -1,3 +1,5 @@
+/* ----- All Pages ----- */
+
 body {
     margin: 0 auto;
     font-family: Source Serif Pro, serif;
@@ -6,13 +8,6 @@ body {
     color: rgba(0, 0, 0, 0.75);
     font-size: 19px;
     background-color: rgba(217, 217, 217, 0.3);
-}
-
-#header {
-    max-width: 630px;
-    margin: 0 auto;
-    background-color: #FFFFFF;
-    padding: 15px 5px 5px 5px;
 }
 
 #logo {
@@ -57,6 +52,47 @@ hr {
     padding: 20px;
 }
 
+/* ----- Home Page ----- */
+
+#header, #home-header {
+    max-width: 630px;
+    margin: 0 auto;
+    background-color: #FFFFFF;
+    padding: 15px 5px 5px 5px;
+
+}
+
+#header-wrapper {
+    position:fixed;
+    top:0;
+    width: 100%;
+}
+
+#home-header {
+    padding-top: 5px;
+}
+
+#home-body {
+    background-color: #FFFFFF;
+}
+
+#home-header #logo-txt {
+    font-size: 30px;
+    margin-top: 6px;
+}
+
+#home-header #logo {
+    width: 350px;
+}
+
+#home-header #bear-img {
+    width: 40px;
+    height: 40px;
+    background-size: 40px 40px;
+}
+
+/* ----- Headings & Links ----- */
+
 h1, h2, h3, h4, h4 {
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     line-height: 40px;
@@ -82,7 +118,7 @@ h1 {
 
 h2 {
     font-size: 28px;
-    margin-top: 34px 0 5px 0;
+    margin: 34px 0 5px 0;
 }
 
 h3 {
@@ -115,7 +151,7 @@ p {
     padding-top: 50px;
 }
 
-#signup-logo {
+#medium-logo {
     width: 60px;
     height: 60px;
     background-size: 60px 60px;

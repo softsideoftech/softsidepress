@@ -5,12 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>{{.Css}}</style>
 </head>
-<body>
-<div id="header">
-    <img src="http://static.softsideoftech.com/softside-header.png"/>
+<body id="home-body">
+<div id="header-wrapper">
+    <div id="home-header">
+        <a id="logo" href="/">
+            <div id="bear-img" class="bear-img"></div>
+            <div id="logo-txt">Soft Side of Tech</div>
+        </a>
+    </div>
 </div>
 <div id="column-body">
-
 {{.Body}}
 </div>
 </body>

@@ -61,7 +61,7 @@ func renderMgmtPage(w http.ResponseWriter, r *http.Request, templateName string,
 	// Run the template
 	buffer := &bytes.Buffer{}
 	listMemberParams := SubscriptionTemplateParams{listMember.FirstName, EncodeId(sentEmailId), owner}
-	renderMarkdownToHtmlTemplate(buffer, pagesHtmlTemplate, pageTitle, "src/softside/mgmt-pages/" +templateName + ".md", listMemberParams)
+	renderMarkdownToHtmlTemplate(buffer, mgmtPagesHtmlTemplate, pageTitle, "src/softside/mgmt-pages/" +templateName + ".md", listMemberParams)
 
 
 	w.Header().Add("Content-Type", "text/html; charset=utf-8")
@@ -130,7 +130,7 @@ func Join(w http.ResponseWriter, r *http.Request) {
 
 	// Update all the fields whether or not the record exists. Updating email is idempotent.
 	listMember.Email = email
-	listMember.FirstName = firstName
+	listMember.FirstName = strings.Title(strings.ToLower(firstName))
 	now := time.Now()
 	if (listMember.Subscribed == nil) {
 		listMember.Subscribed = &now
