@@ -152,26 +152,34 @@ func TrackRequest(w http.ResponseWriter, r *http.Request) {
 	})
 
 	// Obtain or save the url if it's not an email tracking pixel
-	trackedUrl := ctx.obtainOrCreateTrackedUrl(sentEmailId, r.URL.Path)
+	trackedUrl, err := ctx.obtainOrCreateTrackedUrl(sentEmailId, r.URL.Path)
 
-	// Track the hit
-	trackingHit := TrackingHit{
-		TrackedUrlId:   trackedUrl.Id,
-		MemberCookieId: memberCookie.Id,
-		ReferrerUrl:    r.Referer(),
-		IpAddress:      decodeIpAddress(r.RemoteAddr),
+	if (err == nil) {
+		// Track the hit
+		trackingHit := TrackingHit{
+			TrackedUrlId:   trackedUrl.Id,
+			MemberCookieId: memberCookie.Id,
+			ReferrerUrl:    r.Referer(),
+			IpAddress:      decodeIpAddress(r.RemoteAddr),
 
-		// Use the cookie as the authority on the ListMemberId because it would
-		// have either been initialized correctly or retrieved from the db
-		ListMemberId: memberCookie.ListMemberId,
+			// Use the cookie as the authority on the ListMemberId because it would
+			// have either been initialized correctly or retrieved from the db
+			ListMemberId: memberCookie.ListMemberId,
+		}
+		err = ctx.db.Insert(&trackingHit)
+		if err != nil {
+			err = fmt.Errorf("Problem inserting TrackingHit record. ListMemberId: : %d, Remote IP Address: %s, ReferrerURL: %s DB error: %v\n", memberCookie.ListMemberId, r.RemoteAddr, r.Referer(), err)
+		}
 	}
-	err = ctx.db.Insert(&trackingHit)
-	if err != nil {
-		panic(fmt.Errorf("Problem inserting TrackingHit record. ListMemberId: : %d, Remote IP Address: %s, ReferrerURL: %s DB error: %v\n", memberCookie.ListMemberId, r.RemoteAddr, r.Referer(), err))
+
+	// If we had an error, log it but keep trying to serve the page
+	if (err != nil) {
+		fmt.Println(err)
 	}
 
-	// If the request is a redirect-tracking link, then redirect the request now
-	if len(trackedUrl.TargetUrl) > 0 {
+	// If the request is a redirect-tracking link, then redirect the request now.
+	// It's possible that trackedUrl will be nil if we had a error (db most likely)
+	if trackedUrl != nil && len(trackedUrl.TargetUrl) > 0 {
 		http.Redirect(w, r, trackedUrl.TargetUrl, http.StatusTemporaryRedirect)
 
 	} else {
@@ -195,7 +203,7 @@ func TrackRequest(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (ctx *RequestContext) obtainOrCreateTrackedUrl(sentEmailId SentEmailId, urlPath string) *TrackedUrl {
+func (ctx *RequestContext) obtainOrCreateTrackedUrl(sentEmailId SentEmailId, urlPath string) (*TrackedUrl, error) {
 	trackedUrl := &TrackedUrl{Id: 0}
 	// Default linkId for email tracking pixel
 	if sentEmailId == 0 {
@@ -207,14 +215,14 @@ func (ctx *RequestContext) obtainOrCreateTrackedUrl(sentEmailId SentEmailId, url
 				trackedUrl.Url = urlPath
 				err = ctx.db.Insert(trackedUrl)
 				if err != nil {
-					panic(fmt.Errorf("failed to insert tracked url: %s, err: %v", urlPath, err))
+					return nil, fmt.Errorf("failed to insert tracked url: %s, err: %v", urlPath, err)
 				}
 			} else {
-				panic(fmt.Errorf("failed to select from db TrackedUrlIUd: %d, err: %v", trackedUrl.Id, err))
+				return nil, fmt.Errorf("failed to select from db TrackedUrlIUd: %d, err: %v", trackedUrl.Id, err)
 			}
 		}
 	}
-	return trackedUrl
+	return trackedUrl, nil
 }
 
 func decodeSendMailIdFromUri(path string) SentEmailId {
