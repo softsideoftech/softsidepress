@@ -1,5 +1,5 @@
 # Tools I Use to Reach Alignment & Buy-in
-<b>I’</b>ve gotten aligned with people in as quickly thirty seconds over a side chat during a meeting. And I’ve heard stories of executives taking months or even years building relationships over coffees or lunches until they were ready to consider doing business with each other. I’m going to summarize the tools that I use all the time without even thinking about it and when I think they’re appropriate. There’s a time and place for each of them and I’ll try to define what each one is and how I prefer to use them. The tools I use can be grouped into text based and live human interactions. Though some people use voicemail, which feels somewhere in between for me.
+<b>I’</b>ve gotten aligned with people in as quickly thirty seconds over a side chat during a meeting. And I’ve heard stories of captains of industry taking months or even years building relationships over dinners and golf until they were ready to consider doing business with each other. Each option is it's own tool and there’s a time and place for each of them. I'll tell you the ones that I use regularly and how I prefer to use them. And for completeness, I'll also include a few "power user" techniques that I've seen employed by the masters of the game.
 
 ---
 
@@ -36,27 +36,35 @@ There’s a certain life to documents. They’re aren’t transient like IMs or 
 
 ### When I Use Each
 Here’s a quick reference for when I reach for each mode of communication. I don’t actually go through this checklist every time I want to message someone. I’m breaking it down to make sure I’m not full of BS:
-Lifetime
-Transient: Instant Message or Email
-Long-lived: Document
 
-Who to include
-I already know who needs to know: Instant Message
-A few others might come up: Email
-Unknown others: Document
+#### Lifetime
+> Transient: _**Instant Message**_ or _**Email**_
 
-Shared Context / New Complexity
-Simple facts or updates: Instant Message
-Might need some interpretation: Email
-New ideas in need of some head wrapping: Document
+> Long-lived: _**Document**_
 
-Importance / Sensitivity
-Can’t possibly scare or offend: Instant Message
-Needs some tact: Email or Document
-Somebody might freak out: Use a live human!
+#### Who to include
+> I already know who needs to know: _**Instant Message**_
+
+> A few others might come up: _**Email**_
+
+> Unknown others: _**Document**_
+
+#### Shared Context / New Complexity
+> Simple facts or updates: _**Instant Message**_
+
+> Might need some interpretation: _**Email**_
+
+> New ideas in need of some head wrapping: _**Document**_
+
+#### Importance / Sensitivity
+> Can’t possibly scare or offend: _**Instant Message**_
+
+> Could use some tact: _**Email**_ or _**Document**_
+
+> Somebody might freak out: _**Do it in person!**_
 
 ## Live Human Alignment
-<b>W</b>hen something is important or sensitive enough to really bother people, I prefer to have a live human interaction. There’s so much more that comes across beyond the content of people’s words and I often need or what to experience all that “more”. Even when it’s not that sensitive, I often find it easier and more efficient to have a 30-second conversation than a bunch of back and forth over IM or email through the course of a day. Most of my interactions are one of: informal chats, one-on-ones and meetings.
+<b>W</b>hen something is important or sensitive enough to really bother people, I prefer to have a live human interaction. There’s so much more that comes across beyond the content of people’s words and I often need or want to experience all that “more”. Even when it’s not that sensitive, I often find it easier and more efficient to have a 30-second conversation than a bunch of back and forth over IM or email through the course of a day. Most of my interactions are one of: informal chats, one-on-ones and meetings.
 
 ## Informal Chats
 I use these for getting aligned on simple topics when there’s likely to be a lot of back and forth, like when there isn’t enough shared context for an IM or if there’s something sensitive about the topic for me or the other person. These are typically unscheduled, otherwise I call them a “one on one” and treat them differently. A lot of the time sometime just comes up and it’s easiest to talk it through live. I might walk up to someone’s desk or call them up on their phone or over video. I might even have a side chat in the middle of a larger meeting during a transition time while the presenter is futzing with IT issues, which happens surprising often in our era. 
