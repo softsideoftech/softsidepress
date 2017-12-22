@@ -17,7 +17,7 @@ body {
     width: 250px;
 }
 
-div#logo-txt {
+.logo-styled-text {
     font-family: "Courier New", monospace;
     font-weight: 600;
     font-size: 20px;
@@ -59,13 +59,13 @@ hr {
     margin: 0 auto;
     background-color: #FFFFFF;
     padding: 15px 5px 5px 5px;
-
 }
 
 #header-wrapper {
     position:fixed;
     top:0;
     width: 100%;
+    background-color: rgba(255, 255, 255, 0.9);
 }
 
 #home-header {
@@ -91,12 +91,28 @@ hr {
     background-size: 40px 40px;
 }
 
+#home-footer {
+    text-align: center;
+}
+
+#home-footer a {
+    float: none;
+    text-decoration: none;
+}
+
+#home-footer a:hover {
+    color: #545589;
+}
+
+#home-footer h2 {
+    font-size: 22px;
+}
+
 /* ----- Headings & Links ----- */
 
 h1, h2, h3, h4, h4 {
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     line-height: 40px;
-    /*color: #545589;*/
     font-weight: 500;
     color: rgba(0, 0, 0, 0.85);
 }
@@ -141,12 +157,12 @@ blockquote {
 
 /* ---- Sign up ----*/
 
-#signup-heading {
+.footer-heading {
     max-width: 450px;
     margin: 0 auto;
 }
 
-#signup-heading h2 {
+.footer-heading h2 {
     font-size: 22px;
     color: rgba(0, 0, 0, 0.9);
     /*line-height: 26px;*/

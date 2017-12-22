@@ -12,7 +12,7 @@ import (
 const errorTemplate = "src/softside/mgmt-pages/error.md"
 const pagesHtmlTemplate = "src/softside/html/pages-tmpl.html"
 const homePageHtmlTemplate = "src/softside/html/home-page-tmpl.html"
-const homePageMdTemplate = "src/softside/pages/index.md"
+const homePageMdTemplate = "src/softside/pages/whats-purposeful-leadership-coaching.md"
 const mgmtPagesHtmlTemplate = "src/softside/html/mgmt-pages-tmpl.html"
 const owner = "Vlad"
 
