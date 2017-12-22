@@ -1,10 +1,14 @@
-# Purposeful<br/>Leadership Coaching
+# Purposeful Leadership Coaching
+![Vlad](http://static.softsideoftech.com/vlad.jpg "That's me on the balcony in my home in Utrecht, Netherlands.")
+
+> > _That's me on my balcony in Utrecht, Netherlands._
+
 <b>I</b> work with leaders who want to cultivate a deeper sense of purpose in their lives. They have proven their competence on many levels over their years and we meet at a point in their journey where their _way of being_ in the world--that had gotten them this far--is starting to show its wear. They sense that there might be a different way forward where the path isn't as rocky and the hills not as steep.
 
 ---
 
 ## What is Purpose?
-<b>W</b>hen I use the word _purpose_, I don't necessarily mean that there must be some grand vision of the world that's worthy of a big personal sacrifice. Though it might be. I'm referring to people's built-in drive to act from directly sensing the appropriate thing to do, as opposed to doing things for the sake of filling holes in an ego or placating one's insecurities. It means letting go of harsh personal standards, letting go of cultural expectations, letting go of achievement for ambition's sake. 
+<b>W</b>hen I use the word _purpose_, I don't necessarily mean that there must be some grand vision of the world that's worthy of a big personal sacrifice. Though it might be. When a leader is in touch with what's real for them, they naturally know how to act. They don't need to do anything for the sake of filling holes in their ego or placating their insecurities. It means they let go of harsh personal standards, let go of cultural expectations, let go of achievement for ambition's sake.
 
 When a leader lives with a sense purpose, particular outcomes don't matter quite so much. What matters is their direction. Is it worthy of their effort even if there's no reward at the end? Even if there is no end?
 
@@ -26,6 +30,4 @@ Leaders' power comes from the mutual connection and trust that they create with 
 ## And Coaching?
 <b>I</b> am not the wise man at the top of the mountain. I don't have a monopoly on wisdom and I never "know better". I am a peer to the leaders I work with. We have conversations as equals, usually two or three each month. I don't judge and I don't give advice. My only goal is to help leaders unlock the wisdom they already possess by being intimately present with them in our conversations every step of the way.
 
-Sometimes I invite them to consider new perspectives or experiment with different practices in their lives. After some time, they might not need or want to work with me any more. They may have cultivated the competencies they need to run their lives. They may have developed broader and more complex ways of seeing and being in the world. They can come up with their own experiments and practices to continue on their personal growth journey. 
-
-And that's what I'm going for.
+Sometimes I invite them to consider new perspectives or experiment with different practices in their lives. After some time, they might not need or want to work with me any more. They may have cultivated the competencies they need to run their lives. They may have developed broader and more complex ways of seeing and being in the world. The move on with the ability to come up with their own experiments and practices to continue their personal growth journey.

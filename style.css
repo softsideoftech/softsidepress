@@ -62,10 +62,11 @@ hr {
 }
 
 #header-wrapper {
-    position:fixed;
-    top:0;
+    /*position:fixed;*/
+    /*top:0;*/
     width: 100%;
     background-color: rgba(255, 255, 255, 0.9);
+    /*height: 60px;*/
 }
 
 #home-header {
@@ -128,7 +129,7 @@ a:hover {
 h1 {
     font-size: 34px;
     /*font-weight: 600;*/
-    margin: 0 0 15px 0;
+    margin: 0 0 35px 0;
     text-align: center;
 }
 
@@ -155,6 +156,9 @@ blockquote {
     font-size: 17px;
 }
 
+blockquote blockquote {
+    font-size: 16px;
+}
 /* ---- Sign up ----*/
 
 .footer-heading {
