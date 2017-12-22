@@ -62,11 +62,8 @@ hr {
 }
 
 #header-wrapper {
-    /*position:fixed;*/
-    /*top:0;*/
     width: 100%;
     background-color: rgba(255, 255, 255, 0.9);
-    /*height: 60px;*/
 }
 
 #home-header {
@@ -75,6 +72,11 @@ hr {
 
 #home-body {
     background-color: #FFFFFF;
+}
+
+div#column-body p img {
+    display: block;
+    width: 100%;
 }
 
 #home-header #logo-txt {
@@ -158,6 +160,8 @@ blockquote {
 
 blockquote blockquote {
     font-size: 16px;
+    margin: 0;
+    text-align: center;
 }
 /* ---- Sign up ----*/
 

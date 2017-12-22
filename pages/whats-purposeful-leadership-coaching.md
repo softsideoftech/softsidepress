@@ -1,7 +1,7 @@
 # Purposeful Leadership Coaching
 ![Vlad](http://static.softsideoftech.com/vlad.jpg "That's me on the balcony in my home in Utrecht, Netherlands.")
 
-> > _That's me on my balcony in Utrecht, Netherlands._
+> > _That's me on my balcony<br/>in Utrecht, Netherlands._
 
 <b>I</b> work with leaders who want to cultivate a deeper sense of purpose in their lives. They have proven their competence on many levels over their years and we meet at a point in their journey where their _way of being_ in the world--that had gotten them this far--is starting to show its wear. They sense that there might be a different way forward where the path isn't as rocky and the hills not as steep.
 

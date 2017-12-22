@@ -90,11 +90,12 @@ INSERT INTO tracked_urls (id, url) VALUES (0, '');
 SELECT *
 FROM tracked_urls;
 
-
 INSERT INTO tracked_urls (id, url, target_url) VALUES (-2935145334901629174, '/asdf2', '"http://fakeurl.com/"');
 
 SELECT *
 FROM tracking_hits;
+
+truncate tracking_hits;
 
 INSERT INTO list_members (first_name, last_name, email) VALUES ('Mark', 'Johnson', 'vlad+3@cloudmars.com');
 

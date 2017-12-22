@@ -29,12 +29,12 @@ func renderMarkdownToHtmlTemplate(writer io.Writer, baseHtmlFile string, title s
 	templateName := baseHtmlFile + markdownFile
 
 	// Get the template from the cache to avoid constantly reading and parsing files from disk
-	fullPageTemplate, ok := templateCache.Load(templateName)
+	fullPageTemplate, cacheLoaded := templateCache.Load(templateName)
 
 	// todo: turning off caching for development purposes
-	ok = false
+	//cacheLoaded = false
 
-	if !ok {
+	if !cacheLoaded {
 		// Load the markdown template file
 		markdownTemplateBytes, err := ioutil.ReadFile(markdownFile)
 		if err != nil {
@@ -58,7 +58,10 @@ func renderMarkdownToHtmlTemplate(writer io.Writer, baseHtmlFile string, title s
 		}
 		var cssFileString = string(cssFileBytes)
 
-		baseHtmlTemplate.Execute(buffer, HtmlPageParams{Title: title, Css: cssFileString, Body: bodyHtml})
+		err = baseHtmlTemplate.Execute(buffer, HtmlPageParams{Title: title, Css: cssFileString, Body: bodyHtml})
+		if (err != nil) {
+			return err
+		}
 
 		// Render the parameters into the full template.
 		// Using an html template instead of text to safely escape user-passed params
