@@ -134,7 +134,8 @@ func TrackRequest(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Try to obtain the ListMemberId using the encoded SendEmailId in the url path if it exists.
-	sentEmailId := decodeSendMailIdFromUri(r.URL.Path)
+	urlPath := r.URL.Path
+	sentEmailId := decodeSendMailIdFromUri(urlPath)
 	listMemberId, err := ctx.getListMemberIdFromSentEmail(sentEmailId)
 	// ignore any error and keep going
 
@@ -152,7 +153,7 @@ func TrackRequest(w http.ResponseWriter, r *http.Request) {
 	})
 
 	// Obtain or save the url if it's not an email tracking pixel
-	trackedUrl, err := ctx.obtainOrCreateTrackedUrl(sentEmailId, r.URL.Path)
+	trackedUrl, err := ctx.obtainOrCreateTrackedUrl(sentEmailId, urlPath)
 
 	if (err == nil) {
 		// Track the hit
@@ -184,12 +185,12 @@ func TrackRequest(w http.ResponseWriter, r *http.Request) {
 
 	} else {
 		// Otherwise this might be a website page, so look for that.
-		templateFile := "src/softside/pages" + r.URL.Path + ".md"
+		templateFile := "src/softside/pages" + urlPath + ".md"
 		fileInfo, err := os.Stat(templateFile)
 
 		// Check if we should load a regular page or the home page
 		if fileInfo != nil && !strings.Contains(templateFile, "index.html") {
-			words := strings.Split(fileInfo.Name(), "-")
+			words := strings.Split(strings.Trim(urlPath, "/"), "-")
 			title := strings.Title(strings.Join(words, " "))
 			err = renderMarkdownToHtmlTemplate(w, pagesHtmlTemplate, title, templateFile, nil)
 		} else {

@@ -51,8 +51,8 @@ So what if Adam seemingly does everything right, but still makes a mistake? One 
 ### When to Work Harder
 So what’s Adam to do? Well, if changing the plan isn’t an option, he can try to make up his shortfall by working harder. OK, it’s never that simple. Adam might have a wife and kids that love seeing their daddy come home for dinner. He might have a team that also has families, friends, hobbies, and other commitments. And most people are fans of their sleep. Working harder comes at a cost. Is Adam prepared to pay that cost? Is his team? And by the way, how is his relationship with his team? Will they trust that Adam has their interests in mind or will they think that they’re the ones paying the price for his incompetence? There are no perfect answers to these questions. Assuming Adam and his team are not already killing themselves putting in long days and weeks, then working harder can be an option. Done right it can preserve Adam’s and his team’s reputation, ensure CruD’s new initiative is successful, and even improve his team’s morale with a tough victory despite the personal costs. How to do this well is something I’ll talk about in a future post. Just remember it’s ok to _work harder to stay reliable_ when things go badly. Just don’t make a habit of it or else the personal costs will catch up with you. They always do. If you find yourself working hard all the time to make up for some shortfall, revisit the other four behaviors of accountability as that’s where your challenge will most often lie.
 
-
 ---
+
 <b>S</b>o here’s what I could have done at Clara if I really wanted be an accountable leader:
 
 > _**Engage strategically**_ to understand the larger context around my projects.

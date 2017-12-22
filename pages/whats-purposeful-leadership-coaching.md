@@ -1,0 +1,6 @@
+# What is Purposeful<br/>Leadership Coaching?
+
+I work with leaders who want to cultivate a deeper sense of purpose in their lives. They have proven their competence on many levels over their years and we meet at a point in their journey where their _way of being_ in the world--that had gotten them this far--is starting to show its wear. They sense that there might be a different way forward where the path isn't as rocky and the hills not as steep.
+
+## What is Purpose?
+When I use the word _purpose_, I don't necesarilly mean that there must be some grand vision of the world that's worthy of some big personal sacrifice. Though it might be. I'm referring to people's intrinsic drive to act as opposed to doing things for the sake of satisfying an ego or placating insecurities. It means letting go of harsh personal standards, letting go of cultural expecations, letting go of achievement simply for ambition's sake. Living with purpose often starts with finding meaning in the simple and everyday aspects of life.
