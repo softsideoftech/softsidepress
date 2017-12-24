@@ -235,3 +235,12 @@ b {
     color: rgba(0, 0, 0, 0.85);
     margin-top: -4px;
 }
+
+iframe {
+    width: 500px;
+    height: 140px;
+    border: none;
+    margin: auto;
+    display: block;
+    margin-bottom: 60px;
+}

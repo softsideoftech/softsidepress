@@ -21,7 +21,7 @@ type BodyParams interface {
 }
 
 // Load the css file
-const cssFile = "/Users/vlad/go/src/softside/style.css" // TODO: make this a relative path
+const cssFile = "src/softside/style.css" // TODO: make this a relative path
 var templateCache = sync.Map{}
 
 // TODO: figure out how to load and cache all the template files
@@ -32,7 +32,7 @@ func renderMarkdownToHtmlTemplate(writer io.Writer, baseHtmlFile string, title s
 	fullPageTemplate, cacheLoaded := templateCache.Load(templateName)
 
 	// todo: turning off caching for development purposes
-	//cacheLoaded = false
+	cacheLoaded = false
 
 	if !cacheLoaded {
 		// Load the markdown template file
