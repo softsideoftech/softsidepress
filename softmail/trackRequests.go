@@ -11,6 +11,7 @@ import (
 	"strings"
 	"math/rand"
 	"os"
+	"strconv"
 )
 
 var extractSentEmailIdFromImgPixel = regexp.MustCompile("/(.*?)\\.jpg")
@@ -147,12 +148,13 @@ func TrackRequest(w http.ResponseWriter, r *http.Request) {
 
 	if (err == nil) {
 		// Track the hit
+		ipString, ipInt := decodeIpAddress(r.RemoteAddr)
 		trackingHit := TrackingHit{
-			TrackedUrlId:   trackedUrl.Id,
-			MemberCookieId: memberCookie.Id,
-			ReferrerUrl:    r.Referer(),
-			IpAddress:      decodeIpAddress(r.RemoteAddr),
-
+			TrackedUrlId:    trackedUrl.Id,
+			MemberCookieId:  memberCookie.Id,
+			ReferrerUrl:     r.Referer(),
+			IpAddress:       ipInt, // TODO: check how this works with Nginx
+			IpAddressString: ipString,
 			// Use the cookie as the authority on the ListMemberId because it would
 			// have either been initialized correctly or retrieved from the db
 			ListMemberId: memberCookie.ListMemberId,
@@ -223,18 +225,28 @@ func decodeSendMailIdFromUri(path string) SentEmailId {
 	}
 	sentEmailId, err := DecodeId(submatch[1])
 	if err != nil {
-		fmt.Printf("Problem parsing SentEmailId from url: %s, error message: %s", path, err)
+		fmt.Printf("Problem parsing SentEmailId from url: %s, error message: %v", path, err)
 		// Keep going anyway so we could set the cookie and retroactive track this user later if we obtain a ListMemberId
 	}
 	return sentEmailId
 }
 
-func decodeIpAddress(remoteAddr string) string {
+func decodeIpAddress(remoteAddr string) (string, IpAddress) {
 	submatch := extractIpAddress.FindStringSubmatch(remoteAddr)
 	if submatch == nil {
-		return ""
+		return "", 0
 	} else {
-		return submatch[1]
+		ipAddressString := submatch[1]
+		parts := strings.Split(ipAddressString, ".")
+		firstOctet, err1 := strconv.ParseInt(parts[0], 10, 64)
+		secondOctet, err2 := strconv.ParseInt(parts[1], 10, 64)
+		thirdOctet, err3 := strconv.ParseInt(parts[2], 10, 64)
+		fourthOctet, err4 := strconv.ParseInt(parts[3], 10, 64)
+		if (err1 != nil || err2 != nil || err3 != nil || err4 != nil) {
+			fmt.Printf("Problem parsing IP Address: %s, error: %v, %v, %v, %v", remoteAddr, err1, err2, err3, err4)
+			return "", 0
+		}
+		return ipAddressString, (firstOctet * 16777216) + (secondOctet * 65536) + (thirdOctet * 256) + (fourthOctet)
 	}
 }
 

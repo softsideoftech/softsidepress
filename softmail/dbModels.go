@@ -50,12 +50,16 @@ type TrackedUrl struct {
 }
 
 type TrackingHitId = uint32
+type IpAddress = int64
+
 type TrackingHit struct {
 	Id             TrackingHitId
 	TrackedUrlId   TrackedUrlId
 	ListMemberId   ListMemberId
 	MemberCookieId MemberCookieId
-	IpAddress      string
+	IpAddress      IpAddress
+	IpAddressString      string
 	ReferrerUrl    string
 	Created        time.Time
 }
+
