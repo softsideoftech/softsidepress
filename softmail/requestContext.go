@@ -3,9 +3,14 @@ package softmail
 import (
 	"github.com/go-pg/pg"
 	"net/http"
+	"os"
 )
 
-var SoftsideDB = pg.Connect(&pg.Options{User: "softside",})
+var SoftsideDB = pg.Connect(&pg.Options{
+	User: os.Getenv("SOFTSIDE_DB_USER"),
+	Database: os.Getenv("SOFTSIDE_DB"),
+	Password: os.Getenv("SOFTSIDE_DB_PASSWORD"),
+	})
 
 type RequestContext struct {
 	db *pg.DB

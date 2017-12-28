@@ -264,6 +264,9 @@ func (ctx *RequestContext) obtainOrCreateMemberCookie(listMemberId ListMemberId,
 			err := ctx.db.Select(memberCookie)
 			if err != nil {
 				fmt.Printf("Problem retrieving MemberCookie record with id: : %d, DB message: %s\n", memberCookieId, err)
+
+				// Since we had a problem, set the cookie to nil so we could create a new one
+				memberCookie = nil
 			}
 		}
 	}
