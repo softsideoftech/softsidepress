@@ -7,7 +7,6 @@ import (
 	"github.com/sourcegraph/go-ses"
 	"crypto/md5"
 	"hash/fnv"
-	"github.com/go-pg/pg"
 	"strings"
 	"regexp"
 )
@@ -46,12 +45,6 @@ func decodeSendMailIdFromUriEnd(path string) SentEmailId {
 
 func Sendmail(subject string, templateFile string, fromEmail string) error {
 
-	// Connect to the DB
-	// TODO: Replace the naive DB connection with connection pooling and a config driven connection string
-	db := pg.Connect(&pg.Options{
-		User: "vlad",
-	})
-
 	// Load the template file
 	markdownEmailBodyBytes, err := ioutil.ReadFile(templateFile)
 	markdownEmailBody := string(markdownEmailBodyBytes)
@@ -63,12 +56,12 @@ func Sendmail(subject string, templateFile string, fromEmail string) error {
 	// Save the email template in the DB if it doesn't exist
 	emailTemplateId := emailTemplateToId(subject, markdownEmailBodyBytes)
 	emailTemplate := EmailTemplate{Id: emailTemplateId}
-	err = db.Select(&emailTemplate)
+	err = SoftsideDB.Select(&emailTemplate)
 	if err != nil {
 		if strings.Contains(err.Error(), "no rows in result set") {
 			emailTemplate.Subject = subject
 			emailTemplate.Body = markdownEmailBody
-			err = db.Insert(&emailTemplate)
+			err = SoftsideDB.Insert(&emailTemplate)
 			if err != nil {
 				return err
 			}
@@ -79,7 +72,7 @@ func Sendmail(subject string, templateFile string, fromEmail string) error {
 
 	// Load the email list
 	var listMembers []ListMember
-	err = db.Model(&listMembers).Select()
+	err = SoftsideDB.Model(&listMembers).Select()
 	if err != nil {
 		return err
 	}
@@ -97,7 +90,7 @@ func Sendmail(subject string, templateFile string, fromEmail string) error {
 			EmailTemplateId: emailTemplateId,
 			ListMemberId:    listMember.Id,
 		}
-		err := db.Insert(sentEmail)
+		err := SoftsideDB.Insert(sentEmail)
 		if err != nil {
 			return err
 		}

@@ -5,7 +5,6 @@ import (
 	"regexp"
 	"encoding/base64"
 	"fmt"
-	"github.com/go-pg/pg"
 	"time"
 	"crypto/md5"
 	"hash/fnv"
@@ -75,12 +74,8 @@ func DecodeMemberCookieId(idString string) (MemberCookieId, error) {
 
 func GenerateTrackingLink(w http.ResponseWriter, r *http.Request) {
 	targetUrl := r.URL.Query().Get("target")
-	// TODO: Replace the naive DB connection with connection pooling and a config driven connection string
-	ctx := &RequestContext{
-		db: pg.Connect(&pg.Options{
-			User: "vlad",
-		}),
-	}
+
+	ctx := NewRequestCtx(w, r)
 
 	// Keep trying until we create a new short url
 	url := ""
@@ -126,12 +121,7 @@ func (ctx *RequestContext) tryToCreateShortTrackedUrl(targetUrl string) (string,
 
 func TrackRequest(w http.ResponseWriter, r *http.Request) {
 
-	// TODO: Replace the naive DB connection with connection pooling and a config driven connection string
-	ctx := &RequestContext{
-		db: pg.Connect(&pg.Options{
-			User: "vlad",
-		}),
-	}
+	ctx := NewRequestCtx(w, r)
 
 	// Try to obtain the ListMemberId using the encoded SendEmailId in the url path if it exists.
 	urlPath := r.URL.Path

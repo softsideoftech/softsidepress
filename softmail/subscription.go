@@ -3,7 +3,6 @@ package softmail
 import (
 	"time"
 	"bytes"
-	"github.com/go-pg/pg"
 	"net/http"
 	"fmt"
 	"strings"
@@ -23,36 +22,36 @@ type SubscriptionTemplateParams struct {
 }
 
 func sendUserFacingError(logMessage string, err error, w http.ResponseWriter) {
-	fmt.Printf(logMessage + "err: %v", err)
+	fmt.Printf(logMessage+"err: %v", err)
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.Header().Set("X-Content-Type-Options", "nosniff")
 	w.WriteHeader(http.StatusInternalServerError)
 	renderMarkdownToHtmlTemplate(w, mgmtPagesHtmlTemplate, "Something isn't right...", errorTemplate, SubscriptionTemplateParams{OwnerName: owner})
 }
 
-func (ctx *RequestContext) someScribe(w http.ResponseWriter, r *http.Request, templateFile string, pageTitle string) *ListMember {
+func (ctx *RequestContext) someScribe(templateFile string, pageTitle string) *ListMember {
 
 	// Find the SentEmailId in the url
-	sentEmailId := decodeSendMailIdFromUriEnd(r.URL.Path)
+	sentEmailId := decodeSendMailIdFromUriEnd(ctx.r.URL.Path)
 	if sentEmailId == 0 {
-		sendUserFacingError("Couldn't find SentEmailId in url: %v", nil, w)
+		sendUserFacingError("Couldn't find SentEmailId in url: %v", nil, ctx.w)
 		return nil
 	}
 
 	// Load the ListMember from the DB
 	listMemberId, err := ctx.getListMemberIdFromSentEmail(sentEmailId)
 	if (err != nil) {
-		sendUserFacingError("", err, w)
+		sendUserFacingError("", err, ctx.w)
 		return nil
 	}
 	listMember := &ListMember{Id: listMemberId}
 	err = ctx.db.Select(listMember)
 	if err != nil {
-		sendUserFacingError("Couldn't find list member in url: %v", err, w)
+		sendUserFacingError("Couldn't find list member in url: %v", err, ctx.w)
 		return nil
 	}
 
-	renderMgmtPage(w, r, templateFile, pageTitle, sentEmailId, listMember)
+	renderMgmtPage(ctx.w, ctx.r, templateFile, pageTitle, sentEmailId, listMember)
 
 	return listMember
 }
@@ -61,23 +60,16 @@ func renderMgmtPage(w http.ResponseWriter, r *http.Request, templateName string,
 	// Run the template
 	buffer := &bytes.Buffer{}
 	listMemberParams := SubscriptionTemplateParams{listMember.FirstName, EncodeId(sentEmailId), owner}
-	renderMarkdownToHtmlTemplate(buffer, mgmtPagesHtmlTemplate, pageTitle, "src/softside/mgmt-pages/" +templateName + ".md", listMemberParams)
-
+	renderMarkdownToHtmlTemplate(buffer, mgmtPagesHtmlTemplate, pageTitle, "src/softside/mgmt-pages/"+templateName+".md", listMemberParams)
 
 	w.Header().Add("Content-Type", "text/html; charset=utf-8")
 	http.ServeContent(w, r, "", time.Now(), bytes.NewReader(buffer.Bytes()))
 }
 
 func Resubscribe(w http.ResponseWriter, r *http.Request) {
-	// Connect to the DB
-	// TODO: Replace the naive DB connection with connection pooling and a config driven connection string
-	ctx := &RequestContext{
-		db: pg.Connect(&pg.Options{
-			User: "vlad",
-		}),
-	}
+	ctx := NewRequestCtx(w, r)
 
-	listMember := ctx.someScribe(w, r, "resubscribe", "Welcome back :)")
+	listMember := ctx.someScribe("resubscribe", "Welcome back :)")
 
 	// Update the unsubscribe status
 	if (listMember != nil) {
@@ -88,32 +80,21 @@ func Resubscribe(w http.ResponseWriter, r *http.Request) {
 
 func Unsubscribe(w http.ResponseWriter, r *http.Request) {
 	// Connect to the DB
-	// TODO: Replace the naive DB connection with connection pooling and a config driven connection string
-	ctx := &RequestContext{
-		db: pg.Connect(&pg.Options{
-			User: "vlad",
-		}),
-	}
+	ctx := NewRequestCtx(w, r)
 
-	listMember := ctx.someScribe(w, r, "unsubscribe", "Goodbye, {{.FirstName}}")
+	listMember := ctx.someScribe("unsubscribe", "Goodbye, {{.FirstName}}")
 
 	// Update the unsubscribe status
 	if (listMember != nil) {
 		now := time.Now()
 		listMember.Unsubscribed = &now
 		ctx.db.Update(listMember)
-		// todo: send an email to unsubscribers to let them they're off
+		// todo: send an email to unsubscribers to let them know they're off
 	}
 }
 
 func Join(w http.ResponseWriter, r *http.Request) {
-	// Connect to the DB
-	// TODO: Replace the naive DB connection with connection pooling and a config driven connection string
-	ctx := &RequestContext{
-		db: pg.Connect(&pg.Options{
-			User: "vlad",
-		}),
-	}
+	ctx := NewRequestCtx(w, r)
 
 	firstName := r.FormValue("first-name")
 	email := r.FormValue("email")
@@ -149,6 +130,6 @@ func Join(w http.ResponseWriter, r *http.Request) {
 	if (err != nil) {
 		sendUserFacingError(fmt.Sprintf("Problem adding member to list. FirstName: %s, Email: %s", firstName, email), err, w)
 	} else {
-		renderMgmtPage(w,r, "join", "Welcome, {{.FirstName}}", SentEmailId(0), listMember)
+		renderMgmtPage(w, r, "join", "Welcome, {{.FirstName}}", SentEmailId(0), listMember)
 	}
 }

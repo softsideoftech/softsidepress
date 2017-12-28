@@ -6,20 +6,12 @@ import (
 	"softside/softmail"
 )
 
-type Page struct {
-	Title string
-	Body  []byte
-}
 
 func main() {
-	//print(url.QueryEscape("http://fake-domain.com/dummy-path?param=val"))
-	//print(softmail.UrlToId("/asdf2"))
-	testEmailTracker()
+	runService()
 
 	//testSendMail()
-
 	//softmail.StartSqs()
-
 }
 
 func testSendMail() {
@@ -29,7 +21,7 @@ func testSendMail() {
 	}
 }
 
-func testEmailTracker() {
+func runService() {
 	http.HandleFunc("/yes-please/", softmail.Resubscribe)
 	http.HandleFunc("/bye/", softmail.Unsubscribe)
 	http.HandleFunc("/join/", softmail.Join)
