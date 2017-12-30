@@ -28,7 +28,7 @@ case "$1" in
   go run src/softside/hello.go >> /root/go/softside.log 2>&1 & echo $! > /root/go/softside.pid
    ;;
  *)
-   echo "Usage: tomcat {start|stop|restart}" >&2
+   echo "Usage: softside {start|stop|restart}" >&2
    exit 3
    ;;
 esac
