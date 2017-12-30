@@ -88,4 +88,3 @@ CREATE TABLE ip2location (
   CONSTRAINT ip2location_pkey PRIMARY KEY (ip_from, ip_to)
 );
 
-INSERT INTO ip2location VALUES (2130706433, 2130706433, '-', 'localhost', '-', '-', 0, 0, '-', '-');
