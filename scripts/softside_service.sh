@@ -9,12 +9,12 @@
 # Description: This file starts and stops the Soft Side of Tech site/service.
 ### END INIT INFO
 
+# source the environment variables
+[ -f /root/.bash_profile ] && . /root/.bash_profile
+cd /root/go
 
 case "$1" in
  start)
-   export GOPATH=/root/go
-   /root/.bash_profile
-   cd /root/go
    go run src/softside/hello.go >> /root/go/softside.log 2>&1 & echo $! > /root/go/softside.pid
    ;;
  stop)
@@ -22,9 +22,6 @@ case "$1" in
    ;;
  restart)
   /usr/bin/killall -s 9 hello
-  export GOPATH=/root/go
-  /root/.bash_profile
-  cd /root/go
   go run src/softside/hello.go >> /root/go/softside.log 2>&1 & echo $! > /root/go/softside.pid
    ;;
  *)
