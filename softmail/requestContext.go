@@ -10,7 +10,7 @@ var SoftsideDB = pg.Connect(&pg.Options{
 	User: os.Getenv("SOFTSIDE_DB_USER"),
 	Database: os.Getenv("SOFTSIDE_DB"),
 	Password: os.Getenv("SOFTSIDE_DB_PASSWORD"),
-	Network: "unix",
+	Addr: os.Getenv("SOFTSIDE_DB_ADDRESS"),
 	})
 
 type RequestContext struct {
