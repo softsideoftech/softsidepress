@@ -180,14 +180,17 @@ func TrackRequest(w http.ResponseWriter, r *http.Request) {
 		templateFile := "src/softside/pages" + urlPath + ".md"
 		fileInfo, err := os.Stat(templateFile)
 
+		// Build the fullUrl for pages to potentially use
+		var fullUrl = fmt.Sprintf("http://%s%s", r.Host, r.URL.EscapedPath())
+
 		// Check if we should load a regular page or the home page
 		if fileInfo != nil && !strings.Contains(templateFile, "index.html") {
 			words := strings.Split(strings.Trim(urlPath, "/"), "-")
 			title := strings.Title(strings.Join(words, " "))
-			err = renderMarkdownToHtmlTemplate(w, pagesHtmlTemplate, title, templateFile, nil)
+			err = renderMarkdownToHtmlTemplate(w, pagesHtmlTemplate, fullUrl, title, templateFile, nil)
 		} else {
 			// Didn't find a regular page so load the home page
-			err = renderMarkdownToHtmlTemplate(w, homePageHtmlTemplate, "Soft Side of Tech", homePageMdTemplate, nil)
+			err = renderMarkdownToHtmlTemplate(w, homePageHtmlTemplate, fullUrl, "Soft Side of Tech", homePageMdTemplate, nil)
 		}
 		if err != nil {
 			sendUserFacingError("", err, w)

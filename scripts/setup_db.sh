@@ -17,4 +17,3 @@ sudo -u postgres psql -d softside -U softside -f /var/lib/postgresql/dbSchema.sq
 
 wget http://www.ip2location.com/download/?token=$2&file=DB11LITEBIN;
 
-sudo -u postgres

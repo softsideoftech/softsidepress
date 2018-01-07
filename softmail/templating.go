@@ -11,27 +11,27 @@ import (
 )
 
 type HtmlPageParams struct {
+	Url   string
 	Title string
-	Css string
-	Body string
+	Css   string
+	Body  string
 }
 
 type BodyParams interface {
-
 }
 
 // Load the css file
 const cssFile = "src/softside/style.css" // TODO: make this a relative path
 var templateCache = sync.Map{}
 
-func renderMarkdownToHtmlTemplate(writer io.Writer, baseHtmlFile string, title string, markdownFile string, bodyParams BodyParams) error {
+func renderMarkdownToHtmlTemplate(writer io.Writer, baseHtmlFile string, url string, title string, markdownFile string, bodyParams BodyParams) error {
 	templateName := baseHtmlFile + markdownFile
 
 	// Get the template from the cache to avoid constantly reading and parsing files from disk
 	fullPageTemplate, cacheLoaded := templateCache.Load(templateName)
 
-	// todo: turning off caching for development purposes
-	//cacheLoaded = false
+	// todo: set to FALSE to turn off caching for development purposes
+	cacheLoaded = false
 
 	if !cacheLoaded {
 		// Load the markdown template file
@@ -57,7 +57,7 @@ func renderMarkdownToHtmlTemplate(writer io.Writer, baseHtmlFile string, title s
 		}
 		var cssFileString = string(cssFileBytes)
 
-		err = baseHtmlTemplate.Execute(buffer, HtmlPageParams{Title: title, Css: cssFileString, Body: bodyHtml})
+		err = baseHtmlTemplate.Execute(buffer, HtmlPageParams{Url: url, Title: title, Css: cssFileString, Body: bodyHtml})
 		if (err != nil) {
 			return err
 		}

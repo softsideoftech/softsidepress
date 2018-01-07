@@ -163,6 +163,7 @@ blockquote blockquote {
     margin: 0;
     text-align: center;
 }
+
 /* ---- Sign up ----*/
 
 .footer-heading {
@@ -201,6 +202,7 @@ input {
     padding: 5px 20px;
     display: block;
 }
+
 .input {
     border-bottom: #cccccc 1px solid;
     margin: 20px auto;
@@ -221,13 +223,18 @@ button:focus {
 }
 
 button {
-    background-color: #545589;
+    background-color: #646599;
     border: none;
     color: #FFFFFF;
     padding: 10px;
     width: 200px;
     border-radius: 50px;
     font-weight: 500;
+}
+
+button:hover {
+    background-color: #7475A9;
+    cursor: pointer;
 }
 
 b {
@@ -243,4 +250,99 @@ iframe {
     margin: auto;
     display: block;
     margin-bottom: 60px;
+}
+
+/* ----- Share Box ----- */
+
+@media screen and (min-width: 1024px) {
+    #share-box {
+        position: fixed;
+        top: 10%;
+        right: 4%;
+        width: 100px;
+        height: 400px;
+        font-family: sans-serif;
+        font-weight: 600;
+        color: #aaaaaa;
+        text-align: center;
+    }
+
+    .share-button {
+        background-color: #FFFFFF;
+        margin: 20px 0 20px 0;
+        width: 70px;
+        height: 70px;
+        border-radius: 10px;
+
+        -moz-transition: all .2s ease-in;
+        -o-transition: all .2s ease-in;
+        -webkit-transition: all .2s ease-in;
+        transition: all .2s ease-in;
+    }
+
+    .share-button:hover {
+        cursor: pointer;
+    }
+
+    .fb .icon {
+        background-size: 100% 100%;
+        width: 100%;
+        height: 100%;
+        background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Capa_1" x="0px" y="0px" viewBox="0 0 155.139 155.139" style="enable-background:new 0 0 155.139 155.139;" xml:space="preserve" width="512px" height="512px"><g>	<path id="f_1_" d="M89.584,155.139V84.378h23.742l3.562-27.585H89.584V39.184   c0-7.984,2.208-13.425,13.67-13.425l14.595-0.006V1.08C115.325,0.752,106.661,0,96.577,0C75.52,0,61.104,12.853,61.104,36.452   v20.341H37.29v27.585h23.814v70.761H89.584z" fill="%23F3F3F3"/></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g></svg>');
+    }
+
+    .fb:hover {
+        background-color: #4468B0;
+    }
+    .lkd .icon {
+        position: relative;
+        top: 7px;
+        left: 7px;
+        background-size: 56px 56px;
+        width: 56px;
+        height: 56px;
+        background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Capa_1" x="0px" y="0px" width="512px" height="512px" viewBox="0 0 430.117 430.117" style="enable-background:new 0 0 430.117 430.117;" xml:space="preserve"><g>	<path id="LinkedIn" d="M430.117,261.543V420.56h-92.188V272.193c0-37.271-13.334-62.707-46.703-62.707   c-25.473,0-40.632,17.142-47.301,33.724c-2.432,5.928-3.058,14.179-3.058,22.477V420.56h-92.219c0,0,1.242-251.285,0-277.32h92.21   v39.309c-0.187,0.294-0.43,0.611-0.606,0.896h0.606v-0.896c12.251-18.869,34.13-45.824,83.102-45.824   C384.633,136.724,430.117,176.361,430.117,261.543z M52.183,9.558C20.635,9.558,0,30.251,0,57.463   c0,26.619,20.038,47.94,50.959,47.94h0.616c32.159,0,52.159-21.317,52.159-47.94C103.128,30.251,83.734,9.558,52.183,9.558z    M5.477,420.56h92.184v-277.32H5.477V420.56z" fill="%23F3F3F3"/></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g></svg>');
+    }
+
+    .lkd:hover {
+        background-color: #1074AF;
+    }
+    .twtr .icon {
+        position: relative;
+        top: 10px;
+        left: 10px;
+        background-size: 50px 50px;
+        width: 50px;
+        height: 50px;
+        background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Capa_1" x="0px" y="0px" viewBox="0 0 612 612" style="enable-background:new 0 0 612 612;" xml:space="preserve" width="512px" height="512px"><g>	<g>		<path d="M612,116.258c-22.525,9.981-46.694,16.75-72.088,19.772c25.929-15.527,45.777-40.155,55.184-69.411    c-24.322,14.379-51.169,24.82-79.775,30.48c-22.907-24.437-55.49-39.658-91.63-39.658c-69.334,0-125.551,56.217-125.551,125.513    c0,9.828,1.109,19.427,3.251,28.606C197.065,206.32,104.556,156.337,42.641,80.386c-10.823,18.51-16.98,40.078-16.98,63.101    c0,43.559,22.181,81.993,55.835,104.479c-20.575-0.688-39.926-6.348-56.867-15.756v1.568c0,60.806,43.291,111.554,100.693,123.104    c-10.517,2.83-21.607,4.398-33.08,4.398c-8.107,0-15.947-0.803-23.634-2.333c15.985,49.907,62.336,86.199,117.253,87.194    c-42.947,33.654-97.099,53.655-155.916,53.655c-10.134,0-20.116-0.612-29.944-1.721c55.567,35.681,121.536,56.485,192.438,56.485    c230.948,0,357.188-191.291,357.188-357.188l-0.421-16.253C573.872,163.526,595.211,141.422,612,116.258z" fill="%23F3F3F3"/>	</g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g></svg>');
+    }
+
+    .twtr:hover {
+        background-color: #2AA3EF;
+    }
+
+    .email .icon {
+        position: relative;
+        top: 10px;
+        left: 10px;
+        background-size: 50px 50px;
+        width: 50px;
+        height: 50px;
+        background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Layer_1" x="0px" y="0px" viewBox="0 0 511.999 511.999" style="enable-background:new 0 0 511.999 511.999;" xml:space="preserve" width="512px" height="512px"><g>	<g>		<path d="M444.253,47.065H67.747c-37.355,0-67.745,30.391-67.745,67.745v282.379c0,37.355,30.39,67.745,67.745,67.745h376.506    c37.355,0,67.745-30.391,67.745-67.745V114.81C511.998,77.455,481.608,47.065,444.253,47.065z M470.634,397.189    c0,14.546-11.835,26.381-26.381,26.381H67.747c-14.546,0-26.381-11.835-26.381-26.381V114.81    c0-14.546,11.835-26.381,26.381-26.381h376.506c14.546,0,26.381,11.835,26.381,26.381V397.189z" fill="%23F3F3F3"/>	</g></g><g>	<g>		<path d="M508.259,102.95c-6.549-9.357-19.443-11.633-28.804-5.083L255.999,254.284L32.544,97.866    c-9.357-6.551-22.253-4.274-28.803,5.083s-4.274,22.253,5.083,28.803L244.14,296.474c3.561,2.493,7.71,3.738,11.86,3.738    c4.149,0,8.299-1.246,11.86-3.738l235.316-164.721C512.533,125.203,514.809,112.307,508.259,102.95z" fill="%23F3F3F3"/>	</g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g></svg>');
+    }
+
+    .email:hover {
+        background-color: #999999;
+    }
+
+    #shares-box {
+        font-size: 20px;
+        width: 70px;
+    }
+
+    #shares-heading {
+        width: 200px;
+        font-size: 18px;
+        margin-left: -65px;
+    }
 }
