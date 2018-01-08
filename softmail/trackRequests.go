@@ -148,7 +148,7 @@ func TrackRequest(w http.ResponseWriter, r *http.Request) {
 
 	if (err == nil) {
 
-		fmt.Printf("Request headers: %v", r.Header)
+		fmt.Printf("Request headers: %v\n", r.Header)
 
 		// Try to find the user's IP address in the request
 		var rawRemoteAddr string
@@ -263,22 +263,28 @@ func decodeSendMailIdFromUri(path string) SentEmailId {
 }
 
 func decodeIpAddress(remoteAddr string) (string, IpAddress) {
-	submatch := extractIpAddress.FindStringSubmatch(remoteAddr)
-	if submatch == nil {
-		return "", 0
+	var ipAddressString string
+	if strings.Index(remoteAddr, ":") == -1 {
+		ipAddressString = remoteAddr
 	} else {
-		ipAddressString := submatch[1]
-		parts := strings.Split(ipAddressString, ".")
-		firstOctet, err1 := strconv.ParseInt(parts[0], 10, 64)
-		secondOctet, err2 := strconv.ParseInt(parts[1], 10, 64)
-		thirdOctet, err3 := strconv.ParseInt(parts[2], 10, 64)
-		fourthOctet, err4 := strconv.ParseInt(parts[3], 10, 64)
-		if (err1 != nil || err2 != nil || err3 != nil || err4 != nil) {
-			fmt.Printf("Problem parsing IP Address: %s, error: %v, %v, %v, %v", remoteAddr, err1, err2, err3, err4)
+		submatch := extractIpAddress.FindStringSubmatch(remoteAddr)
+		if submatch == nil {
 			return "", 0
 		}
-		return ipAddressString, (firstOctet * 16777216) + (secondOctet * 65536) + (thirdOctet * 256) + (fourthOctet)
+		ipAddressString = submatch[1]
 	}
+
+	parts := strings.Split(ipAddressString, ".")
+	firstOctet, err1 := strconv.ParseInt(parts[0], 10, 64)
+	secondOctet, err2 := strconv.ParseInt(parts[1], 10, 64)
+	thirdOctet, err3 := strconv.ParseInt(parts[2], 10, 64)
+	fourthOctet, err4 := strconv.ParseInt(parts[3], 10, 64)
+	if (err1 != nil || err2 != nil || err3 != nil || err4 != nil) {
+		fmt.Printf("Problem parsing IP Address: %s, error: %v, %v, %v, %v", remoteAddr, err1, err2, err3, err4)
+		return "", 0
+	}
+	return ipAddressString, (firstOctet * 16777216) + (secondOctet * 65536) + (thirdOctet * 256) + (fourthOctet)
+}
 }
 
 func (ctx *RequestContext) getListMemberIdFromSentEmail(sentEmailId SentEmailId) (ListMemberId, error) {
