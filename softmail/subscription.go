@@ -26,7 +26,13 @@ func sendUserFacingError(logMessage string, err error, w http.ResponseWriter) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.Header().Set("X-Content-Type-Options", "nosniff")
 	w.WriteHeader(http.StatusInternalServerError)
-	renderMarkdownToHtmlTemplate(w, mgmtPagesHtmlTemplate, "", "Something isn't right...", errorTemplate, SubscriptionTemplateParams{OwnerName: owner})
+	renderMarkdownToHtmlTemplate(MarkdownTemplateConfig{
+		Writer:       w,
+		BaseHtmlFile: mgmtPagesHtmlTemplate,
+		Title:        "Something isn't right...",
+		MarkdownFile: errorTemplate,
+		BodyParams:   SubscriptionTemplateParams{OwnerName: owner},
+	})
 }
 
 func (ctx *RequestContext) someScribe(templateFile string, pageTitle string) *ListMember {
@@ -60,7 +66,13 @@ func renderMgmtPage(w http.ResponseWriter, r *http.Request, templateName string,
 	// Run the template
 	buffer := &bytes.Buffer{}
 	listMemberParams := SubscriptionTemplateParams{listMember.FirstName, EncodeId(sentEmailId), owner}
-	renderMarkdownToHtmlTemplate(buffer, mgmtPagesHtmlTemplate, "", pageTitle, "src/softside/mgmt-pages/"+templateName+".md", listMemberParams)
+	renderMarkdownToHtmlTemplate(MarkdownTemplateConfig{
+		Writer:       buffer,
+		BaseHtmlFile: mgmtPagesHtmlTemplate,
+		Title:        pageTitle,
+		MarkdownFile: "src/softside/mgmt-pages/" + templateName + ".md",
+		BodyParams:   listMemberParams,
+	})
 
 	w.Header().Add("Content-Type", "text/html; charset=utf-8")
 	http.ServeContent(w, r, "", time.Now(), bytes.NewReader(buffer.Bytes()))

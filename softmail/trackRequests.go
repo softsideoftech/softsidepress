@@ -181,16 +181,29 @@ func TrackRequest(w http.ResponseWriter, r *http.Request) {
 		fileInfo, err := os.Stat(templateFile)
 
 		// Build the fullUrl for pages to potentially use
-		var fullUrl = fmt.Sprintf("http://%s%s", r.Host, r.URL.EscapedPath())
+		var fullUrl = fmt.Sprintf("https://%s%s", r.Host, r.URL.EscapedPath())
 
 		// Check if we should load a regular page or the home page
 		if fileInfo != nil && !strings.Contains(templateFile, "index.html") {
 			words := strings.Split(strings.Trim(urlPath, "/"), "-")
-			title := strings.Title(strings.Join(words, " "))
-			err = renderMarkdownToHtmlTemplate(w, pagesHtmlTemplate, fullUrl, title, templateFile, nil)
+			summaryPhrase := strings.Join(words, " ")
+			err = renderMarkdownToHtmlTemplate(MarkdownTemplateConfig{
+				Writer:       w,
+				BaseHtmlFile: pagesHtmlTemplate,
+				Url:          fullUrl,
+				Summary:      summaryPhrase,
+				MarkdownFile: templateFile,
+			})
 		} else {
 			// Didn't find a regular page so load the home page
-			err = renderMarkdownToHtmlTemplate(w, homePageHtmlTemplate, fullUrl, "Soft Side of Tech", homePageMdTemplate, nil)
+			err = renderMarkdownToHtmlTemplate(
+				MarkdownTemplateConfig{
+					Writer:       w,
+					BaseHtmlFile: homePageHtmlTemplate,
+					Url:          fullUrl,
+					Title:        "Soft Side of Tech",
+					MarkdownFile: homePageMdTemplate,
+				})
 		}
 		if err != nil {
 			sendUserFacingError("", err, w)

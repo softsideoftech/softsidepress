@@ -338,6 +338,7 @@ iframe {
     #shares-box {
         font-size: 20px;
         width: 70px;
+        display: none;
     }
 
     #shares-heading {

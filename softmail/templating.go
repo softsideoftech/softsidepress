@@ -8,24 +8,40 @@ import (
 	"gopkg.in/russross/blackfriday.v2"
 	"io/ioutil"
 	"sync"
+	"regexp"
 )
 
 type HtmlPageParams struct {
-	Url   string
-	Title string
-	Css   string
-	Body  string
+	Url        string
+	Title      string
+	Summary    string
+	Css        string
+	JavaScript string
+	Body       string
 }
 
 type BodyParams interface {
 }
 
+type MarkdownTemplateConfig struct {
+	Writer       io.Writer
+	BaseHtmlFile string
+	Url          string
+	Title        string
+	Summary      string
+	MarkdownFile string
+	BodyParams   BodyParams
+}
+
 // Load the css file
-const cssFile = "src/softside/style.css" // TODO: make this a relative path
+const cssFile = "src/softside/html/style.css"    // TODO: make this a relative path
+const jsFile = "src/softside/html/javascript.js" // TODO: make this a relative path
+var extractTitle = regexp.MustCompile("^# (.+)")
 var templateCache = sync.Map{}
 
-func renderMarkdownToHtmlTemplate(writer io.Writer, baseHtmlFile string, url string, title string, markdownFile string, bodyParams BodyParams) error {
-	templateName := baseHtmlFile + markdownFile
+func renderMarkdownToHtmlTemplate(c MarkdownTemplateConfig) error {
+
+	templateName := c.BaseHtmlFile + c.MarkdownFile
 
 	// Get the template from the cache to avoid constantly reading and parsing files from disk
 	fullPageTemplate, cacheLoaded := templateCache.Load(templateName)
@@ -35,35 +51,56 @@ func renderMarkdownToHtmlTemplate(writer io.Writer, baseHtmlFile string, url str
 
 	if !cacheLoaded {
 		// Load the markdown template file
-		markdownTemplateBytes, err := ioutil.ReadFile(markdownFile)
+		markdownTemplateBytes, err := ioutil.ReadFile(c.MarkdownFile)
 		if err != nil {
 			return err
+		}
+
+		// If a title wasn't provided, get it from the H1 from the markdown file.
+		if (len(c.Title) == 0) {
+			submatch := extractTitle.FindStringSubmatch(string(markdownTemplateBytes))
+			if (submatch != nil) {
+				c.Title = submatch[1]
+			}
 		}
 
 		// Render the markdown as HTML
 		bodyHtml := string(blackfriday.Run(markdownTemplateBytes))
 
 		// Merge the markdown html into the base
-		baseHtmlTemplate, err := txtTemplate.ParseFiles(baseHtmlFile)
+		baseHtmlTemplate, err := txtTemplate.ParseFiles(c.BaseHtmlFile)
 		if err != nil {
 			return err
 		}
-		buffer := &bytes.Buffer{}
 
 		// Load the css file
 		cssFileBytes, err := ioutil.ReadFile(cssFile)
 		if err != nil {
 			return err
 		}
-		var cssFileString = string(cssFileBytes)
 
-		err = baseHtmlTemplate.Execute(buffer, HtmlPageParams{Url: url, Title: title, Css: cssFileString, Body: bodyHtml})
+		// Load the js file
+		jsFileBytes, err := ioutil.ReadFile(jsFile)
+		if err != nil {
+			return err
+		}
+
+		// Generate the html template by templatizing the page components and body html arguments into it
+		buffer := &bytes.Buffer{}
+		err = baseHtmlTemplate.Execute(buffer, HtmlPageParams{
+			Url:        c.Url,
+			Title:      c.Title,
+			Summary:    c.Summary,
+			Css:        string(cssFileBytes),
+			JavaScript: string(jsFileBytes),
+			Body:       bodyHtml,
+		})
 		if (err != nil) {
 			return err
 		}
 
-		// Render the parameters into the full template.
-		// Using an html template instead of text to safely escape user-passed params
+		// Parse the rendered HTML as a new template
+		// Using an html template instead of text to safely escape user-passed arguments
 		fullPageTemplate, err = htmlTemplate.New(templateName).Parse(buffer.String())
 		if err != nil {
 			return err
@@ -72,7 +109,7 @@ func renderMarkdownToHtmlTemplate(writer io.Writer, baseHtmlFile string, url str
 	}
 
 	template := fullPageTemplate.(*htmlTemplate.Template)
-	template.Execute(writer, bodyParams)
+	template.Execute(c.Writer, c.BodyParams)
 
 	return nil
 }

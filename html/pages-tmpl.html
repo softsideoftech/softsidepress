@@ -47,14 +47,17 @@
             <div class="icon"></div>
         </div>
     </a>
-    <a target="_blank" href="mailto:?subject={{.Title}}&Body=This essay resonated with me. I thought you might like it too: {{.Url}}">
+    <a target="_blank" href="mailto:?subject=[softsideoftech] {{.Title}}&Body=Vlad's essay on {{.Summary}} resonated with me. I thought you might like it too: {{.Url}}">
         <div class="share-button email">
             <div class="icon"></div>
         </div>
     </a>
     <div id="shares-box">
-        <span id="shares-count">74</span> Shares
+        <span id="shares-count">0</span> Shares
     </div>
 </div>
 </body>
+<script>
+    {{.JavaScript}}
+</script>
 </html>
