@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
-# assumes pg_hba.conf is set to 'trust' for local connections
+## Assumes that:
+## - pg_hba.conf is set to 'trust' for local connections
+## IP db is downloaded and unzipped to /root
+### https://lite.ip2location.com/database/ip-country-region-city-latitude-longitude-zipcode-timezone
 
 # Dowload and install the latest Postgres
 echo 'deb http://apt.postgresql.org/pub/repos/apt/ xenial-pgdg main' >> /etc/apt/sources.list.d/pgdg.list
@@ -15,5 +18,7 @@ chmod a+r /var/lib/postgresql/dbSchema.sql
 
 sudo -u postgres psql -d softside -U softside -f /var/lib/postgresql/dbSchema.sql
 
-wget http://www.ip2location.com/download/?token=$2&file=DB11LITEBIN;
+chmod a+r /root/IP2LOCATION-LITE-DB11.CSV
+mv /root/IP2LOCATION-LITE-DB11.CSV /var/lib/postgresql/
+sudo -u postgres psql -d softside -U softside -c "\copy ip2location FROM '/var/lib/postgresql/IP2LOCATION-LITE-DB11.CSV' WITH CSV QUOTE AS '\"'"
 

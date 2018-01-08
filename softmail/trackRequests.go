@@ -147,9 +147,6 @@ func TrackRequest(w http.ResponseWriter, r *http.Request) {
 	trackedUrl, err := ctx.obtainOrCreateTrackedUrl(sentEmailId, urlPath)
 
 	if (err == nil) {
-
-		fmt.Printf("Request headers: %v\n", r.Header)
-
 		// Try to find the user's IP address in the request
 		var rawRemoteAddr string
 		realIp := r.Header.Get("X-Real-IP")
@@ -202,7 +199,7 @@ func TrackRequest(w http.ResponseWriter, r *http.Request) {
 		fileInfo, err := os.Stat(templateFile)
 
 		// Build the escapedUrl for pages to potentially use
-		var escapedUrl = fmt.Sprintf("https://%s%s", r.Host, r.URL.EscapedPath())
+		var escapedUrl = fmt.Sprintf("https://%s%s", siteDomain, r.URL.EscapedPath())
 
 		// Check if we should load a regular page or the home page
 		if fileInfo != nil && !strings.Contains(templateFile, "index.html") {

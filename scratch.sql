@@ -41,3 +41,4 @@ INSERT INTO email_templates (subject, body) VALUES ('foo', 'bar'), ('asdf', 'qwe
 
 SELECT *
 FROM sent_emails;
+

@@ -20,8 +20,16 @@
 {{.Body}}
     <hr/>
     <div id="home-footer">
-        <h2>Sign up if you'd like me to send you my writing on leadership in technology</h2>
-        <iframe src="https://upscri.be/0c8c85/" ></iframe>
+        <form id="signup-box" action="/join/" method="post">
+            <div class="footer-heading">
+                <h2>Sign up and I'll send you more of my writing on leadership in technology</h2>
+            </div>
+            <div class="input"><input class="signup-item" name="first-name" placeholder="Your first name"/></div>
+            <div class="input"><input class="signup-item" name="email" type="email" placeholder="email@example.com"/>
+            </div>
+
+            <button class="signup-item" type="submit">Sign Up</button>
+        </form>
         <h2>If you'd like to get in touch, you can reach me at</h2>
         <a class="logo-styled-text" href="mailto:vlad@softsideoftech.com">vlad@softsideoftech.com</a>
     </div>
@@ -34,7 +42,11 @@
 <script async src="https://www.googletagmanager.com/gtag/js?id=UA-111529467-1"></script>
 <script>
     window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
+
+    function gtag() {
+        dataLayer.push(arguments);
+    }
+
     gtag('js', new Date());
 
     gtag('config', 'UA-111529467-1');
