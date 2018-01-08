@@ -47,7 +47,7 @@ func renderMarkdownToHtmlTemplate(c MarkdownTemplateConfig) error {
 	fullPageTemplate, cacheLoaded := templateCache.Load(templateName)
 
 	// todo: set to FALSE to turn off caching for development purposes
-	cacheLoaded = false
+	//cacheLoaded = false
 
 	if !cacheLoaded {
 		// Load the markdown template file
