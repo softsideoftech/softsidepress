@@ -285,7 +285,6 @@ func decodeIpAddress(remoteAddr string) (string, IpAddress) {
 	}
 	return ipAddressString, (firstOctet * 16777216) + (secondOctet * 65536) + (thirdOctet * 256) + (fourthOctet)
 }
-}
 
 func (ctx *RequestContext) getListMemberIdFromSentEmail(sentEmailId SentEmailId) (ListMemberId, error) {
 	if sentEmailId == 0 {
