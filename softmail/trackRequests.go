@@ -148,6 +148,8 @@ func TrackRequest(w http.ResponseWriter, r *http.Request) {
 
 	if (err == nil) {
 
+		fmt.Printf("Request headers: %v", r.Header)
+
 		// Try to find the user's IP address in the request
 		var rawRemoteAddr string
 		realIp := r.Header.Get("X-Real-IP")

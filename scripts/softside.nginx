@@ -6,7 +6,7 @@ server {
 
     server_name softsideoftech.com;
 
-    real_ip_header X-Real-IP;
+    proxy_set_header X-Forwarded-For $remote_addr;
 
     location / {
         proxy_pass http://localhost:8080;
