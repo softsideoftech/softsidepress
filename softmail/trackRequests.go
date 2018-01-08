@@ -147,8 +147,21 @@ func TrackRequest(w http.ResponseWriter, r *http.Request) {
 	trackedUrl, err := ctx.obtainOrCreateTrackedUrl(sentEmailId, urlPath)
 
 	if (err == nil) {
+
+		// Try to find the user's IP address in the request
+		var rawRemoteAddr string
+		realIp := r.Header.Get("X-Real-IP")
+		if len(realIp) == 0 {
+			realIp = r.Header.Get("X-Forwarded-For")
+		}
+		if len(realIp) > 0 {
+			rawRemoteAddr = realIp
+		} else {
+			rawRemoteAddr = r.RemoteAddr
+		}
+
 		// Track the hit
-		ipString, ipInt := decodeIpAddress(r.RemoteAddr)
+		ipString, ipInt := decodeIpAddress(rawRemoteAddr)
 		trackingHit := TrackingHit{
 			TrackedUrlId:    trackedUrl.Id,
 			MemberCookieId:  memberCookie.Id,
@@ -161,7 +174,7 @@ func TrackRequest(w http.ResponseWriter, r *http.Request) {
 		}
 		err = ctx.db.Insert(&trackingHit)
 		if err != nil {
-			err = fmt.Errorf("Problem inserting TrackingHit record. ListMemberId: : %d, Remote IP Address: %s, ReferrerURL: %s DB error: %v\n", memberCookie.ListMemberId, r.RemoteAddr, r.Referer(), err)
+			err = fmt.Errorf("Problem inserting TrackingHit record. ListMemberId: : %d, Remote IP Address: %s, ReferrerURL: %s DB error: %v\n", memberCookie.ListMemberId, rawRemoteAddr, r.Referer(), err)
 		}
 	}
 

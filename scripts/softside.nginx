@@ -6,7 +6,17 @@ server {
 
     server_name softsideoftech.com;
 
+    real_ip_header X-Real-IP;
+
     location / {
         proxy_pass http://localhost:8080;
     }
+
+    ssl_certificate /etc/letsencrypt/live/softsideoftech.com/fullchain.pem; # managed by Certbot
+    ssl_certificate_key /etc/letsencrypt/live/softsideoftech.com/privkey.pem; # managed by Certbot
+
+    if ($scheme != "https") {
+        return 301 https://$host$request_uri;
+    } # managed by Certbot
+
 }
