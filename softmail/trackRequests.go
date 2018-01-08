@@ -161,22 +161,28 @@ func TrackRequest(w http.ResponseWriter, r *http.Request) {
 		} else {
 			rawRemoteAddr = r.RemoteAddr
 		}
-
-		// Track the hit
 		ipString, ipInt := decodeIpAddress(rawRemoteAddr)
-		trackingHit := TrackingHit{
-			TrackedUrlId:    trackedUrl.Id,
-			MemberCookieId:  memberCookie.Id,
-			ReferrerUrl:     r.Referer(),
-			IpAddress:       ipInt, // TODO: check how this works with Nginx
-			IpAddressString: ipString,
-			// Use the cookie as the authority on the ListMemberId because it would
-			// have either been initialized correctly or retrieved from the db
-			ListMemberId: memberCookie.ListMemberId,
-		}
-		err = ctx.db.Insert(&trackingHit)
-		if err != nil {
-			err = fmt.Errorf("Problem inserting TrackingHit record. ListMemberId: : %d, Remote IP Address: %s, ReferrerURL: %s DB error: %v\n", memberCookie.ListMemberId, rawRemoteAddr, r.Referer(), err)
+
+		// Don't track local requests (healthchecks, etc)
+		if (ipString != "127.0.0.1") {
+
+			// Track the hit
+			trackingHit := TrackingHit{
+				TrackedUrlId:    trackedUrl.Id,
+				MemberCookieId:  memberCookie.Id,
+				ReferrerUrl:     r.Referer(),
+				IpAddress:       ipInt,
+				IpAddressString: ipString,
+				// Use the cookie as the authority on the ListMemberId because it would
+				// have either been initialized correctly or retrieved from the db
+				ListMemberId: memberCookie.ListMemberId,
+			}
+			err = ctx.db.Insert(&trackingHit)
+			if err != nil {
+				err = fmt.Errorf(
+					"Problem inserting TrackingHit record. ListMemberId: : %d, Remote IP Address: %s, ReferrerURL: %s DB error: %v\n",
+					memberCookie.ListMemberId, rawRemoteAddr, r.Referer(), err)
+			}
 		}
 	}
 
@@ -195,8 +201,8 @@ func TrackRequest(w http.ResponseWriter, r *http.Request) {
 		templateFile := "src/softside/pages" + urlPath + ".md"
 		fileInfo, err := os.Stat(templateFile)
 
-		// Build the fullUrl for pages to potentially use
-		var fullUrl = fmt.Sprintf("https://%s%s", r.Host, r.URL.EscapedPath())
+		// Build the escapedUrl for pages to potentially use
+		var escapedUrl = fmt.Sprintf("https://%s%s", r.Host, r.URL.EscapedPath())
 
 		// Check if we should load a regular page or the home page
 		if fileInfo != nil && !strings.Contains(templateFile, "index.html") {
@@ -205,7 +211,7 @@ func TrackRequest(w http.ResponseWriter, r *http.Request) {
 			err = renderMarkdownToHtmlTemplate(MarkdownTemplateConfig{
 				Writer:       w,
 				BaseHtmlFile: pagesHtmlTemplate,
-				Url:          fullUrl,
+				Url:          escapedUrl,
 				Summary:      summaryPhrase,
 				MarkdownFile: templateFile,
 			})
@@ -215,7 +221,7 @@ func TrackRequest(w http.ResponseWriter, r *http.Request) {
 				MarkdownTemplateConfig{
 					Writer:       w,
 					BaseHtmlFile: homePageHtmlTemplate,
-					Url:          fullUrl,
+					Url:          escapedUrl,
 					Title:        "Soft Side of Tech",
 					MarkdownFile: homePageMdTemplate,
 				})
