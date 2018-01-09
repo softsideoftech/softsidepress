@@ -20,17 +20,17 @@ type HtmlPageParams struct {
 	Body       string
 }
 
-type BodyParams interface {
+type PerRequestParams interface {
 }
 
 type MarkdownTemplateConfig struct {
-	Writer       io.Writer
-	BaseHtmlFile string
-	Url          string
-	Title        string
-	Summary      string
-	MarkdownFile string
-	BodyParams   BodyParams
+	Writer           io.Writer
+	BaseHtmlFile     string
+	Url              string
+	Title            string
+	Summary          string
+	MarkdownFile     string
+	PerRequestParams PerRequestParams
 }
 
 // Load the css file
@@ -109,7 +109,7 @@ func renderMarkdownToHtmlTemplate(c MarkdownTemplateConfig) error {
 	}
 
 	template := fullPageTemplate.(*htmlTemplate.Template)
-	template.Execute(c.Writer, c.BodyParams)
+	template.Execute(c.Writer, c.PerRequestParams)
 
 	return nil
 }

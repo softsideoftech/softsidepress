@@ -27,11 +27,11 @@ func sendUserFacingError(logMessage string, err error, w http.ResponseWriter) {
 	w.Header().Set("X-Content-Type-Options", "nosniff")
 	w.WriteHeader(http.StatusInternalServerError)
 	renderMarkdownToHtmlTemplate(MarkdownTemplateConfig{
-		Writer:       w,
-		BaseHtmlFile: mgmtPagesHtmlTemplate,
-		Title:        "Something isn't right...",
-		MarkdownFile: errorTemplate,
-		BodyParams:   SubscriptionTemplateParams{OwnerName: owner},
+		Writer:           w,
+		BaseHtmlFile:     mgmtPagesHtmlTemplate,
+		Title:            "Something isn't right...",
+		MarkdownFile:     errorTemplate,
+		PerRequestParams: SubscriptionTemplateParams{OwnerName: owner},
 	})
 }
 
@@ -67,11 +67,11 @@ func renderMgmtPage(w http.ResponseWriter, r *http.Request, templateName string,
 	buffer := &bytes.Buffer{}
 	listMemberParams := SubscriptionTemplateParams{listMember.FirstName, EncodeId(sentEmailId), owner}
 	renderMarkdownToHtmlTemplate(MarkdownTemplateConfig{
-		Writer:       buffer,
-		BaseHtmlFile: mgmtPagesHtmlTemplate,
-		Title:        pageTitle,
-		MarkdownFile: "src/softside/mgmt-pages/" + templateName + ".md",
-		BodyParams:   listMemberParams,
+		Writer:           buffer,
+		BaseHtmlFile:     mgmtPagesHtmlTemplate,
+		Title:            pageTitle,
+		MarkdownFile:     "src/softside/mgmt-pages/" + templateName + ".md",
+		PerRequestParams: listMemberParams,
 	})
 
 	w.Header().Add("Content-Type", "text/html; charset=utf-8")

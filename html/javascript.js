@@ -44,3 +44,11 @@ client.get('http://public.newsharecounts.com/count.json?url=' + window.location.
     var shareCount = twtr.count;
     incrementShareCount("twtr", shareCount)
 });
+
+
+
+setInterval(function() {
+    if (document.hasFocus()) {
+        client.get("/ping?id={{.TrackingId}}"); // .TrackingId will be filled in via the go templating
+    }
+}, 5000);

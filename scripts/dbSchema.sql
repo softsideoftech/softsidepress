@@ -71,7 +71,8 @@ CREATE TABLE tracking_hits (
   ip_address        BIGINT                                          NOT NULL,
   ip_address_string VARCHAR(128)                                    NOT NULL,
   referrer_url      VARCHAR(1024),
-  created           TIMESTAMP DEFAULT current_timestamp             NOT NULL
+  created           TIMESTAMP DEFAULT current_timestamp             NOT NULL,
+  time_on_page      INT DEFAULT 0
 );
 
 CREATE TABLE ip2location (

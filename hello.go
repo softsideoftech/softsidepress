@@ -27,7 +27,8 @@ func runService() {
 	http.HandleFunc("/join/", softmail.Join)
 	http.HandleFunc("/favicon.ico", HandleFavicon)
 	http.HandleFunc("/gen_link", softmail.GenerateTrackingLink)
-	http.HandleFunc("/", softmail.TrackRequest)
+	http.HandleFunc("/ping", softmail.TrackTimeOnPage)
+	http.HandleFunc("/", softmail.HandleNormalRequest)
 	http.ListenAndServe(":8080", nil)
 }
 

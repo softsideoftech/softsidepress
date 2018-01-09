@@ -26,6 +26,11 @@ const cookieName = "sftml"
 // TODO: make this configurable
 const siteDomain = "softsideoftech.com"
 
+
+type TrackingRequestParams struct {
+	TrackingId TrackingHitId
+}
+
 // TODO: Move to util
 func EncodeId(sentEmailId uint32) string {
 	var buf [4]byte
@@ -120,7 +125,23 @@ func (ctx *RequestContext) tryToCreateShortTrackedUrl(targetUrl string) (string,
 	return "", nil
 }
 
-func TrackRequest(w http.ResponseWriter, r *http.Request) {
+func TrackTimeOnPage(w http.ResponseWriter, r *http.Request) {
+	trackingHitIdStr := r.URL.Query()["id"][0]
+
+	ctx := NewRequestCtx(w, r)
+
+	parsedId, err := strconv.ParseInt(trackingHitIdStr, 10, 32)
+	if (err != nil) {
+		fmt.Printf("Counld't parse tracking id: %s, err: %v", trackingHitIdStr, err)
+	}
+	var trackingHit TrackingHit
+	_, err = ctx.db.Model(&trackingHit).Set("time_on_page = time_on_page + 5").Where("id = ?", TrackingHitId(parsedId)).Update()
+	if (err != nil) {
+		fmt.Printf("Counldn't update tracking hit with id: %d, err: %v", parsedId, err)
+	}
+}
+
+func HandleNormalRequest(w http.ResponseWriter, r *http.Request) {
 
 	ctx := NewRequestCtx(w, r)
 
@@ -146,6 +167,8 @@ func TrackRequest(w http.ResponseWriter, r *http.Request) {
 	// Obtain or save the url if it's not an email tracking pixel
 	trackedUrl, err := ctx.obtainOrCreateTrackedUrl(sentEmailId, urlPath)
 
+	var trackingHitId TrackingHitId
+
 	if (err == nil) {
 		// Try to find the user's IP address in the request
 		var rawRemoteAddr string
@@ -161,7 +184,7 @@ func TrackRequest(w http.ResponseWriter, r *http.Request) {
 		ipString, ipInt := decodeIpAddress(rawRemoteAddr)
 
 		// Don't track local requests (healthchecks, etc)
-		if (ipString != "127.0.0.1") {
+		if (true || ipString != "127.0.0.1") {
 
 			// Track the hit
 			trackingHit := TrackingHit{
@@ -179,6 +202,8 @@ func TrackRequest(w http.ResponseWriter, r *http.Request) {
 				err = fmt.Errorf(
 					"Problem inserting TrackingHit record. ListMemberId: : %d, Remote IP Address: %s, ReferrerURL: %s DB error: %v\n",
 					memberCookie.ListMemberId, rawRemoteAddr, r.Referer(), err)
+			} else {
+				trackingHitId = trackingHit.Id
 			}
 		}
 	}
@@ -211,6 +236,7 @@ func TrackRequest(w http.ResponseWriter, r *http.Request) {
 				Url:          escapedUrl,
 				Summary:      summaryPhrase,
 				MarkdownFile: templateFile,
+				PerRequestParams: TrackingRequestParams{TrackingId: trackingHitId},
 			})
 		} else {
 			// Didn't find a regular page so load the home page
@@ -221,6 +247,7 @@ func TrackRequest(w http.ResponseWriter, r *http.Request) {
 					Url:          escapedUrl,
 					Title:        "Soft Side of Tech",
 					MarkdownFile: homePageMdTemplate,
+					PerRequestParams: TrackingRequestParams{TrackingId: trackingHitId},
 				})
 		}
 		if err != nil {

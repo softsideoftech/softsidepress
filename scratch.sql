@@ -35,7 +35,7 @@ FROM email_actions_enum;
 SELECT *
 FROM member_cookies;
 SELECT *
-FROM tracking_hits;
+FROM tracking_hits where time_on_page > 0;
 
 INSERT INTO email_templates (subject, body) VALUES ('foo', 'bar'), ('asdf', 'qwer');
 
