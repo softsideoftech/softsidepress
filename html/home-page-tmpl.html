@@ -35,6 +35,34 @@
     </div>
     <div id="medium-logo" class="bear-img"></div>
 </div>
+<div id="share-box">
+    <div id="shares-heading">
+        Spread the word
+    </div>
+    <a onclick="window.open('https://www.linkedin.com/shareArticle?mini=true&url={{.Url}}', 'newwindow', 'width=640,height=480'); return false;">
+        <div class="share-button lkd">
+            <div class="icon"></div>
+        </div>
+    </a>
+    <a onclick="window.open('https://www.facebook.com/sharer/sharer.php?u={{.Url}}', 'newwindow', 'width=640,height=480'); return false;">
+        <div class="share-button fb">
+            <div class="icon"></div>
+        </div>
+    </a>
+    <a onclick="window.open('https://twitter.com/intent/tweet?&text={{.Title}}&tw_p=tweetbutton&url={{.Url}}&via=softsideoftech', 'newwindow', 'width=640,height=480'); return false;">
+        <div class="share-button twtr">
+            <div class="icon"></div>
+        </div>
+    </a>
+    <a target="_blank" href="mailto:?subject=[softsideoftech] {{.Title}}&Body=Vlad's essay on {{.Summary}} resonated with me. I thought you might like it too: {{.Url}}">
+        <div class="share-button email">
+            <div class="icon"></div>
+        </div>
+    </a>
+    <div id="shares-box">
+        <span id="shares-count">0</span> Shares
+    </div>
+</div>
 </body>
 
 <!-- Global site tag (gtag.js) - Google Analytics -->

@@ -33,7 +33,7 @@ client.get('https://graph.facebook.com/?id=' + window.location.href, function (r
     incrementShareCount("fb", shareCount)
 });
 
-client.get('https://www.linkedin.com/countserv/count/share?format=json&url=' + window.location.href, function (response) {
+client.get('/lkdcnt?url=' + window.location.href, function (response) {
     var lkd = JSON.parse(response);
     var shareCount = lkd.count;
     incrementShareCount("ldk", shareCount)
