@@ -39,7 +39,7 @@ client.get('https://www.linkedin.com/countserv/count/share?format=json&url=' + w
     incrementShareCount("ldk", shareCount)
 });
 
-client.get('http://public.newsharecounts.com/count.json?url=' + window.location.href, function (response) {
+client.get('https://public.newsharecounts.com/count.json?url=' + window.location.href, function (response) {
     var twtr = JSON.parse(response);
     var shareCount = twtr.count;
     incrementShareCount("twtr", shareCount)
