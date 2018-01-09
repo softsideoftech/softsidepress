@@ -184,7 +184,7 @@ func HandleNormalRequest(w http.ResponseWriter, r *http.Request) {
 		ipString, ipInt := decodeIpAddress(rawRemoteAddr)
 
 		// Don't track local requests (healthchecks, etc)
-		if (true || ipString != "127.0.0.1") {
+		if (ipString != "127.0.0.1") {
 
 			// Track the hit
 			trackingHit := TrackingHit{
