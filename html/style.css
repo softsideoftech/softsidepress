@@ -64,16 +64,20 @@ hr {
 #header-wrapper {
     width: 100%;
     background-color: rgba(255, 255, 255, 0.9);
+    height: 150px;
 }
 
 #home-header {
-    padding-top: 5px;
+    padding-top: 20px;
 }
 
 #home-body {
     background-color: #FFFFFF;
 }
 
+#home-body h1 {
+    font-size: 30px;
+}
 div#column-body p img {
     display: block;
     width: 100%;
