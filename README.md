@@ -1,4 +1,4 @@
-_**This is a early work-in-progress and not at all fit for you to use. If you'd like me to notify you when it's ready, just create or comment on an issue or email me at vlad (at) softsideoftech (dot) com **_
+**_This is a early work-in-progress and not at all fit for you to use. If you'd like me to notify you when it's ready, just create or comment on an issue or email me at vlad (at) softsideoftech (dot) com _**
 
 # Soft Side Tech
 
