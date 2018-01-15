@@ -1,5 +1,7 @@
 # How I build motivated teams
 
+![][lead-image-jpg]
+
 > _I can’t simply hire people who are “engaged” and “driven”. Those are behaviors that emerge under just the right circumstances. But I can hire people based on their **motivators**—conditions that matter to them and that my team can actually provide._
 
 <b>I</b> just had a video call with Kevin, a talented engineering manager that used to report to me. After catching up on all the changes and developments in our lives, he mentioned that some people on his team felt like their hiring criteria was missing an importance essence. They wanted to add something akin to “ownership” or “drive” to their candidate evaluation process. Essentially, they wanted to only hire people that would be motivated and engaged on their team.
@@ -95,3 +97,5 @@ Now the fun part — deciding. This is the time for the team to talk about h
 > Get _**buy-in and alignment**_ from all my team members
 
 > Make _**systematic hiring decisions**_ based on our criteria
+
+[lead-image-jpg]: https://d235962hz41e70.cloudfront.net/raft-team.jpeg

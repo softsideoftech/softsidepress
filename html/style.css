@@ -7,7 +7,6 @@ body {
     font-weight: 400;
     color: rgba(0, 0, 0, 0.75);
     font-size: 19px;
-    background-color: rgba(217, 217, 217, 0.3);
 }
 
 #logo {
@@ -49,30 +48,39 @@ hr {
     max-width: 600px;
     margin: 0 auto;
     background-color: #FFFFFF;
-    padding: 0 20px 20px 20px;
+    padding:  130px 20px 20px;
+    position: relative;
+    z-index: -1;
 }
 
+#page-header-wrapper {
+    width: 100%;
+    height: 50px;
+    top: 0;
+    position: fixed;
+    border-bottom: #dddddd 1px solid;
+    background-color: rgba(255, 255, 255, 0.95)
+}
 /* ----- Home Page ----- */
 
 #header, #home-header {
     max-width: 630px;
     margin: 0 auto;
-    background-color: #FFFFFF;
-    padding: 15px 5px 5px 5px;
+    padding: 10px 5px 5px 5px;
+    background-color: rgba(255, 255, 255, 0.95)
 }
 
 #header-wrapper {
     width: 100%;
-    background-color: rgba(255, 255, 255, 0.9);
-    height: 115px;
+    height: 80px;
+    top: 0;
+    position: fixed;
+    border-bottom: #dddddd 1px solid;
+    background-color: rgba(255, 255, 255, 0.95)
 }
 
 #home-header {
     padding-top: 20px;
-}
-
-#home-body {
-    background-color: #FFFFFF;
 }
 
 #home-body h1 {
@@ -266,7 +274,7 @@ iframe {
     #share-box {
         display: block;
         position: fixed;
-        top: 10%;
+        top: 100px;
         right: 4%;
         width: 100px;
         height: 400px;

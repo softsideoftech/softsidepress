@@ -1,5 +1,7 @@
 # I failed to reach alignment with my team and it cost me
 
+![][lead-image-jpg]
+
 <b>I</b> find myself thinking back often to the time when the lesson of _**alignment and buy-in**_ finally sunk in for me. A few years ago when I was leading the data products team at Workday (known as the SYMAN team), I came across a startup that was offering a continuous feedback product that I got excited about. This new product looked like it could supplement periodic manager feedback with lightweight peer-to-peer feedback that was ongoing and also anonymous so that everyone would be comfortable sharing. We had just grown from a 20 person team to a more than 50 person “org” inside of a year and I was hearing more and more about frictions between different  teams within my org. I was hoping that this feedback product would shed some light on the frictions to the people causing those frictions and to the managers who actually ran the org on a day to day basis.
 
 I talked to the startup founder about letting us trial the product with the whole team. As soon as we struck the deal, I went to my leadership team, the top four SYMAN managers, and let them know about how great this product was and how it was going to give  us more insight into our people and help us relieve some of the tensions that had built up across their teams. The room got quiet. I didn’t get the questions or excitement that I was expecting. I just saw what looked like nervous faces eyeing each other. We eventually had some strained conversation about it and no one outright objected. I could tell the managers weren’t totally bought in so I asked them to give it shot for a month or two to see how it goes. Worst case, it’s an experiment that doesn’t work out. But I had a grand vision for the best case. In that vision this product gave our people transparency into how they’re being perceived and experienced by others in a safe and tactful way. It would surface the issues that were at the root of their personal development challenges, which would be great topics to discuss with their managers in a more open way.
@@ -25,3 +27,6 @@ When I’m trying to execute quickly in a complex situation, it can be hard to a
 ---
 
 <b>S</b>o what should I have done differently? Check out my next post in the alignment and buy-in Series: The Tools for Reaching Alignment.
+
+
+[lead-image-jpg]: https://d235962hz41e70.cloudfront.net/hurt-bear.jpeg

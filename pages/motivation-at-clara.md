@@ -65,4 +65,6 @@ I only said reprocessed bits of these thoughts out loud, but my mind was screami
 
 I had a breakdown in accountability. But it didn't start out that way. Here's the story of my accountability at Clara.
 
-[lead-image-jpg]: https://foo.png
+[lead-image-jpg]: https://d235962hz41e70.cloudfront.net/escalator.jpeg
+
+

@@ -6,12 +6,13 @@
     <style>{{.Css}}</style>
 </head>
 <body>
-<div id="header">
-    <a id="logo" href="/">
-        <div id="bear-img" class="bear-img"></div>
-        <div class="logo-styled-text">Soft Side of Tech</div>
-    </a>
-    <hr>
+<div id="page-header-wrapper">
+    <div id="header">
+        <a id="logo" href="/">
+            <div id="bear-img" class="bear-img"></div>
+            <div class="logo-styled-text">Soft Side of Tech</div>
+        </a>
+    </div>
 </div>
 <div id="column-body">
 
@@ -47,7 +48,8 @@
             <div class="icon"></div>
         </div>
     </a>
-    <a target="_blank" href="mailto:?subject=[softsideoftech] {{.Title}}&Body=Vlad's essay on {{.Summary}} resonated with me. I thought you might like it too: {{.Url}}">
+    <a target="_blank"
+       href="mailto:?subject=[softsideoftech] {{.Title}}&Body=Vlad's essay on {{.Summary}} resonated with me. I thought you might like it too: {{.Url}}">
         <div class="share-button email">
             <div class="icon"></div>
         </div>
@@ -56,6 +58,7 @@
         <span id="shares-count">0</span> Shares
     </div>
 </div>
+
 </body>
 <script>
     {{.JavaScript}}

@@ -1,5 +1,7 @@
 # Three Conversations That Made Me a More Effective Leader
 
+![][lead-image-jpg]
+
 > _Conversation is a skill that we can improve at. One of the most powerful developments I've had as a leader was building my competence at the three types of conversations: for relationship, for possibility, and for action._
 
 <b>T</b>here's a particular incident from my time at Workday when I struggled to get [buy-in and alignment from my team](/alignment-and-buy-in). It bothered me for years and I've learned a lot from it. Check out that link for the back story.
@@ -51,3 +53,5 @@ asdf
 ### Declaration
 ### Promise
 ### Request
+
+[lead-image-jpg]: https://d235962hz41e70.cloudfront.net/seargent.jpeg

@@ -1,4 +1,7 @@
-# Tools I Use to Reach Alignment & Buy-in
+# The Tools I Use to Reach Alignment and Buy-in
+
+![][lead-image-jpg]
+
 <b>I’</b>ve gotten aligned with people in as quickly thirty seconds over a side chat during a meeting. And I’ve heard stories of captains of industry taking months or even years building relationships over dinners and golf until they were ready to consider doing business with each other. Each option is it's own tool and there’s a time and place for each of them. I'll tell you the ones that I use regularly and how I prefer to use them. And for completeness, I'll also include a few "power user" techniques that I've seen employed by the masters of the game.
 
 ---
@@ -97,3 +100,6 @@ As a leader and a manger, these are my bread-and-butter. I do them all day every
 If I’m meeting with someone for the first time, my first priority is always to establish a relationship, otherwise it’s basically impossible to get things done without treating each other as cogs in a machine rather than the human beings that we are, each with our own unique needs and desires. If for some reason my work demands that I get something done with someone new, then I’ll usually spend the first 50–60% of our time establishing relationship and the remainder on exploring possibilities and taking whatever action we agree on. 
 
 Most of the time my one on ones are scheduled and recurring anywhere between weekly and monthly.
+
+
+[lead-image-jpg]: https://d235962hz41e70.cloudfront.net/tools.jpeg
