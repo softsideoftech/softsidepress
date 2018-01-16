@@ -140,11 +140,12 @@ h1, h2, h3, h4, h4 {
 }
 
 a {
-    color: rgba(0, 0, 0, 0.75);
+    color: #545589;
+    text-decoration: none;
 }
 
 a:hover {
-    color: rgba(0, 0, 0, 0.6);
+    color: #7475A9;
 }
 
 h1 {
@@ -285,7 +286,7 @@ iframe {
         right: 4%;
         width: 100px;
         height: 400px;
-        font-family: sans-serif;
+        font-family: "Courier New", monospace;
         font-weight: 600;
         color: #bbbbbb;
         text-align: center;
