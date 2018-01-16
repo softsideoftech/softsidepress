@@ -23,22 +23,27 @@ About a year after the Workday incident, I found out that people smarter and mor
 
 ### Conversations for Relationship
 
-For most of my life, I only got into conversations for relationship by accident. I had this idea that people who deliberately had conversations to build relationships were being fake. _Relationships can't be contrived_ I thought. Schmoozing and networking were these distasteful things that I wanted to avoid. I thought that those who did it were being sleazy. And maybe some of them were. A part of me also felt that I wasn't any good at connecting with people, so I invented nasty stories about those who were so I could convince myself that I was better than those "sleazy conversationalists." That way I didn't have to face the sense of inadequacy that I felt deep down about not having many friends or having enough love and appreciation from others. Well according to Flaherty (and I believe this too) we can't be forced into relationships. We can only enter into one willingly and mutually. But we can _influence_ how quickly they develop and how deep they can get. This is where conversational skill comes in. And if it's a skill, then it's something we can practice and improve at. So how do we do that?
+For most of my life, I only got into conversations for relationship by accident. I had this idea that people who deliberately had conversations to build relationships were being fake. _Relationships can't be contrived_ I thought. Schmoozing and networking were these distasteful things that I wanted to avoid. I thought that those who did it were being sleazy. And maybe some of them were. A part of me also felt that I wasn't any good at connecting with people, so I invented nasty stories about those who were so I could convince myself that I was better than those "sleazy conversationalists." That way I didn't have to face the sense of inadequacy that I secretly felt about not having many friends or having enough love and appreciation from others. Well according to Flaherty (and I believe this too) we can't be forced into relationships. We can only enter into one willingly and mutually. But we can _influence_ how quickly they develop and how close they can get. This is where conversational skill comes in. And if it's a skill, then it's something we can practice and improve at. So how do we do that?
 
-First we need to understand _what is a relationship_? For me, it's a mutual sense of connection and closeness. When we _relate_ to each other we are connecting over the things that we both care about, specifically, our common _**interests**_, _**concerns**_, and _**commitments**_. Each of those three offers a possibility for a different kind of relationship.
+First we need to understand _what is a relationship_? My take is that it's a mutual sense of connection and closeness. When we _relate_ to each other we are connecting over the things that we both care about, specifically, our common _**interests**_, _**concerns**_, and _**commitments**_. Each of those three offers the opportunity for different kinds of relationships.
 
 #### Shared Interests
-If we share an interest, like a hobby or a sport, we could be acquaintances and enjoy some activity together like watching a football game or a playing a match of Magic The Gathering. Or we can connect over some personal history like going to the same college or growing up in the same town. At this depth our relationship is going to be pretty casual. I'm not likely to get vulnerable enough to reveal something too personal, like being abused by my parents as a child, and maybe discover that we have that in common too.
+If we share an interest, like a hobby or a sport, we could be acquaintances and enjoy some activity together like watching a football game or a playing a match of Magic The Gathering. Or we can connect over some personal history like going to the same college or growing up in the same town. At this depth our relationship is going to be pretty casual. I'm not likely to get vulnerable enough to reveal something personally sensitive, like being abused physically and emotionally by my parents as a child, and possibly discover that we have that in common too.
 
 #### Shared Concerns
-Our concerns (desires, worries, etc) tend to be more meaningful for us. Most people I've worked with are pretty concerned about their job and career even if they're not totally committed to the company they're working for. A lot of collaboration becomes possible when you and I both know that we care about doing a good job and maybe advancing our careers too.
+Our concerns (desires, worries, etc) tend to be more meaningful for us. Most people I've worked with are pretty concerned about their jobs and careers, even if they're not committed to the companies they're working for. As limited as that is, you and I would probably be willing to work together on a task if we knew that we both cared about doing our jobs (and maybe advancing our careers too). We'd even tolerate the frictions of our different preferences and personality quirks to a limited degree.
 
 #### Shared Commitments
+It's only when we have shared commitments that long-lasting collaborations become possible. Parents have the ultimate commitment in their children. It's why it can be so easy for them to relate while picking up their kids from school. Purpose-driven startup co-founders sometimes share commitments to whatever it is their company stands for. Though I would guess that only a minority of founders are genuinely committed to a larger purpose behind their company. That's a whole other conversation. 
 
+When you and I have a shared commitment, we are willing to work through disagreements and confusion and difficult emotions. We can also share in the joy of positive developments with such an intensity that someone who is simply interested but not committed wouldn't feel.
+
+Part of what makes my coaching work so powerful is that I am committed to my clients' commitments (within the boundaries of coaching, of course). Our mutual commitment opens a world of possibilities for the relationship. It's what allows me and my clients to be open and vulnerable enough with each other for deep and meaningful shifts to occur.
 
 
 ### Conversations for Possibility
-sadf
+
+I've had so many breakdowns in both life and at work because I didn't make the distinction between talking about possibilities and coordinating action. 
 
 ### Conversations for Action
 asdf
@@ -51,6 +56,7 @@ asdf
 ### Assertion
 ### Assessment
 ### Declaration
+Declaration of Independence (vision, then obstacles)
 ### Promise
 ### Request
 

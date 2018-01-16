@@ -45,12 +45,12 @@ hr {
 }
 
 #column-body {
-    max-width: 600px;
+    max-width: 640px;
     margin: 0 auto;
     background-color: #FFFFFF;
-    padding:  130px 20px 20px;
+    padding: 130px 3% 0 3%;
     position: relative;
-    z-index: -1;
+    z-index: 1;
 }
 
 #page-header-wrapper {
@@ -59,8 +59,10 @@ hr {
     top: 0;
     position: fixed;
     border-bottom: #dddddd 1px solid;
-    background-color: rgba(255, 255, 255, 0.95)
+    background-color: rgba(255, 255, 255, 0.95);
+    z-index: 2;
 }
+
 /* ----- Home Page ----- */
 
 #header, #home-header {
@@ -86,10 +88,14 @@ hr {
 #home-body h1 {
     font-size: 30px;
 }
+
 div#column-body p img {
     display: block;
-    width: 100%;
+    width: 106%;
+    margin-left: -3%;
 }
+
+
 
 #home-header #logo-txt {
     font-size: 30px;
@@ -311,6 +317,7 @@ iframe {
     .fb:hover {
         background-color: #4468B0;
     }
+
     .lkd .icon {
         position: relative;
         top: 7px;
@@ -324,6 +331,7 @@ iframe {
     .lkd:hover {
         background-color: #1074AF;
     }
+
     .twtr .icon {
         position: relative;
         top: 10px;
