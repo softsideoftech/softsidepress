@@ -1,4 +1,6 @@
 # Purposeful Leadership Coaching
+>> _December 23rd, 2017 by [Vlad Giverts](/purposeful-leadership-coaching)_
+
 ![Vlad](https://s3-us-west-2.amazonaws.com/static.softsideoftech.com/vlad.jpg "That's me on the balcony in my home in Utrecht, Netherlands.")
 
 > > _That's me on my balcony<br/>in Utrecht, Netherlands._

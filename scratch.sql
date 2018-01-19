@@ -33,12 +33,15 @@ SELECT *
 FROM email_actions_enum;
 
 SELECT *
-FROM member_cookies;
-SELECT *
-FROM tracking_hits where time_on_page > 0;
+FROM member_cookies order by created desc;
+SELECT * FROM tracking_hits;
+SELECT * FROM tracking_hits where time_on_page > 0;
 
 INSERT INTO email_templates (subject, body) VALUES ('foo', 'bar'), ('asdf', 'qwer');
 
 SELECT *
 FROM sent_emails;
 
+select * from email_actions;
+
+delete from sent_emails where third_party_id is null;

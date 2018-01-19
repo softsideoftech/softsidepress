@@ -11,6 +11,7 @@ import (
 	"net/mail"
 	"bytes"
 	"regexp"
+	"time"
 )
 
 type SqsMessage struct {
@@ -21,7 +22,31 @@ type SesMessage struct {
 	NotificationType string                 `json notificationType`
 	Content          string                 `json content`
 	Mail             Mail                   `json mail`
+	Bounce           Bounce                 `json bounce`
+	Complaint        Complaint              `json complaint`
 	Receipt          map[string]interface{} `json receipt`
+}
+
+type Bounce struct {
+	BounceType        string          `json bounceType`
+	BounceSubType     string          `json bounceSubType`
+	BouncedRecipients []MailRecipient `json bouncedRecipients`
+	Timestamp         string          `json timestamp`
+	FeedbackId        string          `json feedbackId`
+	RemoteMtaIp       string          `json remoteMtaIp`
+}
+
+type MailRecipient struct {
+	EmailAddress string `json emailAddress`
+}
+
+type Complaint struct {
+	UserAgent             string          `json userAgent`
+	ComplainedRecipients  []MailRecipient `json complainedRecipients`
+	ComplaintFeedbackType string          `json complaintFeedbackType`
+	ArrivalDate           string          `json emailAddress`
+	Timestamp             string          `json emailAddress`
+	FeedbackId            string          `json emailAddress`
 }
 
 type Mail struct {
@@ -49,26 +74,68 @@ func StartSqs() error {
 	// set the queue url
 	worker.QueueURL = "https://sqs.us-west-2.amazonaws.com/249869178481/softside-ses-q"
 	// start the worker
-	worker.Start(svc, worker.HandlerFunc(func(msg *sqs.Message) error {
+	worker.Start(svc, worker.HandlerFunc(handleSqsMessage))
 
-		// Parse the SQS message
-		msgString := aws.StringValue(msg.Body)
-		var sqsMessage SqsMessage
-		err := json.Unmarshal([]byte(msgString), &sqsMessage);
-		if (err != nil) {
-			return err;
+	return nil;
+}
+
+func handleSqsMessage(msg *sqs.Message) error {
+
+	// Parse the SQS message
+	msgString := aws.StringValue(msg.Body)
+	var sqsMessage SqsMessage
+	err := json.Unmarshal([]byte(msgString), &sqsMessage);
+	if (err != nil) {
+		return err;
+	}
+
+	// Parse the SNS/SES message from the SQS message
+	var sesMessage SesMessage
+	err = json.Unmarshal([]byte(sqsMessage.Message), &sesMessage);
+	if (err != nil) {
+		return err;
+	}
+
+	// Retrieve the sent message id
+	var sentEmail = &SentEmail{}
+	err = SoftsideDB.Model(sentEmail).Where("third_party_id = ?", sesMessage.Mail.MessageId).Select()
+	if (err != nil) {
+		return err;
+	}
+
+	//VALUES ('sent'), ('delivered'), ('opened'), ('clicked'), ('hard_bounce'), ('soft_bounce'), ('complaint');
+
+	// Handle Each type of notification
+	switch sesMessage.NotificationType {
+	case "Delivery":
+		{
+			SoftsideDB.Insert(&EmailAction{SentEmailId: sentEmail.Id, Action: "delivered",})
 		}
-
-		//EMAIL\[\[(.+?)]].*FIRSTNAME\[\[(.+?)]]
-
-		// Parse the SNS/SES message from the SQS message
-		var sesMessage SesMessage
-		err = json.Unmarshal([]byte(sqsMessage.Message), &sesMessage);
-		if (err != nil) {
-			return err;
+	case "Bounce":
+		{
+			now := time.Now()
+			if sesMessage.Bounce.BounceType == "Transient" {
+				// If it's explicitly a Transient (ie 'soft') bounce, then record it but don't unsubscribe the person.
+				SoftsideDB.Insert(&EmailAction{SentEmailId: sentEmail.Id, Action: "soft_bounce"})
+			} else {
+				// Assume it's a hard bounce unless explicitly stated otherwise and unsubscribe this person
+				SoftsideDB.Insert(&EmailAction{SentEmailId: sentEmail.Id, Action: "hard_bounce"})
+				SoftsideDB.Update(&ListMember{Id:sentEmail.ListMemberId, Unsubscribed: &now})
+			}
 		}
+	case "Complaint":
+		{
+			now := time.Now()
+			SoftsideDB.Insert(&EmailAction{SentEmailId: sentEmail.Id, Action: "complaint",})
 
-		// Parse the email content
+			// Unsubscribe people if they complain (i.e. mark as spam)
+			SoftsideDB.Update(&ListMember{Id:sentEmail.ListMemberId, Unsubscribed: &now})
+		}
+	}
+
+	// todo: this is old dead code for reading incoming emails
+	// Parse the email content
+	if false {
 		reader := strings.NewReader(sesMessage.Content)
 		mailMsg, err := mail.ReadMessage(reader)
 		if (err != nil) {
@@ -80,23 +147,10 @@ func StartSqs() error {
 		buf.ReadFrom(mailMsg.Body)
 		emailBody := buf.String()
 
-		// Extract the email and firstname out of the body
-		fmt.Println(emailBody)
-		submatch := extractNameAndEmailRegex.FindStringSubmatch(emailBody)
-		email := submatch[1]
-		firstName := submatch[2]
+		// debug statement
+		fmt.Print(emailBody)
+	}
 
-		// Save to DB
-		newListMember := &ListMember{
-			Email:     email,
-			FirstName: firstName,
-		}
-		err = SoftsideDB.Insert(newListMember)
-		if err != nil {
-			return err;
-		}
-		return nil
-	}))
+	return nil
 
-	return nil;
 }

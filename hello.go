@@ -7,19 +7,8 @@ import (
 	"io/ioutil"
 )
 
-
 func main() {
 	runService()
-
-	//testSendMail()
-	//softmail.StartSqs()
-}
-
-func testSendMail() {
-	err := softmail.Sendmail("test body", "/Users/vlad/go/src/softside/emails/testemail.md", "vlad@softsideoftech.com")
-	if err != nil {
-		fmt.Println(err)
-	}
 }
 
 func runService() {
@@ -35,9 +24,7 @@ func runService() {
 }
 
 func HandleFavicon(w http.ResponseWriter, r *http.Request) {
-	// todo: make this configurable
-	favIconUrl := "https://s3-us-west-2.amazonaws.com/static.softsideoftech.com/favicon.ico"
-	http.Redirect(w, r, favIconUrl, http.StatusTemporaryRedirect)
+	http.Redirect(w, r, softmail.FavIconUrl, http.StatusTemporaryRedirect)
 }
 
 // Proxy for LinedIn counts because calling LinkedIn from the browser causes a CORS error.

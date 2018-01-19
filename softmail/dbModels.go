@@ -31,9 +31,10 @@ type SentEmail struct {
 	EmailTemplateId EmailTemplateId
 	ListMemberId    ListMemberId
 	Created         time.Time
+	ThirdPartyId    string
 }
 
-type MemberCookieId = int32
+type MemberCookieId = int64
 type MemberCookie struct {
 	Id           MemberCookieId
 	ListMemberId ListMemberId
@@ -43,23 +44,33 @@ type MemberCookie struct {
 
 type TrackedUrlId = int64
 type TrackedUrl struct {
-	Id        TrackedUrlId
-	Url       string
-	TargetUrl string
-	Created   time.Time
+	Id          TrackedUrlId
+	SentEmailId SentEmailId
+	Url         string
+	TargetUrl   string
+	Created     time.Time
 }
 
 type TrackingHitId = uint32
 type IpAddress = int64
 
 type TrackingHit struct {
-	Id             TrackingHitId
-	TrackedUrlId   TrackedUrlId
-	ListMemberId   ListMemberId
-	MemberCookieId MemberCookieId
-	IpAddress      IpAddress
-	IpAddressString      string
-	ReferrerUrl    string
-	Created        time.Time
+	Id              TrackingHitId
+	TrackedUrlId    TrackedUrlId
+	ListMemberId    ListMemberId
+	MemberCookieId  MemberCookieId
+	IpAddress       IpAddress
+	IpAddressString string
+	ReferrerUrl     string
+	Created         time.Time
 }
 
+type EmailActionId = uint32
+type EmailActionEnum = string
+type EmailAction struct {
+	Id          EmailActionId
+	SentEmailId SentEmailId
+	Action      EmailActionEnum
+	Created     time.Time
+	Metadata    string
+}

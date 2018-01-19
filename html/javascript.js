@@ -48,7 +48,7 @@ client.get('https://public.newsharecounts.com/count.json?url=' + window.location
 
 
 setInterval(function() {
-    if (document.hasFocus()) {
+    if (document.hasFocus() && '{{.TrackingId}}' != '0') {
         client.get("/ping?id={{.TrackingId}}"); // .TrackingId will be filled in via the go templating
     }
 }, 5000);

@@ -9,7 +9,19 @@ import (
 	"hash/fnv"
 	"strings"
 	"regexp"
+	"encoding/xml"
+	htmlTemplate "html/template"
+	"bytes"
+	"github.com/jaytaylor/html2text"
 )
+
+const emailSuffixMdFile = "src/softside/emails/emailSuffix.md" // TODO: make this a relative path
+
+type EmailTemplateParams struct {
+	FirstName string
+	SentEmailId string
+	SiteDomain string
+}
 
 func emailTemplateToId(subject string, body []byte) int64 {
 	hash := md5.New()
@@ -21,17 +33,16 @@ func emailTemplateToId(subject string, body []byte) int64 {
 	return int64(hash64.Sum64()) // make it signed to conform with the Postgres "bigint" type
 }
 
-var firstNameRegex = regexp.MustCompile("(\\{\\{first_name\\}\\})")
-var sentEmailIdRegex = regexp.MustCompile("(\\{\\{sent_email_id\\}\\})")
-
 var linkRegex = regexp.MustCompile("\\((https://)(.+?)\\)")
-var extractSentEmailIdFromUrlEnd = regexp.MustCompile("/.*/(.*)")
+var extractSentEmailIdFromUrlEndSlash = regexp.MustCompile("/.*/(.*)")
 
-// todo: make these configurable
-const trackingSubDomain = "www"
+type SendEmailResponse struct {
+	MessageId string `xml:"SendEmailResult>MessageId"`
+	RequestId string `xml:"ResponseMetadata>RequestId"`
+}
 
 func decodeSendMailIdFromUriEnd(path string) SentEmailId {
-	submatch := extractSentEmailIdFromUrlEnd.FindStringSubmatch(path)
+	submatch := extractSentEmailIdFromUrlEndSlash.FindStringSubmatch(path)
 	if submatch == nil {
 		return 0
 	}
@@ -70,6 +81,25 @@ func Sendmail(subject string, templateFile string, fromEmail string) error {
 		}
 	}
 
+	// Add the SendEmailId template parameter to all internal links
+	markdownEmailBody = linkRegex.ReplaceAllString(markdownEmailBody, "($1$2-{{.SentEmailId}})")
+
+	// Load the suffix template and append it to the markdown template
+	suffixEmailBodyBytes, err := ioutil.ReadFile(emailSuffixMdFile)
+	suffixEmailBody := string(suffixEmailBodyBytes)
+	if err != nil {
+		return err
+	}
+	markdownEmailBody += suffixEmailBody
+
+	// Turn the markdown into HTML
+	htmlEmailTemplateString := string(blackfriday.Run([]byte(markdownEmailBody)))
+
+	// Create the HTML template (must be HTML and not TEXT to escape user supplied values such as FirstName)
+	parsedEmailTempalte, err := htmlTemplate.New(templateFile).Parse(htmlEmailTemplateString)
+
+	// todo: make sure unsubscribes use sentemailid and add an appropriate record to email actions
+
 	// Load the email list
 	var listMembers []ListMember
 	err = SoftsideDB.Model(&listMembers).Select()
@@ -98,35 +128,49 @@ func Sendmail(subject string, templateFile string, fromEmail string) error {
 		// Base64 encode the SentEmail id
 		encodedSentEmailId := EncodeId(sentEmail.Id)
 
-		// Templatize the first name and sent email id
-		// todo: replace with go templates
-		markdownEmailBody = templatizeParams(markdownEmailBody, &listMember, encodedSentEmailId)
+		// Render the HTML template
+		buffer := &bytes.Buffer{}
+		err = parsedEmailTempalte.Execute(buffer, &EmailTemplateParams{
+			SentEmailId: encodedSentEmailId,
+			FirstName:   listMember.FirstName,
+			SiteDomain:  siteDomain,
+		})
+		if err != nil {
+			return err
+		}
+		htmlEmailString := buffer.String()
 
-		// Templatize the links
-		markdownEmailBody := linkRegex.ReplaceAllString(markdownEmailBody, "($1$2-"+encodedSentEmailId+")")
-
-		// Generate the html body
-		htmlEmailString := string(blackfriday.Run([]byte(markdownEmailBody)))
-
-		// Append the tracking pixel
-		htmlEmailString += "<img src='http://" + trackingSubDomain + "." + siteDomain + "/" + encodedSentEmailId + ".jpg'/>"
-
-		// Send the email
-		res, err := ses.EnvConfig.SendEmailHTML(fromEmail, listMember.Email, subject, markdownEmailBody, htmlEmailString)
-		if err == nil {
-			fmt.Printf("Sent email: %s...\n", res)
-		} else {
-			fmt.Printf("Error sending email: %s\n", err)
+		// Convert the HTML to plaintext
+		textEmailString, err := html2text.FromString(htmlEmailString)
+		if err != nil {
+			return err
 		}
 
-		// TODO: Save id that comes back from SES so we could track bounces and complaints
-		// TODO: Return an actual image so email clients don't keep re-requesting
+		// Send the email
+		res, err := ses.EnvConfig.SendEmailHTML(fromEmail, listMember.Email, subject, textEmailString, htmlEmailString)
+		if err == nil {
+			fmt.Printf("Sent email: %s\n\n\n%s\n\n\n%s\n", htmlEmailString, textEmailString, res)
+		} else {
+			return err
+		}
+
+		// Record the email sent event if we didn't get an error from AWS
+		SoftsideDB.Insert(&EmailAction{SentEmailId: sentEmail.Id, Action: "sent"})
+
+		// Unmarshall the AWS XML reponse into a struct
+		var sendEmailResponse SendEmailResponse
+		err = xml.Unmarshal([]byte(res), &sendEmailResponse)
+		if err != nil {
+			return err
+		}
+
+		// Update the sent email with the AWS MessageId
+		sentEmail.ThirdPartyId = sendEmailResponse.MessageId
+		err = SoftsideDB.Update(sentEmail)
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil
-}
-
-func templatizeParams(markdownEmailBody string, listMember *ListMember, encodedSentEmailId string) string {
-	markdownEmailBody = firstNameRegex.ReplaceAllString(markdownEmailBody, listMember.FirstName)
-	return sentEmailIdRegex.ReplaceAllString(markdownEmailBody, encodedSentEmailId)
 }
