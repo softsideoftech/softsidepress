@@ -162,7 +162,7 @@ func HandleNormalRequest(w http.ResponseWriter, r *http.Request) {
 	sentEmailListMemberId  := ListMemberId(0)
 
 	// Don't don't bother with cookies for local requests (healthchecks, etc)
-	if true || ipString != "127.0.0.1" { // TODO: DEBUG: remove the TRUE!!!!
+	if ipString != "127.0.0.1" {
 
 		// Get the cookie from the request so we could look it up in the
 		// database and create a new record if it doesn't already exist

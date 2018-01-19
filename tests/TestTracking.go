@@ -11,11 +11,11 @@ func main() {
 }
 
 func testIdEncoding() {
-	nums := []uint{0, 1 2, 3, 4, 32432423142314321}
-	sum := 0
-	for _, num := range nums {
-
-	}
+	//nums := []uint{0, 1, 2, 3, 4, 32432423142314321}
+	//sum := 0
+	//for _, num := range nums {
+	//
+	//}
 }
 
 func testDecodeSentMailLinkFromUri() {
