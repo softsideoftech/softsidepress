@@ -59,14 +59,14 @@ type Mail struct {
 	CommonHeaders    map[string]interface{} `json commonHeaders`
 }
 
-var extractNameAndEmailRegex = regexp.MustCompile("EMAIL\\[\\[(.+?)]].*FIRSTNAME\\[\\[(.+?)]]");
+var extractNameAndEmailRegex = regexp.MustCompile("EMAIL\\[\\[(.+?)]].*FIRSTNAME\\[\\[(.+?)]]")
 
 func StartSqs() error {
 
 	sess, err := session.NewSession(&aws.Config{Region: aws.String("us-west-2")})
 
-	if (err != nil) {
-		return err;
+	if err != nil {
+		return err
 	}
 
 	svc := sqs.New(sess)
@@ -76,7 +76,15 @@ func StartSqs() error {
 	// start the worker
 	worker.Start(svc, worker.HandlerFunc(handleSqsMessage))
 
-	return nil;
+	return nil
+}
+
+type SQSHandlerError struct {
+	message string
+}
+
+func (e SQSHandlerError) Error() string {
+	return e.message
 }
 
 func handleSqsMessage(msg *sqs.Message) error {
@@ -84,23 +92,28 @@ func handleSqsMessage(msg *sqs.Message) error {
 	// Parse the SQS message
 	msgString := aws.StringValue(msg.Body)
 	var sqsMessage SqsMessage
-	err := json.Unmarshal([]byte(msgString), &sqsMessage);
-	if (err != nil) {
-		return err;
+	err := json.Unmarshal([]byte(msgString), &sqsMessage)
+	if err != nil {
+		return err
 	}
 
 	// Parse the SNS/SES message from the SQS message
 	var sesMessage SesMessage
-	err = json.Unmarshal([]byte(sqsMessage.Message), &sesMessage);
-	if (err != nil) {
-		return err;
+	err = json.Unmarshal([]byte(sqsMessage.Message), &sesMessage)
+	if err != nil {
+		return err
 	}
 
 	// Retrieve the sent message id
 	var sentEmail = &SentEmail{}
 	err = SoftsideDB.Model(sentEmail).Where("third_party_id = ?", sesMessage.Mail.MessageId).Select()
-	if (err != nil) {
-		return err;
+	if err != nil {
+		if strings.Contains(err.Error(), "no rows in result set") {
+			fmt.Printf("Couldn't find SendEmail with third_party_id: %s. ignoring.", sesMessage.Mail.MessageId)
+			return nil
+		} else {
+			return err
+		}
 	}
 
 	//VALUES ('sent'), ('delivered'), ('opened'), ('clicked'), ('hard_bounce'), ('soft_bounce'), ('complaint');
@@ -109,28 +122,40 @@ func handleSqsMessage(msg *sqs.Message) error {
 	switch sesMessage.NotificationType {
 	case "Delivery":
 		{
-			SoftsideDB.Insert(&EmailAction{SentEmailId: sentEmail.Id, Action: "delivered",})
+			err = SoftsideDB.Insert(&EmailAction{SentEmailId: sentEmail.Id, Action: "delivered",})
 		}
 	case "Bounce":
 		{
 			now := time.Now()
 			if sesMessage.Bounce.BounceType == "Transient" {
 				// If it's explicitly a Transient (ie 'soft') bounce, then record it but don't unsubscribe the person.
-				SoftsideDB.Insert(&EmailAction{SentEmailId: sentEmail.Id, Action: "soft_bounce"})
+				err = SoftsideDB.Insert(&EmailAction{SentEmailId: sentEmail.Id, Action: "soft_bounce"})
 			} else {
 				// Assume it's a hard bounce unless explicitly stated otherwise and unsubscribe this person
-				SoftsideDB.Insert(&EmailAction{SentEmailId: sentEmail.Id, Action: "hard_bounce"})
-				SoftsideDB.Update(&ListMember{Id:sentEmail.ListMemberId, Unsubscribed: &now})
+				err = SoftsideDB.Insert(&EmailAction{SentEmailId: sentEmail.Id, Action: "hard_bounce"})
+				if err == nil {
+					result, err := SoftsideDB.Model(&ListMember{}).Set("unsubscribed = ?", &now).Where("id = ?", sentEmail.ListMemberId).Update()
+					if result == nil || result.RowsAffected() != 1 {
+						return SQSHandlerError{(fmt.Sprintf("Problem updating list member to unsubscribed with id: %d, err: %v", sentEmail.ListMemberId, err))}
+					}
+				}
 			}
 		}
 	case "Complaint":
 		{
 			now := time.Now()
-			SoftsideDB.Insert(&EmailAction{SentEmailId: sentEmail.Id, Action: "complaint",})
+			err = SoftsideDB.Insert(&EmailAction{SentEmailId: sentEmail.Id, Action: "complaint",})
 
 			// Unsubscribe people if they complain (i.e. mark as spam)
-			SoftsideDB.Update(&ListMember{Id:sentEmail.ListMemberId, Unsubscribed: &now})
+			if err == nil {
+				result, err := SoftsideDB.Model(&ListMember{}).Set("unsubscribed = ?", &now).Where("id = ?", sentEmail.ListMemberId).Update()
+				if result == nil || result.RowsAffected() != 1 {
+					return SQSHandlerError{(fmt.Sprintf("Problem updating list member to unsubscribed with id: %d, err: %v", sentEmail.ListMemberId, err))}
+				}
+			}
 		}
+	default:
+		fmt.Printf("Unexpected SES message:\n%s\n\n\n", sqsMessage.Message)
 	}
 
 	// todo: this is old dead code for reading incoming emails
@@ -138,8 +163,8 @@ func handleSqsMessage(msg *sqs.Message) error {
 	if false {
 		reader := strings.NewReader(sesMessage.Content)
 		mailMsg, err := mail.ReadMessage(reader)
-		if (err != nil) {
-			return err;
+		if err != nil {
+			return err
 		}
 
 		// Obtain the email body
@@ -151,6 +176,5 @@ func handleSqsMessage(msg *sqs.Message) error {
 		fmt.Print(emailBody)
 	}
 
-	return nil
-
+	return err
 }
