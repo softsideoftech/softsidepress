@@ -5,37 +5,85 @@
 
 > _I can’t simply hire people who are “engaged” and “driven”. Those are behaviors that emerge under just the right circumstances. But I can hire people based on their **motivators**—conditions that matter to them and that my team can actually provide._
 
-<b>I</b> just had a video call with Kevin, a talented engineering manager that used to report to me. After catching up on all the changes and developments in our lives, he mentioned that some people on his team felt like their hiring criteria was missing an importance essence. They wanted to add something akin to “ownership” or “drive” to their candidate evaluation process. Essentially, they wanted to only hire people that would be motivated and engaged on their team.
+<b>I</b> just had a video call with Kevin, one of the engineering managers that was on my team at Clara. At first we caught up on what changed and developed in our lives and I figured that's how most of the conversation was going to go. Then he threw out that something important was missing from the hiring process at Clara. As CTO, I had helped create that hiring process. I felt a light jab in my heart as he said something essential was missing.  
 
-Kevin asked for my thoughts because I used to be the CTO at this company and helped create their current interview process. My gut reaction was, of course! who wouldn’t want engineers who were engaged and always drove hard to get their projects live? I recalled how we spent nearly two months coming up with an interview process based on competencies. These were a combination of skills and attitudes that we believed would lead someone to be successful for this particular engineering team. We cared a lot about being able to objectively identify the people that were likely to be successful on our team without injecting our personal biases. I remembered how we debated at adding ownership to our set of competencies, but by the end we decided against it because ownership was not actually a competency, and neither was drive nor engagement. These things, I started arguing to Kevin, were emergent behaviors that people have when they care about what they’re doing, when they’re motivated. 
+He said they wanted to add something akin to “ownership” or “drive” to their engineering hiring criteria. Simply, they only wanted to only hire people that would be motivated and engaged on their team.
 
-It’s not like people are either  motivated or lazy by their very nature. I knew a brilliant junior engineer that despite his talent, couldn’t work up the energy to learn our codebase or sharpen his skills. But man, you should have seen this guy’s standup comedy routines. He was hilarious. It was just his hobby, but I could tell he must have practiced his delivery and tested his jokes countless times.
+> _Of course! I thought. Who wouldn’t want engineers who were engaged and always drove hard to get their projects live?_
+ 
+ I took a few moments to let the rush of wounded pride pass through me. 
+  
+ I remembered how we debated at adding ownership to our hiring criteria, but by the end we decided against it because ownership was not a competency you could objectively evaluate for, and neither was drive nor engagement. 
+ 
+ > _Engagement, I argued, was an emergent behavior that happens when we care about what we’re doing, when we’re motivated._
 
-I’ve personally experienced the whole spectrum of motivation over the years. I had one job early in my career where I surfed so much internet at the office, that if I did more than an hour of actual work I considered that to be a productive day. If someone had interviewed me for ownership or drive during this time in my life and managed to pull an honest answer out of me, they would have concluded that I was a lazy bum that would never accomplish anything meaningful in my life. In my very next job, I started working 6-days a week pulling 11-hour days and coding for at least 9½ of them. I had a 1 hour break for lunch, and spent no more than 30 minutes getting water or taking bathroom breaks. Minutes spent surfing the internet (other than resolving coding issues)? Exactly zero.
+I knew in my gut that the direct path Kevin proposed taking was a mistake, but I couldn't say why in the moment. So I promised to think about it and get back to him. 
 
-How did this turnabout happen? In the first job I was basically a QA. The work was way below my ability and I was bored out of my mind. I felt horrible about not really working, but I couldn’t bring myself to actually do more than an infinitesimal amount work. The second job was my own startup. I had the ultimate sense of ownership. It was my baby and I cared for it. And I worked on it accordingly.
+Well this is it, and you're along for the ride :) 
+
+In the rest of this essay, I'll explain where I believe our motivation comes from and offer a step by step guide for how I would harness it on my own teams. 
+
+_(BTW, if you want to see how we hired for competence at Clara, take a look at [this talk](https://www.youtube.com/watch?v=F8UuYPgkMks) that Kevin gave at Stripe about it)_
 
 ---
 
-## Motivators
-<b>M</b>otivation is something people experience based on the circumstances they’re in. And I’ve seen that the circumstances matter to me are often not at all what my friends care about or even peers in similar roles. themselves. So how can I figure out if someone that might join my team is going to be driven as hell or will do just enough to merely get by? 
+## Why I can't hire for ownership directly
 
-I’ve noticed some common themes. Some people like solving hard technical problems regardless of the domain. This was me in the first several years of my career. Others feel fulfilled by getting behind a juicy purpose like curing cancer. And on occasion, I've seen people get excited about their work through their personal relationships on the team. The more reasons people had to care about their work the more engaged I’ve seen them get. 
+<b>I</b>t’s not like we're either motivated or lazy by our nature. I knew a brilliant junior engineer that despite his talent, couldn’t work up the energy to learn our codebase or sharpen his skills. But man, you should have seen this guy’s standup comedy routines. He was hilarious. It was only his hobby, but I could tell he must have practiced his delivery and tested his jokes constantly.
+
+I’ve personally experienced the whole spectrum of motivation. I had one job early in my career where I pretty much all I did was surf the internet.
+
+> _If I did more than an hour of actual work, I considered it to be a productive day._
+
+If someone interviewed me for drive while I was still at this job and managed to pull an honest answer out of me, they would have figured that I was a lazy bum and wouldn't accomplish anything meaningful in life. 
+
+In my very next job, I worked 6-days a week pulling 11-hour days and coding for the entire time excecpt for lunch and bathroom breaks. Minutes spent surfing the internet? Zero.
+
+What the _? In my first job I was basically a QA. The work was below my ability and I was constantly bored. I felt horrible about not really working, but I couldn’t bring myself to put in more than a tiny bit of effort. The second job was my own startup. It was my baby and I worked on it accordingly.
+
+These are extreme examples. And I've seen and lived many other milder ones over the years. What I've come to believe is that is that everyone has the potential to be motivated depending on their _circumstances_.
+
+---
+
+## So what motivates us?
+<b>M</b>otivation is something we experience based on the circumstances we’re in. And I’ve seen that the circumstances matter to me are often not at all the ones that matter to my friends care about or my CTO peers. So how can I figure out if someone that might join my team is going to be driven as hell or will do just enough to merely get by? 
+
+I’ve noticed some common themes. Some of us like solving hard technical problems regardless of the domain. This was me in the first several years of my career. Others feel fulfilled by getting behind a juicy purpose like curing cancer. And on occasion, I've seen people get excited about their work through their personal relationships on the team. The more reasons people had to care about their work the more engaged I’ve seen them get. 
 
 So if I really want to hire someone for ownership or drive, I first need to figure out what matters to them. What are the driving forces in their life? And how well does my team align with what matters to this person? Motivation author Dan Pink has a [nice video](https://www.youtube.com/watch?v=u6XAPnuFjJc) about his findings. And here are some of the common motivators that I’ve seen come across the teams that I’ve managed or been a part of, including the ones I’ve shamelessly stolen from Mr Pink :-)
 
-### Developing Mastery
-Most people, particularly the engineers I've known, enjoy perfecting a particular skill and then using that skill in the world. This could be anything from learning all the ins and outs of Ruby on Rails to building deep intuition around distributed systems. Or it could be gradually cultivating mastery in people management like I’m trying to do by writing this essay or you might be by reading it.
+### Motivator #1: Developing Mastery
+ I used to work at this social network called Tagged. In my days there, it was the 3rd largest network after MySpace and Facebook and we only had 20 engineers. Many of the engineers there were embarrassed about the product because the site members mainly used it for flirting and dating and it had a “soft core porn” feel to it. But I loved it. Not the product, but the work. I specifically joined Tagged because it had a massive ratio of users to engineers. I was only 2 years out of college and I was tasked with building crazy complex services to deal with the challenges of our scale. 
 
- I used to work at this social network called Tagged. In my days there, it was the 3rd largest network after MySpace and Facebook and we only had 20 engineers. Many of the engineers there were embarrassed about the product because the site members mainly used it for flirting and dating and it had a “soft core porn” feel to it. But I loved it. Not the product, but the work. I specifically joined Tagged because it had a massive ratio of users to engineers. I was only 2 years out of college and I got to build crazy complex services to deal with the challenges of scale. I loved the responsibility and got high on my personal sense of accomplishment.
+> _I had no idea **how** and I loved hitting the code every day trying to figure it out._
 
-### Social Good / Purpose
-The more that someone cares about what their company is trying to achieve, the better I’ve seen them feel about their day to day work. Maybe they have an uncle or grandmother that got a mortgage they couldn’t understand or afford and lost everything during the financial crisis, and now they’re on a mission to simplify consumer finance for deeply personal reasons. I would have loved to hire that person when I was at Clara Lending. If you happen to be doing something so obviously good like the proverbial “curing cancer” then almost everyone would be excited about making it happen. I’ve interviewed at a lot of places over the years and most companies tell a good story in this regard. But their stories tended to be most optimistic interpretations of reality and often spilled into hyperbole. I’ve told these stories myself. And my stories have sold people on joining my companies time and again. But their motivational power tended to wear off after their honeymoon period, which usually lasted just a few months. I feel this is especially true for people with less seniority at larger companies as their impact on the company (and thus the larger purpose that they might care about) is relatively small.
+Most of us enjoy perfecting a skill and then using it to great effect in the world. This is especially true among the engineers I've known. This could be anything from learning all the ins and outs of Ruby on Rails to building deep intuition around distributed systems. Or it could be gradually cultivating mastery in people management like I’m trying to do by sorting out my thoughts through this essay.
+
+
+### Motivator #2: Social Good / Purpose
+The more we care about what our company is trying to achieve, the better we feel about our day to day work. 
+
+Maybe somebody has an uncle or grandmother that got a mortgage they couldn’t understand or afford a decade ago and then lost everything during the financial crisis. Now they’re on a personal mission to simplify consumer finance. I would have loved to hire that person when I was at Clara Lending.
+ 
+ If you happen to be doing something so obviously good like the proverbial “curing cancer” then almost everyone would be excited about making it happen. 
+ 
+ We need to be careful here.
+ 
+ I’ve interviewed at a lot of companies over the years and most hiring managers tell a good story in this regard. But their stories tend to be unrealistically optimistic interpretations of reality. Hyperbole. I’ve told these stories myself. And I've sold people on joining my companies with those stories time and again. But those stories' motivational power tended to wear off after their honeymoon period, which usually lasted just a few months. Often this turned into a subtle disallusionment with management that lasted for the rest of their time at the company.
+ 
+ TODO: REWORK THIS PARAGRAPH 
+ 
+ _I have an idea that might sound heretical to some people--be honest._
+ 
+There is so much talk about vision and purpose these days. Countless blog posts from VCs and successful entrpreneurs claim that a compelling vision is the secret to engagement and company success.  
+
+ 
+Almost every founder I've met has  to be honest. Not every company has a vision that their employees genuinely care about and that's ok. There are many reasons for people to show up to work every day 
 
 ### People and Relationships
 This usually takes a while to develop on a team. For a lot of people, especially in the US, some of their most meaningful relationships are the ones they have at work. They don’t want to let their friends down and will work their butts off for the sake of their team. (insert anecdote about Identified here)
 
-### Career Growth
+### Career Growth & Accomplishments
 This can be a nice motivator for a lot of people. It’s hard not to appreciate more money, status, praise, etc. Most people I’ve gotten to know have a desire to be recognized in a fair and reasonable way for their contributions. I’ve also seen some people that were content to do the same job competently well year after year and got uncomfortable at the prospect of a promotion with more responsibility. And there have been a handful that were so  driven by the prospect of career growth, that they would work their butts off to make an impact to get themselves noticed. 
 
 I worked this last way for much of my adult life. I’m a little sad looking back at the emptiness of much of my experience. I was an impressive achiever, but there were times when I cared more about how I was perceived than the quality of my work. I cut my share of corners over the years and stretched my interpretation of reality into the ethical grey area on a few occasions. I now look out for people who are a little “too” driven like I was.

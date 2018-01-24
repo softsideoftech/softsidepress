@@ -98,8 +98,6 @@ func Sendmail(subject string, templateFile string, fromEmail string) error {
 	// Create the HTML template (must be HTML and not TEXT to escape user supplied values such as FirstName)
 	parsedEmailTempalte, err := htmlTemplate.New(templateFile).Parse(htmlEmailTemplateString)
 
-	// todo: make sure unsubscribes use sentemailid and add an appropriate record to email actions
-
 	// Load the email list
 	var listMembers []ListMember
 	err = SoftsideDB.Model(&listMembers).Select()

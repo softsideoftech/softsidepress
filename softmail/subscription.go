@@ -143,6 +143,18 @@ func Join(w http.ResponseWriter, r *http.Request) {
 	if (err != nil) {
 		sendUserFacingError(fmt.Sprintf("Problem adding member to list. FirstName: %s, Email: %s", firstName, email), err, w)
 	} else {
+		// Create a MemberCookie in the db to link the tracking back to the ListMember and set the browser cookie in case it wasn't already set
+		httpCookie, err := r.Cookie(cookieName)
+
+		if err == nil {
+			memberCookie := ctx.ObtainOrCreateMemberCookie(listMember.Id, httpCookie)
+			SetHttpCookie(w, memberCookie)
+		} else {
+			fmt.Printf("Problem obtaining or creating MemberCookie for listMemberId: %d, err: %v", listMember.Id, err)
+		}
+
 		renderMgmtPage(w, r, "join", "Welcome, {{.FirstName}}", SentEmailId(0), listMember)
+
+		// todo: send a confirmation/double-opt-in email
 	}
 }

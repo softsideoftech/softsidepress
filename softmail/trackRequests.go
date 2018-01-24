@@ -164,23 +164,18 @@ func HandleNormalRequest(w http.ResponseWriter, r *http.Request) {
 	// Don't don't bother with cookies for local requests (healthchecks, etc)
 	if ipString != "127.0.0.1" {
 
+
+		// Try to obtain the ListMemberId using the encoded SendEmailId in the url path if it exists.
+		sentEmailListMemberId, err := ctx.getListMemberIdFromSentEmail(sentEmailId)
+		// ignore any error and keep going
+
 		// Get the cookie from the request so we could look it up in the
 		// database and create a new record if it doesn't already exist
 		httpCookie, err := r.Cookie(cookieName)
-
-		// Try to obtain the ListMemberId using the encoded SendEmailId in the url path if it exists.
-		sentEmailListMemberId, err = ctx.getListMemberIdFromSentEmail(sentEmailId)
-		// ignore any error and keep going
-
-		memberCookie := ctx.obtainOrCreateMemberCookie(sentEmailListMemberId, httpCookie)
+		memberCookie := ctx.ObtainOrCreateMemberCookie(sentEmailListMemberId, httpCookie)
 
 		// Set the cookie on the HTTP request. It might already exist, so we'll simply be refreshing the MaxAge.
-		http.SetCookie(w, &http.Cookie{
-			Domain: siteDomain,
-			MaxAge: 60 * 60 * 24 * 365, // 1 year
-			Name:   cookieName,
-			Value:  EncodeId(uint32(memberCookie.Id)),
-		})
+		SetHttpCookie(w, memberCookie)
 
 		// Obtain or save the url if it's not an email tracking pixel
 		if !strings.HasSuffix(urlPath, ".png") {
@@ -210,7 +205,6 @@ func HandleNormalRequest(w http.ResponseWriter, r *http.Request) {
 				trackingHitId = trackingHit.Id
 			}
 		}
-
 
 		// Log any error, but keep trying to serve the page
 		if err != nil {
@@ -273,6 +267,14 @@ func HandleNormalRequest(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		sendUserFacingError("", err, w)
 	}
+}
+func SetHttpCookie(w http.ResponseWriter, memberCookie *MemberCookie) {
+	http.SetCookie(w, &http.Cookie{
+		Domain: siteDomain,
+		MaxAge: 60 * 60 * 24 * 365, // 1 year
+		Name:   cookieName,
+		Value:  EncodeId(uint32(memberCookie.Id)),
+	})
 }
 func getIpInfo(r *http.Request) (string, string, IpAddress) {
 	// Try to find the user's IP address in the request
@@ -382,9 +384,8 @@ Prefer the passed in listMemberId over the one in the dbCookie
 
 If a listMemberId is present and either the httpCookie or dbCookie exist but don't have it set, then update them with the listMemberId.
 
-TODO: Also update the listMemberId on the cookie when people sign up
 */
-func (ctx *RequestContext) obtainOrCreateMemberCookie(listMemberId ListMemberId, httpCookie *http.Cookie) *MemberCookie {
+func (ctx *RequestContext) ObtainOrCreateMemberCookie(listMemberId ListMemberId, httpCookie *http.Cookie) *MemberCookie {
 	if httpCookie == nil {
 		// If there's no httpCookie, then randomly generate an id and return a new one. We're taking a small chance of a collision, but that's ok.
 		randomCookieId := MemberCookieId(rand.Uint64())
