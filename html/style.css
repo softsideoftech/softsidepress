@@ -276,6 +276,10 @@ iframe {
     display: none;
 }
 
+
+#shares-count {
+    display: none;
+}
 /* ----- Share Box ----- */
 
 @media screen and (min-width: 1024px) {
