@@ -10,7 +10,7 @@ type ListMember struct {
 	Company      string
 	Position     string
 	Email        string
-	PersonalRole uint32
+	MemberRole   string
 	Created      time.Time
 	Updated      time.Time
 	Subscribed   *time.Time
@@ -73,4 +73,9 @@ type EmailAction struct {
 	Action      EmailActionEnum
 	Created     time.Time
 	Metadata    string
+}
+
+type MemberGroup struct {
+	Id          string
+	ListMembers []*ListMember
 }

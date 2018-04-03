@@ -18,9 +18,9 @@ import (
 const emailSuffixMdFile = "src/softside/emails/emailSuffix.md" // TODO: make this a relative path
 
 type EmailTemplateParams struct {
-	FirstName string
+	FirstName   string
 	SentEmailId string
-	SiteDomain string
+	SiteDomain  string
 }
 
 func emailTemplateToId(subject string, body []byte) int64 {
@@ -54,7 +54,7 @@ func decodeSendMailIdFromUriEnd(path string) SentEmailId {
 	return sentEmailId
 }
 
-func Sendmail(subject string, templateFile string, fromEmail string) error {
+func Sendmail(subject string, templateFile string, fromEmail string, memberGroupName string) error {
 
 	// Load the template file
 	markdownEmailBodyBytes, err := ioutil.ReadFile(templateFile)
@@ -99,8 +99,16 @@ func Sendmail(subject string, templateFile string, fromEmail string) error {
 	parsedEmailTempalte, err := htmlTemplate.New(templateFile).Parse(htmlEmailTemplateString)
 
 	// Load the email list
+	//var listMembers []ListMember
+	//err = SoftsideDB.Model(&listMembers).Select()
+
 	var listMembers []ListMember
-	err = SoftsideDB.Model(&listMembers).Select()
+	_, err = SoftsideDB.Query(&listMembers, `
+select l.* from list_members l, member_groups g 
+where l.id = g.list_member_id and g.name = ?
+`, "test_delivery")
+
+	fmt.Printf("listMembers: %v\n", listMembers)
 	if err != nil {
 		return err
 	}

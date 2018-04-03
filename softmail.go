@@ -10,7 +10,7 @@ func main() {
 }
 
 func testSendMail() {
-	err := softmail.Sendmail("test body", "/Users/vlad/go/src/softside/emails/testemail.md", "vlad@softsideoftech.com")
+	err := softmail.Sendmail("test body", "/Users/vlad/go/src/softside/emails/testemail.md", "vlad@softsideoftech.com", "test_delivery")
 	if err != nil {
 		fmt.Println(err)
 	}

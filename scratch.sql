@@ -47,11 +47,23 @@ select * from email_actions;
 delete from sent_emails where third_party_id is null;
 
 
--- fixing table
+-- new schema work
 alter table list_members drop personal_role;
 CREATE TABLE member_roles (
   id VARCHAR(128) PRIMARY KEY
 );
 INSERT INTO member_roles (id)
 VALUES ('founder'), ('executive'), ('manager'), ('engineer'), ('ic');
-alter table list_members ADD COLUMN member_role   VARCHAR(128) REFERENCES member_roles (id);
+alter table list_members ADD COLUMN member_role VARCHAR(128) REFERENCES member_roles (id);
+CREATE TABLE member_groups (
+  name VARCHAR(128) NOT NULL,
+  list_member_id INT REFERENCES list_members (id) NOT NULL
+);
+
+alter table member_groups RENAME COLUMN id to name;
+
+insert into member_groups VALUES ('test_delivery', 2),('test_delivery', 3),('test_delivery', 8),('test_bounce', 4),('test_bounce', 5),('test_bounce', 6),('test_bounce', 7);
+
+
+
+select * from list_members l, member_groups g where l.id = g.list_member_id and g.name = 'test_delivery';
