@@ -45,3 +45,13 @@ FROM sent_emails;
 select * from email_actions;
 
 delete from sent_emails where third_party_id is null;
+
+
+-- fixing table
+alter table list_members drop personal_role;
+CREATE TABLE member_roles (
+  id VARCHAR(128) PRIMARY KEY
+);
+INSERT INTO member_roles (id)
+VALUES ('founder'), ('executive'), ('manager'), ('engineer'), ('ic');
+alter table list_members ADD COLUMN member_role   VARCHAR(128) REFERENCES member_roles (id);
