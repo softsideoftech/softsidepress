@@ -3,14 +3,17 @@ package main
 import (
 	"softside/softmail"
 	"fmt"
+	"os"
 )
 
 func main() {
-	testSendMail()
-}
+	args := os.Args[1:]
+	subject := args[0]
+	emailTemplateFile := args[1]
+	fromEmail := args[2]
+	memberGroupName := args[3]
 
-func testSendMail() {
-	err := softmail.Sendmail("test body", "/Users/vlad/go/src/softside/emails/testemail.md", "vlad@softsideoftech.com", "test_delivery")
+	err := softmail.Sendmail(subject, emailTemplateFile, fromEmail, memberGroupName)
 	if err != nil {
 		fmt.Println(err)
 	}

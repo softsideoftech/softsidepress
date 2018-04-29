@@ -61,7 +61,7 @@ func Sendmail(subject string, templateFile string, fromEmail string, memberGroup
 	markdownEmailBody := string(markdownEmailBodyBytes)
 	if err != nil {
 		fmt.Printf("Error reading file: %s\n", err)
-		return err
+		panic(err)
 	}
 
 	// Save the email template in the DB if it doesn't exist
@@ -74,10 +74,10 @@ func Sendmail(subject string, templateFile string, fromEmail string, memberGroup
 			emailTemplate.Body = markdownEmailBody
 			err = SoftsideDB.Insert(&emailTemplate)
 			if err != nil {
-				return err
+				panic(err)
 			}
 		} else {
-			return err
+			panic(err)
 		}
 	}
 
@@ -88,7 +88,7 @@ func Sendmail(subject string, templateFile string, fromEmail string, memberGroup
 	suffixEmailBodyBytes, err := ioutil.ReadFile(emailSuffixMdFile)
 	suffixEmailBody := string(suffixEmailBodyBytes)
 	if err != nil {
-		return err
+		panic(err)
 	}
 	markdownEmailBody += suffixEmailBody
 
@@ -103,14 +103,19 @@ func Sendmail(subject string, templateFile string, fromEmail string, memberGroup
 	//err = SoftsideDB.Model(&listMembers).Select()
 
 	var listMembers []ListMember
-	_, err = SoftsideDB.Query(&listMembers, `
+
+	if memberGroupName == "all" {
+		// Select all members where unsubscribed is nil (ie, they never explicitly unsubscribed)
+		err = SoftsideDB.Model(&listMembers).Where("unsubscribed IS NULL", nil).Select()
+	} else {
+		_, err = SoftsideDB.Query(&listMembers, `
 select l.* from list_members l, member_groups g 
-where l.id = g.list_member_id and g.name = ?
-`, "test_delivery")
+where l.id = g.list_member_id and g.name = ? AND l.unsubscribed IS NULL`, memberGroupName)
+	}
 
 	fmt.Printf("listMembers: %v\n", listMembers)
 	if err != nil {
-		return err
+		panic(err)
 	}
 
 	// For each member
@@ -128,7 +133,7 @@ where l.id = g.list_member_id and g.name = ?
 		}
 		err := SoftsideDB.Insert(sentEmail)
 		if err != nil {
-			return err
+			panic(err)
 		}
 
 		// Base64 encode the SentEmail id
@@ -142,14 +147,14 @@ where l.id = g.list_member_id and g.name = ?
 			SiteDomain:  siteDomain,
 		})
 		if err != nil {
-			return err
+			panic(err)
 		}
 		htmlEmailString := buffer.String()
 
 		// Convert the HTML to plaintext
 		textEmailString, err := html2text.FromString(htmlEmailString)
 		if err != nil {
-			return err
+			panic(err)
 		}
 
 		// Send the email
@@ -157,7 +162,7 @@ where l.id = g.list_member_id and g.name = ?
 		if err == nil {
 			fmt.Printf("Sent email: %s\n\n\n%s\n\n\n%s\n", htmlEmailString, textEmailString, res)
 		} else {
-			return err
+			panic(err)
 		}
 
 		// Record the email sent event if we didn't get an error from AWS
@@ -167,14 +172,14 @@ where l.id = g.list_member_id and g.name = ?
 		var sendEmailResponse SendEmailResponse
 		err = xml.Unmarshal([]byte(res), &sendEmailResponse)
 		if err != nil {
-			return err
+			panic(err)
 		}
 
 		// Update the sent email with the AWS MessageId
 		sentEmail.ThirdPartyId = sendEmailResponse.MessageId
 		err = SoftsideDB.Update(sentEmail)
 		if err != nil {
-			return err
+			panic(err)
 		}
 	}
 

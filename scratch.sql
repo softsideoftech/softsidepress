@@ -12,6 +12,8 @@ DROP TABLE tracked_urls;
 SELECT *
 FROM list_members;
 
+update list_members set unsubscribed = now() where email = 'josh@giverts.com';
+
 
 INSERT INTO tracked_urls (id, url) VALUES (0, '');
 SELECT *
@@ -59,6 +61,7 @@ CREATE TABLE member_groups (
   name VARCHAR(128) NOT NULL,
   list_member_id INT REFERENCES list_members (id) NOT NULL
 );
+
 
 alter table member_groups RENAME COLUMN id to name;
 
