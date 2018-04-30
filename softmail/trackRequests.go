@@ -159,14 +159,15 @@ func HandleNormalRequest(w http.ResponseWriter, r *http.Request) {
 
 	urlPath := r.URL.Path
 	sentEmailId, emailTargetUrl := DecodeSentMailIdFromUri(urlPath)
-	sentEmailListMemberId  := ListMemberId(0)
+	var sentEmailListMemberId  = ListMemberId(0)
 
 	// Don't don't bother with cookies for local requests (healthchecks, etc)
 	if ipString != "127.0.0.1" {
 
 
 		// Try to obtain the ListMemberId using the encoded SendEmailId in the url path if it exists.
-		sentEmailListMemberId, err := ctx.getListMemberIdFromSentEmail(sentEmailId)
+		var err error
+		sentEmailListMemberId, err = ctx.getListMemberIdFromSentEmail(sentEmailId)
 		// ignore any error and keep going
 
 		// Get the cookie from the request so we could look it up in the

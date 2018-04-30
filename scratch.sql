@@ -1,16 +1,7 @@
-DROP TABLE email_templates;
-DROP TABLE list_members;
-DROP TABLE sent_emails;
-DROP TABLE email_actions;
 
-DROP TABLE cookies;
+SELECT * FROM list_members;
 
-DROP TABLE tracking_hits;
-DROP TABLE tracked_urls;
-
-
-SELECT *
-FROM list_members;
+SELECT * FROM member_groups;
 
 update list_members set unsubscribed = now() where email = 'josh@giverts.com';
 
@@ -77,3 +68,5 @@ create temporary table csv_import (first_name text, last_name text, member_role 
 \copy csv_import from '/Users/vlad/Documents/vlad-lkd.csv' WITH CSV HEADER DELIMITER AS ',';
 insert into list_members (first_name, member_role, company, position, email) select first_name, member_role, company, position, email from csv_import;
 drop table csv_import;
+
+
