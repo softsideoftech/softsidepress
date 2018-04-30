@@ -14,5 +14,4 @@ This is the story of my last job, my last straw. This is [how my secret motivati
 
 If this story resonates with you for good or for bad, please reply. I'd appreciate reading what you have to share.
 
-Warmly,
-Vlad
+Warmly,<br/>Vlad

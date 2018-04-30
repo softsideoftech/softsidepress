@@ -1,8 +1,4 @@
-<br/>
----
-<br/>
-If you don't want see any more of my essays, please let me know by [clicking here](https://{{.SiteDomain}}/bye/{{.SentEmailId}}).
-<br/><br/>
+<br/><br/><br/>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
     <tr>
         <td align="center">
@@ -10,4 +6,5 @@ If you don't want see any more of my essays, please let me know by [clicking her
         </td>
     </tr>
 </table>
-
+<br/><br/>
+P.S. If you don't want read any more of my stories, please let me know by [clicking here](https://{{.SiteDomain}}/bye/{{.SentEmailId}}).
