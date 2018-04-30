@@ -1,4 +1,4 @@
-# How My Secret Motivations Drove Me To Reevaluate My Life
+# How My Hidden Motivations Drove Me To Reevaluate My Life
 >> _April 3rd, 2018 by [Vlad Giverts](/purposeful-leadership-coaching)_
 
 ![][lead-image-jpg]
