@@ -55,7 +55,7 @@ CREATE TABLE member_roles (
   id VARCHAR(128) PRIMARY KEY
 );
 INSERT INTO member_roles (id)
-VALUES ('founder'), ('executive'), ('manager'), ('engineer'), ('ic');
+VALUES ('founder'), ('executive'), ('manager'), ('engineer'), ('ic'), ('investor');
 alter table list_members ADD COLUMN member_role VARCHAR(128) REFERENCES member_roles (id);
 CREATE TABLE member_groups (
   name VARCHAR(128) NOT NULL,
@@ -64,9 +64,16 @@ CREATE TABLE member_groups (
 
 
 alter table member_groups RENAME COLUMN id to name;
-
+INSERT INTO member_roles (id)  values ('investor');
 insert into member_groups VALUES ('test_delivery', 2),('test_delivery', 3),('test_delivery', 8),('test_bounce', 4),('test_bounce', 5),('test_bounce', 6),('test_bounce', 7);
 
 
 
 select * from list_members l, member_groups g where l.id = g.list_member_id and g.name = 'test_delivery';
+
+
+
+create temporary table csv_import (first_name text, last_name text, member_role text, company text, position text, email text);
+\copy csv_import from '/Users/vlad/Documents/vlad-lkd.csv' WITH CSV HEADER DELIMITER AS ',';
+insert into list_members (first_name, member_role, company, position, email) select first_name, member_role, company, position, email from csv_import;
+drop table csv_import;

@@ -12,6 +12,10 @@ func main() {
 }
 
 func runService() {
+
+	// Start processing SQS messages from SES in the background
+	go softmail.StartSqs()
+
 	http.HandleFunc("/yes-please/", softmail.Resubscribe)
 	http.HandleFunc("/bye/", softmail.Unsubscribe)
 	http.HandleFunc("/join/", softmail.Join)
