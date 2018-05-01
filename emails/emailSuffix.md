@@ -7,4 +7,4 @@
     </tr>
 </table>
 <br/><br/>
-P.S. If you don't want read any more of my stories, please let me know by [clicking here](https://{{.SiteDomain}}/bye/{{.SentEmailId}}).
+P.S. If you don't want read any more of my stories, please let me know by [unsubscribing](https://{{.SiteDomain}}/bye/{{.SentEmailId}}).
