@@ -1,14 +1,10 @@
-package main
+package softside
 
 import (
 	"softside/softmail"
 	"fmt"
+	"testing"
 )
-
-func main() {
-	testDecodeSentMailLinkFromUri()
-	testDecodeTrackingPixel()
-}
 
 func testIdEncoding() {
 	//nums := []uint{0, 1, 2, 3, 4, 32432423142314321}
@@ -18,28 +14,28 @@ func testIdEncoding() {
 	//}
 }
 
-func testDecodeSentMailLinkFromUri() {
+func TestDecodeSentMailLinkFromUri(t *testing.T) {
 	var rawSentMailId = "sentmailid+_"
 	var targetLink = "https://www.foobar.com/my-fancy-shmancy-article"
 	actualId, _ := softmail.DecodeId(rawSentMailId)
 	decodedID, decodedTargetLink := softmail.DecodeSentMailIdFromUri(targetLink + "-" + rawSentMailId)
 	if (decodedID != actualId) {
-		panic(fmt.Sprintf("decodedID != sentMailId --- %d != %d", decodedID, actualId))
+		t.Error(fmt.Sprintf("decodedID != sentMailId --- %d != %d", decodedID, actualId))
 	}
 	if (*decodedTargetLink != targetLink) {
-		panic(fmt.Sprintf("decodedTargetLink != targetLink --- %s != %s", decodedTargetLink, targetLink))
+		t.Error(fmt.Sprintf("decodedTargetLink != targetLink --- %s != %s", decodedTargetLink, targetLink))
 	}
 }
 
 
-func testDecodeTrackingPixel() {
+func TestDecodeTrackingPixel(t *testing.T) {
 	var rawSentMailId = "sentmailid+_"
 	actualId, _ := softmail.DecodeId(rawSentMailId)
 	decodedID, decodedTargetLink := softmail.DecodeSentMailIdFromUri("https://www.foobar.com/bear/" + rawSentMailId + ".png")
 	if (decodedID != actualId) {
-		panic(fmt.Sprintf("decodedID != sentMailId --- %d != %d", decodedID, actualId))
+		t.Error(fmt.Sprintf("decodedID != sentMailId --- %d != %d", decodedID, actualId))
 	}
 	if (decodedTargetLink != nil) {
-		panic(fmt.Sprintf("decodedTargetLink not nil as expected: ", decodedTargetLink))
+		t.Error(fmt.Sprintf("decodedTargetLink not nil as expected: ", decodedTargetLink))
 	}
 }
