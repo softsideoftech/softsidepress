@@ -25,6 +25,7 @@ jobs:
       - image: circleci/golang:1.9
     working_directory: /go/src/softside
     steps:
+      - run: go build
       - run: scripts/deploy.sh
 
 workflows:
