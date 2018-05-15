@@ -41,6 +41,7 @@ jobs:
             scp -o StrictHostKeyChecking=no /tmp/softside.gz root@softsideoftech.com:
             ssh -o StrictHostKeyChecking=no root@softsideoftech.com 'gunzip -f softside.gz'
             ssh -o StrictHostKeyChecking=no root@softsideoftech.com 'service softside restart'
+
 workflows:
   version: 2
   build-deploy:
