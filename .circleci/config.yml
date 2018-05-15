@@ -21,8 +21,11 @@ jobs:
       - run: go test -v ./tests/...
       - run: go build
 
-      - command: |
-          mv softside /tmp/
+      - run:
+          name: Move build output to tmp file
+          command: |
+            mv softside /tmp/
+
       - store_artifacts:
           path: /tmp/softside
   deploy:
