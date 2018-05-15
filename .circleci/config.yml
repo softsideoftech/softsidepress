@@ -29,7 +29,8 @@ jobs:
 
       - save_cache:
           key: softside-master
-          path: /tmp/softside.gz
+          paths:
+            - /tmp/softside.gz
   deploy:
     docker:
       - image: circleci/golang:1.9
