@@ -24,17 +24,23 @@ jobs:
       - run:
           name: Move build output to tmp file
           command: |
-            mv softside /tmp/
+            gzip softside
+            mv softside.gz /tmp/
 
       - store_artifacts:
-          path: /tmp/softside
+          path: /tmp/softside.gz
   deploy:
     docker:
       - image: circleci/golang:1.9
     working_directory: /go/src/softside
     steps:
       - checkout
-      - run: scripts/deploy.sh
+      - run:
+          name: Copy build output to server and restart the service
+          command: |
+            scp /tmp/softside.gz root@softsideoftech.com:
+            ssh root@softsideoftech.com 'gunzip -f softside.gz'
+            ssh root@softsideoftech.com 'service softside restart'
 workflows:
   version: 2
   build-deploy:
