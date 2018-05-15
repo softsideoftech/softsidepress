@@ -27,15 +27,16 @@ jobs:
             gzip softside
             mv softside.gz /tmp/
 
-      - store_artifacts:
+      - save_cache:
+          key: softside-master
           path: /tmp/softside.gz
   deploy:
     docker:
       - image: circleci/golang:1.9
     working_directory: /go/src/softside
     steps:
-      - restore_cache
-          key: /tmp/softside.gz
+      - restore_cache:
+          key: softside-master
       - run:
           name: Copy build output to server and restart the service
           command: |
