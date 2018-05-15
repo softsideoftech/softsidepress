@@ -34,7 +34,8 @@ jobs:
       - image: circleci/golang:1.9
     working_directory: /go/src/softside
     steps:
-      - checkout
+      - restore_cache
+          key: /tmp/softside.gz
       - run:
           name: Copy build output to server and restart the service
           command: |
