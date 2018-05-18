@@ -3,6 +3,7 @@ package main
 import (
 	"net/http"
 	"softside/softmail"
+	"softside/forwardEmail"
 )
 
 func main() {
@@ -14,6 +15,14 @@ func runService() {
 	// Start processing SQS messages from SES in the background
 	go softmail.StartSqs()
 
+	// Start the SMTP server for forwarding emails
+	go forwardEmail.StartSmtpServer()
+
+	// Start the website
+	startWebsite()
+}
+
+func startWebsite() {
 	http.HandleFunc("/yes-please/", softmail.Resubscribe)
 	http.HandleFunc("/bye/", softmail.Unsubscribe)
 	http.HandleFunc("/join/", softmail.Join)
