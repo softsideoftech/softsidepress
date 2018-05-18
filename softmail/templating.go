@@ -45,10 +45,7 @@ func renderMarkdownToHtmlTemplate(c MarkdownTemplateConfig) error {
 	// Get the template from the cache to avoid constantly reading and parsing files from disk
 	fullPageTemplate, cacheLoaded := templateCache.Load(templateName)
 
-	// todo: set to FALSE to turn off caching for development purposes
-	cacheLoaded = false
-
-	if !cacheLoaded {
+	if !cacheLoaded || DevelopmentMode {
 		// Load the markdown template file
 		markdownTemplateBytes, err := ioutil.ReadFile(c.MarkdownFile)
 		if err != nil {

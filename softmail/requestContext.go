@@ -14,6 +14,7 @@ var SoftsideDB = pg.Connect(&pg.Options{
 	})
 
 var SoftsideContentPath = os.Getenv("SOFTSIDE_CONTENT")
+var DevelopmentMode = os.Getenv("SOFTSIDE_DEV_MODE") == "true"
 
 type RequestContext struct {
 	db *pg.DB
