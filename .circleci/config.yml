@@ -28,7 +28,7 @@ jobs:
             mv softside.gz /tmp/
 
       - save_cache:
-          key: softside-master
+          key: softside-{{ .Branch }}-{{ .Revision }}
           paths:
             - /tmp/softside.gz
   deploy:
@@ -37,7 +37,7 @@ jobs:
     working_directory: /go/src/softside
     steps:
       - restore_cache:
-          key: softside-master
+          key: softside-{{ .Branch }}-{{ .Revision }}
       - run:
           name: Copy build output to server and restart the service
           command: |
