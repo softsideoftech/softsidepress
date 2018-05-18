@@ -8,12 +8,13 @@ import (
 	"strings"
 )
 
-// TODO: Make these pages configurable
-const errorTemplate = "src/softside/mgmt-pages/error.md"
-const pagesHtmlTemplate = "src/softside/html/pages-tmpl.html"
-const homePageHtmlTemplate = "src/softside/html/home-page-tmpl.html"
-const homePageMdTemplate = "src/softside/pages/purposeful-leadership-coaching.md"
-const mgmtPagesHtmlTemplate = "src/softside/html/mgmt-pages-tmpl.html"
+var errorTemplate = SoftsideContentPath + "/mgmt-pages/error.md"
+var pagesHtmlTemplate = SoftsideContentPath + "/html/pages-tmpl.html"
+var homePageHtmlTemplate = SoftsideContentPath + "/html/home-page-tmpl.html"
+var homePageMdTemplate = SoftsideContentPath + "/pages/purposeful-leadership-coaching.md"
+var mgmtPagesHtmlTemplate = SoftsideContentPath + "/html/mgmt-pages-tmpl.html"
+
+// TODO: Make this configurable
 const owner = "Vlad"
 
 type SubscriptionTemplateParams struct {
@@ -71,7 +72,7 @@ func renderMgmtPage(w http.ResponseWriter, r *http.Request, templateName string,
 		Writer:           buffer,
 		BaseHtmlFile:     mgmtPagesHtmlTemplate,
 		Title:            pageTitle,
-		MarkdownFile:     "src/softside/mgmt-pages/" + templateName + ".md",
+		MarkdownFile:     SoftsideContentPath + "/mgmt-pages/" + templateName + ".md",
 		PerRequestParams: listMemberParams,
 	})
 

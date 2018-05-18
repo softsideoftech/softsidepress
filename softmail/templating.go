@@ -33,9 +33,8 @@ type MarkdownTemplateConfig struct {
 	PerRequestParams PerRequestParams
 }
 
-// Load the css file
-const cssFile = "src/softside/html/style.css"    // TODO: make this a relative path
-const jsFile = "src/softside/html/javascript.js" // TODO: make this a relative path
+var cssFile = SoftsideContentPath + "/html/style.css"
+var jsFile = SoftsideContentPath + "/html/javascript.js"
 var extractTitle = regexp.MustCompile("^# (.+)")
 var templateCache = sync.Map{}
 

@@ -235,7 +235,7 @@ func HandleNormalRequest(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Otherwise this might be a markdown page, so let's look for that.
-	templateFile := "src/softside/pages" + urlPath + ".md"
+	templateFile := SoftsideContentPath + "/pages" + urlPath + ".md"
 	fileInfo, err := os.Stat(templateFile)
 
 	// Build the escapedUrl for pages to potentially use

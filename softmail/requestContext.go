@@ -13,6 +13,8 @@ var SoftsideDB = pg.Connect(&pg.Options{
 	Addr: os.Getenv("SOFTSIDE_DB_ADDRESS"),
 	})
 
+var SoftsideContentPath = os.Getenv("SOFTSIDE_CONTENT")
+
 type RequestContext struct {
 	db *pg.DB
 	w http.ResponseWriter

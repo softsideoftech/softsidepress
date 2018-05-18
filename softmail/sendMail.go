@@ -15,7 +15,7 @@ import (
 	"github.com/jaytaylor/html2text"
 )
 
-const emailSuffixMdFile = "src/softside/emails/emailSuffix.md" // TODO: make this a relative path
+const emailSuffixMdFile = "emailSuffix.md" // TODO: make this a relative path
 
 type EmailTemplateParams struct {
 	FirstName   string
@@ -85,7 +85,7 @@ func Sendmail(subject string, templateFile string, fromEmail string, memberGroup
 	markdownEmailBody = linkRegex.ReplaceAllString(markdownEmailBody, "($1$2-{{.SentEmailId}})")
 
 	// Load the suffix template and append it to the markdown template
-	suffixEmailBodyBytes, err := ioutil.ReadFile(emailSuffixMdFile)
+	suffixEmailBodyBytes, err := ioutil.ReadFile(SoftsideContentPath + "/" + emailSuffixMdFile)
 	suffixEmailBody := string(suffixEmailBodyBytes)
 	if err != nil {
 		panic(err)

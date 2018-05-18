@@ -15,14 +15,14 @@ cd /root/go
 
 case "$1" in
  start)
-   go run src/softside/hello.go >> /root/go/softside.log 2>&1 & echo $! > /root/go/softside.pid
+   /root/softside >> /root/softside.log 2>&1 & echo $! > /root/softside.pid
    ;;
  stop)
-   /usr/bin/killall -s 9 hello
+   /usr/bin/kill -s 9 `cat /root/softside.pid`
    ;;
  restart)
-  /usr/bin/killall -s 9 hello
-  go run src/softside/hello.go >> /root/go/softside.log 2>&1 & echo $! > /root/go/softside.pid
+  /usr/bin/killall -s 9 `cat /root/softside.pid`
+  /root/softside >> /root/softside.log 2>&1 & echo $! > /root/softside.pid
    ;;
  *)
    echo "Usage: softside {start|stop|restart}" >&2
