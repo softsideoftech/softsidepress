@@ -13,7 +13,7 @@ func main() {
 	fromEmail := args[2]
 	memberGroupName := args[3]
 
-	err := softmail.Sendmail(subject, emailTemplateFile, fromEmail, memberGroupName)
+	err := softmail.SendEmailToGroup(subject, emailTemplateFile, fromEmail, memberGroupName)
 	if err != nil {
 		fmt.Println(err)
 	}

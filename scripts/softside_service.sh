@@ -19,10 +19,12 @@ case "$1" in
    echo $! > /root/softside.pid
    ;;
  stop)
-   /bin/kill -9 `cat /root/softside.pid`
+#   /bin/kill -9 `cat /root/softside.pid`
+   /usr/bin/pkill -9 softside
    ;;
  restart)
-  /bin/kill -9 `cat /root/softside.pid`
+#  /bin/kill -9 `cat /root/softside.pid`
+  /usr/bin/pkill -9 softside
   /root/softside >> /root/softside.log 2>&1 & echo
   $! > /root/softside.pid
    ;;

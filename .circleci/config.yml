@@ -33,14 +33,17 @@ jobs:
             - /tmp/softside.gz
   deploy:
     docker:
-      - image: circleci/golang:1.9
+      - image: debian
     working_directory: /go/src/softside
     steps:
       - restore_cache:
           key: softside-{{ .Branch }}-{{ .Revision }}
+
       - run:
           name: Copy build output to server and restart the service
           command: |
+            apt-get update
+            apt-get -y install openssh-client
             scp -o StrictHostKeyChecking=no /tmp/softside.gz root@softsideoftech.com:
             ssh -o StrictHostKeyChecking=no root@softsideoftech.com 'gunzip -f softside.gz'
             ssh -o StrictHostKeyChecking=no root@softsideoftech.com 'service softside restart'

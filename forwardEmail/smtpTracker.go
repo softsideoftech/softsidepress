@@ -6,6 +6,7 @@ import (
 	"log"
 	"github.com/emersion/go-smtp"
 	"io"
+	"regexp"
 )
 
 type Backend struct{}
