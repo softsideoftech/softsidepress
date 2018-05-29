@@ -6,6 +6,9 @@ import (
 	"log"
 	"github.com/emersion/go-smtp"
 	"io"
+	"softside/softmail"
+	"github.com/veqryn/go-email/email"
+	"bytes"
 )
 
 type Backend struct{}
@@ -31,6 +34,11 @@ func (u *User) Send(from string, to []string, r io.Reader) error {
 		return err
 	} else {
 		log.Println("Data:", string(b))
+		msg, err := email.ParseMessage(bytes.NewReader(b))
+		if err != nil {
+			return err
+		}
+		softmail.ForwardEmail(to[0], msg)
 	}
 	return nil
 }

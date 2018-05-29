@@ -58,7 +58,7 @@ func decodeSendMailIdFromUriEnd(path string) SentEmailId {
 	return sentEmailId
 }
 
-func ForwardEmail(recipient string, msg email.Message) {
+func ForwardEmail(recipient string, msg *email.Message) {
 
 	var textEmailBody string
 	var htmlEmailBody string
