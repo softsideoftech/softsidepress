@@ -14,6 +14,7 @@ import (
 	"github.com/jaytaylor/html2text"
 	"github.com/veqryn/go-email/email"
 	"github.com/sourcegraph/go-ses"
+	"log"
 )
 
 const emailSuffixMdFile = "emailSuffix.md"
@@ -116,6 +117,8 @@ func ForwardEmail(recipient string, msg *email.Message) {
 	// Append the renderedSuffix to both body formats
 	textEmailBody += renderedSuffix
 	htmlToAppend := string(blackfriday.Run([]byte(renderedSuffix)))
+	htmlToAppend = strings.Replace(htmlToAppend, "\n", "", -1)
+	log.Printf("\n\nHtml suffix: %s\n\n", htmlToAppend)
 	htmlEmailBody += htmlToAppend
 
 	// Place the bytes back into the message

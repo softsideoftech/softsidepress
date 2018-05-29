@@ -51,9 +51,7 @@ body.  f) this is a test with a very long line in the body.  g) this is a
 test with a very long line in the body.  h) this is a test with a very long
 line in the body.  i) this is a test with a very long line in the body.  j)
 this is a test with a very long line in the body.
---
-Purposeful Leadership Coaching
-softsideoftech.com
+
 
 --000000000000ec3461056d50a266
 Content-Type: text/html; charset="UTF-8"
@@ -88,10 +86,7 @@ in the body.=C2=A0 e) this is a test with a very long line in the body.=C2=
  test with a very long line in the body.=C2=A0 g) this is a test with a ver=
 y long line in the body.=C2=A0 h) this is a test with a very long line in t=
 he body.=C2=A0 i) this is a test with a very long line in the body.=C2=A0 j=
-) this is a test with a very long line in the body.<br></div></div>-- <br><=
-div dir=3D"ltr" class=3D"gmail_signature" data-smartmail=3D"gmail_signature=
-"><div dir=3D"ltr">Purposeful Leadership Coaching<div><a href=3D"http://sof=
-tsideoftech.com">softsideoftech.com</a></div></div></div>
+) this is a test with a very long line in the body.<br></div></div>=
 
 --000000000000ec3461056d50a266--
 
