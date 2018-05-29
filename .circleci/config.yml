@@ -33,8 +33,8 @@ jobs:
             - /tmp/softside.gz
   deploy:
     docker:
-      - image: debian
-    working_directory: /
+      - image: circleci
+    working_directory: /go/src/softside
     steps:
       - restore_cache:
           key: softside-{{ .Branch }}-{{ .Revision }}
