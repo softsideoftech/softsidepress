@@ -34,7 +34,7 @@ jobs:
   deploy:
     docker:
       - image: debian
-    working_directory: /go/src/softside
+    working_directory: /
     steps:
       - restore_cache:
           key: softside-{{ .Branch }}-{{ .Revision }}
