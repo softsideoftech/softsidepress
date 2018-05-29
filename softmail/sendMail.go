@@ -95,7 +95,7 @@ func ForwardEmail(recipient string, msg *email.Message) {
 	encodedSentEmailId := EncodeId(sentEmail.Id)
 
 	// Load the suffix template
-	suffixEmailBodyBytes, err := ioutil.ReadFile(SoftsideContentPath + "/" + forwardedEmailSuffixMdFile)
+	suffixEmailBodyBytes, err := ioutil.ReadFile(SoftsideContentPath + "/emails/" + forwardedEmailSuffixMdFile)
 	if err != nil {
 		panic(err)
 	}
@@ -155,7 +155,7 @@ func SendEmailToGroup(subject string, templateFileName string, fromEmail string,
 	markdownEmailBody = linkRegex.ReplaceAllString(markdownEmailBody, "($1$2-{{.SentEmailId}})")
 
 	// Load the suffix template and append it to the markdown template
-	suffixEmailBodyBytes, err := ioutil.ReadFile(SoftsideContentPath + "/" + emailSuffixMdFile)
+	suffixEmailBodyBytes, err := ioutil.ReadFile(SoftsideContentPath + "/emails/" + emailSuffixMdFile)
 	suffixEmailBody := string(suffixEmailBodyBytes)
 	if err != nil {
 		panic(err)
