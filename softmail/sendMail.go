@@ -19,6 +19,9 @@ import (
 
 const emailSuffixMdFile = "emailSuffix.md"
 const forwardedEmailSuffixMdFile = "forwardedEmailSuffix.md"
+const trackingPixelPath = "/pixie/"
+const trackingPixelMarkdown = "![](https://{{.SiteDomain}}" + trackingPixelPath + "{{.SentEmailId}}.png)"
+var trackingPrefixTemplate, _ = htmlTemplate.New("tracking-prefix").Parse(trackingPixelMarkdown)
 
 type EmailTemplateParams struct {
 	FirstName   string
@@ -53,7 +56,7 @@ func decodeSendMailIdFromUriEnd(path string) SentEmailId {
 	}
 	sentEmailId, err := DecodeId(submatch[1])
 	if err != nil {
-		fmt.Printf("Problem parsing SentEmailId from url: %s, error: %v", path, err)
+		log.Printf("Problem parsing SentEmailId from url: %s, error: %v", path, err)
 		return 0
 	}
 	return sentEmailId
@@ -86,7 +89,8 @@ func ForwardEmail(recipient string, msg *email.Message) {
 	sentEmail := &SentEmail{
 		EmailTemplateId: emailTemplateId,
 		ListMemberId:    0, // This is a direct email, not a list email, so a ListMemberId might not exist. Using the phantom list member "0" to represent this case.
-		// todo: save the email address(es) being sent to
+		// todo: save the email address being sent to 
+		// (maybe insert a new type of non-subscribed user into list members?)
 	}
 	err := SoftsideDB.Insert(sentEmail)
 	if err != nil {
@@ -96,39 +100,19 @@ func ForwardEmail(recipient string, msg *email.Message) {
 	encodedSentEmailId := EncodeId(sentEmail.Id)
 
 	// Load the suffix template
-	suffixEmailBodyBytes, err := ioutil.ReadFile(SoftsideContentPath + "/emails/" + forwardedEmailSuffixMdFile)
-	if err != nil {
-		panic(err)
-	}
-	suffixEmailBody := string(suffixEmailBodyBytes)
+	renderedPrefix := obtainTrackingPrefix(encodedSentEmailId)
 
-	// Parse and render the suffix template
-	template, err := htmlTemplate.New(forwardedEmailSuffixMdFile).Parse(suffixEmailBody)
-	if err != nil {
-		panic(err)
-	}
-	buffer := &bytes.Buffer{}
-	template.Execute(buffer, &EmailTemplateParams{
-		SentEmailId: encodedSentEmailId,
-		SiteDomain:  siteDomain,
-	})
-	renderedSuffix := buffer.String()
-
-	// Append the renderedSuffix to both body formats
-	textEmailBody += renderedSuffix
-	htmlToAppend := string(blackfriday.Run([]byte(renderedSuffix)))
-	htmlToAppend = strings.Replace(htmlToAppend, "\n", "", -1)
-	log.Printf("\n\nHtml suffix: %s\n\n", htmlToAppend)
-	htmlEmailBody += htmlToAppend
+	// Append the to only the html email
+	htmlEmailBody = renderedPrefix + htmlEmailBody
 
 	// Place the bytes back into the message
 	if len(htmlMessages) > 0 {
-		htmlMessages[len(htmlMessages) -1].Body = []byte(htmlEmailBody)
+		htmlMessages[len(htmlMessages)-1].Body = []byte(htmlEmailBody)
 	}
 
-	// Place the bytes back into the message
+	// Place the bytes back into the message (todo: this may be unnecessary now that we're not putting tracking into text emails)
 	if len(textMessages) > 0 {
-		textMessages[len(textMessages) -1].Body = []byte(textEmailBody)
+		textMessages[len(textMessages)-1].Body = []byte(textEmailBody)
 	}
 
 	// Actually send the email
@@ -140,6 +124,32 @@ func ForwardEmail(recipient string, msg *email.Message) {
 
 	// Perfom the bookkeeping
 	processSentEmail(err, htmlEmailBody, textEmailBody, awsResponse, sentEmail)
+}
+
+// todo: not using this right now
+func obtainTrackingSuffix(encodedSentEmailId string) string {
+	suffixEmailBodyBytes, err := ioutil.ReadFile(SoftsideContentPath + "/emails/" + forwardedEmailSuffixMdFile)
+	if err != nil {
+		panic(err)
+	}
+	suffixEmailBody := string(suffixEmailBodyBytes)
+	// Parse and render the suffix template
+	template, err := htmlTemplate.New(forwardedEmailSuffixMdFile).Parse(suffixEmailBody)
+	if err != nil {
+		panic(err)
+	}
+	buffer := &bytes.Buffer{}
+	template.Execute(buffer, &EmailTemplateParams{
+		SentEmailId: encodedSentEmailId,
+		SiteDomain:  siteDomain,
+	})
+	renderedSuffix := buffer.String()
+	return renderedSuffix
+}
+
+func obtainTrackingPrefix(encodedSentEmailId string) string {
+	// Parse and render the suffix template
+	return fmt.Sprintf("<img src=\"https://softsideoftech.com/pixie/%s.png\"/>", encodedSentEmailId);
 }
 
 

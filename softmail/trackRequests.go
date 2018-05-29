@@ -27,6 +27,7 @@ const cookieName = "sftml"
 // TODO: make these configurable
 const siteDomain = "softsideoftech.com"
 const trackingImageUrl = "https://d235962hz41e70.cloudfront.net/bear-100.png"
+const trackingPixelUrl = "https://d235962hz41e70.cloudfront.net/transparent-pixel.png"
 const FavIconUrl = "https://d235962hz41e70.cloudfront.net/favicon.ico"
 
 type TrackingRequestParams struct {
@@ -230,7 +231,13 @@ func HandleNormalRequest(w http.ResponseWriter, r *http.Request) {
 	// For now, assume all png requests are email tracking so serve up the tracking image
 	if strings.HasSuffix(urlPath, ".png") {
 		ctx.db.Insert(&EmailAction{SentEmailId: sentEmailId, Action: "opened"})
-		http.Redirect(w, r, trackingImageUrl, http.StatusTemporaryRedirect)
+		var trackingUrl string
+		if strings.Contains(urlPath, trackingPixelPath) {
+			trackingUrl = trackingPixelUrl
+		} else {
+			trackingUrl = trackingImageUrl
+		}
+		http.Redirect(w, r, trackingUrl, http.StatusTemporaryRedirect)
 		return
 	}
 
