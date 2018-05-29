@@ -65,7 +65,7 @@ func ForwardEmail(recipient string, msg *email.Message) {
 
 	htmlMessages := msg.PartsContentTypePrefix("text/html")
 	if len(htmlMessages) > 0 {
-		htmlEmailBodyBytes, _ := htmlMessages[len(htmlMessages) - 1].Bytes()
+		htmlEmailBodyBytes := htmlMessages[len(htmlMessages) - 1].Body
 		htmlEmailBody = string(htmlEmailBodyBytes)
 	}
 
@@ -115,7 +115,8 @@ func ForwardEmail(recipient string, msg *email.Message) {
 
 	// Append the renderedSuffix to both body formats
 	textEmailBody += renderedSuffix
-	htmlEmailBody += string(blackfriday.Run([]byte(renderedSuffix)))
+	htmlToAppend := string(blackfriday.Run([]byte(renderedSuffix)))
+	htmlEmailBody += htmlToAppend
 
 	// Place the bytes back into the message
 	if len(htmlMessages) > 0 {
