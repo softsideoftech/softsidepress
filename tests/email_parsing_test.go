@@ -31,7 +31,7 @@ func TestParseEmail2(t *testing.T) {
 	println(string(bytes))
 
 
-	if true {
+	if softmail.DevelopmentMode {
 		softmail.ForwardEmail("vgiverts@gmail.com", msg)
 	}
 	if err != nil {
