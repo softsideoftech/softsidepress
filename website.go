@@ -12,11 +12,14 @@ func main() {
 
 func runService() {
 
-	// Start processing SQS messages from SES in the background
-	go softmail.StartSqs()
 
-	// Start the SMTP server for forwarding emails
-	go forwardEmail.StartSmtpServer()
+	if !softmail.DevelopmentMode {
+		// Start processing SQS messages from SES in the background
+		go softmail.StartSqs()
+
+		// Start the SMTP server for forwarding emails
+		go forwardEmail.StartSmtpServer()
+	}
 
 	// Start the website
 	startWebsite()
