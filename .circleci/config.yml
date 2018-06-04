@@ -17,20 +17,32 @@ jobs:
       - checkout
 
       # specify any bash command here prefixed with `run: `
-      - run: go get -v -t -d ./...
-      - run: go test -v ./tests/...
-      - run: go build
+      - run:
+          name: Download Dependencies
+          command: go get -v -t -d ./...
+      - run: 
+          name: Run Tests
+          command: go test -v ./tests/...
+      - run: 
+          name: Build Binaries
+          command: |
+            go build
+            cd /go/src/softside/sendmail
+            go build
 
       - run:
-          name: Move build output to tmp file
+          name: Prepare To Save Binaries
           command: |
-            gzip softside
-            mv softside.gz /tmp/
+            gzip /go/src/softside/softside
+            gzip /go/src/softside/sendmail/sendmail
+            mv /go/src/softside/softside.gz /tmp/
+            mv /go/src/softside/sendmail/sendmail.gz /tmp/
 
       - save_cache:
           key: softside-{{ .Branch }}-{{ .Revision }}
           paths:
             - /tmp/softside.gz
+            - /tmp/sendmail.gz
   deploy:
     docker:
       - image: circleci/golang:1.9
@@ -42,8 +54,9 @@ jobs:
       - run:
           name: Copy build output to server and restart the service
           command: |
-            scp -o StrictHostKeyChecking=no /tmp/softside.gz root@softsideoftech.com:
+            scp -o StrictHostKeyChecking=no /tmp/*.gz root@softsideoftech.com:
             ssh -o StrictHostKeyChecking=no root@softsideoftech.com 'gunzip -f softside.gz'
+            ssh -o StrictHostKeyChecking=no root@softsideoftech.com 'gunzip -f sendmail.gz'
             ssh -o StrictHostKeyChecking=no root@softsideoftech.com 'service softside restart'
 
 workflows:

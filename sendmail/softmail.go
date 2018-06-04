@@ -1,4 +1,4 @@
-package sendmail
+package main
 
 import (
 	"softside/softmail"
