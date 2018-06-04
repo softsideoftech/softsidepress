@@ -160,11 +160,10 @@ func HandleNormalRequest(w http.ResponseWriter, r *http.Request) {
 
 	urlPath := r.URL.Path
 	sentEmailId, emailTargetUrl := DecodeSentMailIdFromUri(urlPath)
-	var sentEmailListMemberId  = ListMemberId(0)
+	var sentEmailListMemberId = ListMemberId(0)
 
 	// Don't don't bother with cookies for local requests (healthchecks, etc)
 	if ipString != "127.0.0.1" {
-
 
 		// Try to obtain the ListMemberId using the encoded SendEmailId in the url path if it exists.
 		var err error
@@ -344,9 +343,13 @@ func DecodeSentMailIdFromUri(path string) (SentEmailId, *string) {
 }
 
 func decodeIpAddress(remoteAddr string) (string, IpAddress) {
+
 	var ipAddressString string
 	if strings.Index(remoteAddr, ":") == -1 {
 		ipAddressString = remoteAddr
+	} else if strings.HasPrefix(remoteAddr, "[::1]") {
+		// The decoder only understands IP V4.
+		ipAddressString = "127.0.0.1"
 	} else {
 		submatch := extractIpAddress.FindStringSubmatch(remoteAddr)
 		if submatch == nil {
@@ -355,6 +358,7 @@ func decodeIpAddress(remoteAddr string) (string, IpAddress) {
 		ipAddressString = submatch[1]
 	}
 
+	// todo: make the IP decoding logic understand IPV6
 	parts := strings.Split(ipAddressString, ".")
 	firstOctet, err1 := strconv.ParseInt(parts[0], 10, 64)
 	secondOctet, err2 := strconv.ParseInt(parts[1], 10, 64)
