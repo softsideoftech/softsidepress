@@ -12,11 +12,11 @@ import (
 	"os"
 )
 
-var password string = os.Getenv("SOFTMAIL_FORWARDING_PASSWORD")
+var softmailPassword string = os.Getenv("SOFTMAIL_FORWARDING_PASSWORD")
 type Backend struct{}
 
 func (bkd *Backend) Login(username, password string) (smtp.User, error) {
-	if username != "username" || password != password {
+	if username != "username" || password != softmailPassword {
 		return nil, errors.New("Invalid username or password")
 	}
 	return &User{}, nil
