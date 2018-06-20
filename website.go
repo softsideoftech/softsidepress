@@ -19,11 +19,6 @@ func runService() {
 
 		// Start the SMTP server for forwarding emails
 		go forwardEmail.StartSmtpServer()
-
-		// Start the SSL server terminating the SSL connection for the email server
-		// TODO: figure out a way to do this for the HTTP server too
-		// TODO: do this without listening to two different ports and forwarding data between them
-		go forwardEmail.StartSsl()
 	}
 
 	// Start the website

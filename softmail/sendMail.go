@@ -15,13 +15,16 @@ import (
 	"github.com/veqryn/go-email/email"
 	"github.com/sourcegraph/go-ses"
 	"log"
+	"net/smtp"
+	"os"
 )
 
 const emailSuffixMdFile = "emailSuffix.md"
 const forwardedEmailSuffixMdFile = "forwardedEmailSuffix.md"
 const trackingPixelPath = "/pixie/"
 const trackingPixelMarkdown = "![](https://{{.SiteDomain}}" + trackingPixelPath + "{{.SentEmailId}}.png)"
-var trackingPrefixTemplate, _ = htmlTemplate.New("tracking-prefix").Parse(trackingPixelMarkdown)
+var awsSmtpUsername string = os.Getenv("AWS_SES_SMTP_USER")
+var awsSmtpPassword string = os.Getenv("AWS_SES_SMTP_PASSWORD")
 
 type EmailTemplateParams struct {
 	FirstName   string
@@ -62,7 +65,7 @@ func decodeSendMailIdFromUriEnd(path string) SentEmailId {
 	return sentEmailId
 }
 
-func ForwardEmail(recipient string, msg *email.Message) {
+func ForwardEmail(sender string, recipient string, msg *email.Message) {
 
 	var textEmailBody string
 	var htmlEmailBody string
@@ -73,10 +76,13 @@ func ForwardEmail(recipient string, msg *email.Message) {
 		htmlEmailBody = string(htmlEmailBodyBytes)
 	}
 
+	// Obtain the body so we could save it in the DB
 	textMessages := msg.PartsContentTypePrefix("text/plain")
 	if len(textMessages) > 0 {
 		textEmailBodyBytes := textMessages[len(textMessages) - 1].Body
 		textEmailBody = string(textEmailBodyBytes)
+	} else {
+		textEmailBody = ""
 	}
 
 	subject := msg.Header.Get("Subject")
@@ -99,31 +105,37 @@ func ForwardEmail(recipient string, msg *email.Message) {
 	// Base64 encode the SentEmail id
 	encodedSentEmailId := EncodeId(sentEmail.Id)
 
-	// Load the suffix template
+	// Load the html suffix template
 	renderedPrefix := obtainTrackingPrefix(encodedSentEmailId)
 
 	// Append the to only the html email
 	htmlEmailBody = renderedPrefix + htmlEmailBody
 
-	// Place the bytes back into the message
+	// Place the html bytes back into the message
 	if len(htmlMessages) > 0 {
 		htmlMessages[len(htmlMessages)-1].Body = []byte(htmlEmailBody)
 	}
+	
+	// Re-set the Received header to make sure the recipient is the only thing there
+	msg.Header.Set("Received", fmt.Sprintf("by softsideoftech.com with SMTP for <%s>", recipient))
 
-	// Place the bytes back into the message (todo: this may be unnecessary now that we're not putting tracking into text emails)
-	if len(textMessages) > 0 {
-		textMessages[len(textMessages)-1].Body = []byte(textEmailBody)
-	}
-
-	// Actually send the email
+	// Obtain the message bytes
 	msgBytes, err := msg.Bytes()
 	if err != nil {
 		panic(err)
 	}
+	log.Println("\n\n\nABOUT TO SEND MESSAGE:\n\n")
+	log.Printf(" -- \n%s", string(msgBytes))
+	// Actually send the email
+	/*
 	awsResponse, err := ses.EnvConfig.SendRawEmail(msgBytes)
-
+	
 	// Perfom the bookkeeping
-	processSentEmail(err, htmlEmailBody, textEmailBody, awsResponse, sentEmail)
+	processSentEmail(err, htmlEmailBody, textEmailBody, awsResponse, sentEmail)*/
+
+	auth := smtp.PlainAuth("", awsSmtpUsername, awsSmtpPassword, "email-smtp.us-west-2.amazonaws.com")
+	err = smtp.SendMail("email-smtp.us-west-2.amazonaws.com:587", auth, sender, []string{recipient}, msgBytes)
+	log.Printf("\nAWS SMTP RESPONSE%v\n:", err);
 }
 
 // todo: not using this right now

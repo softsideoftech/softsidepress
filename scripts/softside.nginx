@@ -20,3 +20,13 @@ server {
     } # managed by Certbot
 
 }
+
+stream {
+    server {
+        listen 465 ssl;
+        proxy_pass localhost:25;
+    }
+    
+    ssl_certificate /etc/letsencrypt/live/softsideoftech.com/fullchain.pem; # managed by Certbot
+    ssl_certificate_key /etc/letsencrypt/live/softsideoftech.com/privkey.pem; # managed by Certbot
+}
