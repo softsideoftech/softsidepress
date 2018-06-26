@@ -65,19 +65,48 @@ func decodeSendMailIdFromUriEnd(path string) SentEmailId {
 	return sentEmailId
 }
 
+func FindPartType(msg *email.Message, contentTypePrefix string) ([]*email.Message, error) {
+	buf := make([]*email.Message, 0, 1)
+	if msg.HasParts() {
+		for _, part := range msg.Parts {
+			contentType, _, err := part.Header.ContentType()
+			if err != nil {
+				return buf, err
+			}
+			if strings.HasPrefix(contentType, contentTypePrefix) {
+				buf = append(buf, part)
+			} else {
+				subBuf, err := FindPartType(part, contentTypePrefix)
+				buf = append(buf, subBuf...)
+				if err != nil {
+					return buf, err
+				}
+			}
+		}
+	}
+	return buf, nil
+}
+
+
 func ForwardEmail(sender string, recipient string, msg *email.Message) {
 
 	var textEmailBody string
 	var htmlEmailBody string
 
-	htmlMessages := msg.PartsContentTypePrefix("text/html")
+	htmlMessages, err := FindPartType(msg,"text/html")
+	if err != nil {
+		log.Printf("ERROR finding content type 'text/html': %v\n", err)
+	}
 	if len(htmlMessages) > 0 {
 		htmlEmailBodyBytes := htmlMessages[len(htmlMessages) - 1].Body
 		htmlEmailBody = string(htmlEmailBodyBytes)
 	}
 
 	// Obtain the body so we could save it in the DB
-	textMessages := msg.PartsContentTypePrefix("text/plain")
+	textMessages, err := FindPartType(msg, "text/plain")
+	if err != nil {
+		log.Printf("ERROR finding content type 'text/plain': %v\n", err)
+	}
 	if len(textMessages) > 0 {
 		textEmailBodyBytes := textMessages[len(textMessages) - 1].Body
 		textEmailBody = string(textEmailBodyBytes)
@@ -98,9 +127,9 @@ func ForwardEmail(sender string, recipient string, msg *email.Message) {
 		// todo: save the email address being sent to 
 		// (maybe insert a new type of non-subscribed user into list members?)
 	}
-	err := SoftsideDB.Insert(sentEmail)
+	err = SoftsideDB.Insert(sentEmail)
 	if err != nil {
-		panic(err)
+		log.Printf("ERROR inserting sendEmail into DB: %v\n", err)
 	}
 	// Base64 encode the SentEmail id
 	encodedSentEmailId := EncodeId(sentEmail.Id)
@@ -122,21 +151,18 @@ func ForwardEmail(sender string, recipient string, msg *email.Message) {
 	// Obtain the message bytes
 	msgBytes, err := msg.Bytes()
 	if err != nil {
-		panic(err)
+		log.Panicf("ERROR retrieving emai message bytes: %v", err)
 	}
-	log.Println("\n\n\nABOUT TO SEND MESSAGE:\n\n")
-	log.Printf(" -- \n%s", string(msgBytes))
-	// Actually send the email
-	/*
-	awsResponse, err := ses.EnvConfig.SendRawEmail(msgBytes)
-	
-	// Perfom the bookkeeping
-	processSentEmail(err, htmlEmailBody, textEmailBody, awsResponse, sentEmail)*/
 
+	// Actually send the email
 	auth := smtp.PlainAuth("", awsSmtpUsername, awsSmtpPassword, "email-smtp.us-west-2.amazonaws.com")
-	err = smtp.SendMail("email-smtp.us-west-2.amazonaws.com:587", auth, sender, []string{recipient}, msgBytes)
-	log.Printf("\nAWS SMTP RESPONSE%v\n:", err);
+	awsResponse, err := SendMail("email-smtp.us-west-2.amazonaws.com:587", auth, sender, []string{recipient}, msgBytes)
+	log.Printf("\nAWS SMTP RESPONSE:%s,%v\n:", awsResponse, err);
+
+	processSentEmail(err, htmlEmailBody, textEmailBody, awsResponse[3:], sentEmail)
 }
+
+
 
 // todo: not using this right now
 func obtainTrackingSuffix(encodedSentEmailId string) string {
@@ -241,7 +267,7 @@ func obtainEmailTemplateId(subject string, emailBody string, recipient string) (
 				panic(err)
 			}
 		} else {
-			panic(err)
+			log.Panicf("Problem obtaining email template ID: %v",err)
 		}
 	}
 	return emailTemplateId
@@ -277,27 +303,40 @@ func sendEmailToListMember(emailTemplateId EmailTemplateId, listMember ListMembe
 	}
 	// Send the email
 	awsResponse, err := ses.EnvConfig.SendEmailHTML(fromEmail, listMember.Email, subject, textEmailString, htmlEmailString)
-	processSentEmail(err, htmlEmailString, textEmailString, awsResponse, sentEmail)
+
+	// Unmarshall the response
+	err, awsMessageId := unmarshallAwsResponse(err, awsResponse)
+	if err != nil {
+		panic(err)
+	}
+
+	processSentEmail(err, htmlEmailString, textEmailString, awsMessageId, sentEmail)
 }
 
-func processSentEmail(err error, htmlEmailString string, textEmailString string, awsResponse string, sentEmail *SentEmail) {
+func processSentEmail(err error, htmlEmailString string, textEmailString string, awsMessageId string, sentEmail *SentEmail) {
 	if err == nil {
-		fmt.Printf("Sent email: %s\n\n\n%s\n\n\n%s\n", htmlEmailString, textEmailString, awsResponse)
+		fmt.Printf("Sent email: %s\n\n\n%s\n\n\nawsMessageId: %s\n", htmlEmailString, textEmailString, awsMessageId)
 	} else {
-		panic(err)
+		log.Printf("ERROR sending email: %v\n", err)
+		return 
 	}
 	// Record the email sent event if we didn't get an error from AWS
 	SoftsideDB.Insert(&EmailAction{SentEmailId: sentEmail.Id, Action: "sent"})
+	
+	// Update the sent email with the AWS MessageId
+	sentEmail.ThirdPartyId = awsMessageId
+	err = SoftsideDB.Update(sentEmail)
+	if err != nil {
+		log.Printf("ERROR updating email with AWS MessageId: %v\n", err)
+	}
+}
+
+func unmarshallAwsResponse(err error, awsResponse string) (error, string) {
 	// Unmarshall the AWS XML reponse into a struct
 	var sendEmailResponse SendEmailResponse
 	err = xml.Unmarshal([]byte(awsResponse), &sendEmailResponse)
 	if err != nil {
-		panic(err)
+		log.Printf("ERROR umarshalling AWS SendEmailResponse: %v\n", err)
 	}
-	// Update the sent email with the AWS MessageId
-	sentEmail.ThirdPartyId = sendEmailResponse.MessageId
-	err = SoftsideDB.Update(sentEmail)
-	if err != nil {
-		panic(err)
-	}
+	return err, sendEmailResponse.MessageId
 }
