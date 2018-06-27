@@ -38,7 +38,7 @@ func testEmail(emailMessageString string, t *testing.T) {
 	bytes, err := msg.Bytes()
 	println(string(bytes))
 	if softmail.DevelopmentMode {
-		softmail.ForwardEmail("vlad@softsideoftech.com", "vgiverts@gmail.com", msg)
+		softmail.ForwardEmail("vlad@softsideoftech.com", "vgiverts+123@gmail.com", msg)
 	}
 	if err != nil {
 		t.Error(err)

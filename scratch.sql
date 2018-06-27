@@ -63,10 +63,13 @@ insert into member_groups VALUES ('test_delivery', 2),('test_delivery', 3),('tes
 select * from list_members l, member_groups g where l.id = g.list_member_id and g.name = 'test_delivery';
 
 
-
+-- Import List Members
 create temporary table csv_import (first_name text, last_name text, member_role text, company text, position text, email text);
 \copy csv_import from '/Users/vlad/Documents/vlad-lkd.csv' WITH CSV HEADER DELIMITER AS ',';
 insert into list_members (first_name, member_role, company, position, email) select first_name, member_role, company, position, email from csv_import;
 drop table csv_import;
 
 
+-- select t.subject, s
+
+select * from list_members where email = 'vgiverts+123@gmail.com';

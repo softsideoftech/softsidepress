@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"fmt"
 	"strings"
+	"log"
 )
 
 var errorTemplate = SoftsideContentPath + "/mgmt-pages/error.md"
@@ -113,14 +114,13 @@ func Join(w http.ResponseWriter, r *http.Request) {
 	firstName := r.FormValue("first-name")
 	email := r.FormValue("email")
 
-	// todo: validate the input params
+	// todo: validate the input params 
 
-	listMember := &ListMember{}
-	err := ctx.db.Model(listMember).Column("list_member.*").Where("list_member.email = ?", email).Select()
+	listMember, _, err := GetListMemberByEmail(email)
 
-	// If it's an error other than no rows returned, then log it
-	if (err != nil && !strings.Contains(err.Error(), "no rows in result set")) {
-		fmt.Printf("Selecting member from list. FirstName: %s, Email: %s, err: %v", firstName, email, err)
+	// If it's an error other than no rows returned, then log it and keep going
+	if (err != nil) {
+		log.Printf("ERROR selecting member from list. FirstName: %s, Email: %s, err: %v", firstName, email, err)
 	}
 
 	// Update all the fields whether or not the record exists. Updating email is idempotent.
@@ -159,3 +159,4 @@ func Join(w http.ResponseWriter, r *http.Request) {
 		// todo: send a confirmation/double-opt-in email
 	}
 }
+

@@ -17,12 +17,15 @@ import (
 	"log"
 	"net/smtp"
 	"os"
+	"time"
+	"net/mail"
 )
 
 const emailSuffixMdFile = "emailSuffix.md"
 const forwardedEmailSuffixMdFile = "forwardedEmailSuffix.md"
 const trackingPixelPath = "/pixie/"
 const trackingPixelMarkdown = "![](https://{{.SiteDomain}}" + trackingPixelPath + "{{.SentEmailId}}.png)"
+
 var awsSmtpUsername string = os.Getenv("AWS_SES_SMTP_USER")
 var awsSmtpPassword string = os.Getenv("AWS_SES_SMTP_PASSWORD")
 
@@ -87,18 +90,17 @@ func FindPartType(msg *email.Message, contentTypePrefix string) ([]*email.Messag
 	return buf, nil
 }
 
-
 func ForwardEmail(sender string, recipient string, msg *email.Message) {
 
 	var textEmailBody string
 	var htmlEmailBody string
 
-	htmlMessages, err := FindPartType(msg,"text/html")
+	htmlMessages, err := FindPartType(msg, "text/html")
 	if err != nil {
 		log.Printf("ERROR finding content type 'text/html': %v\n", err)
 	}
 	if len(htmlMessages) > 0 {
-		htmlEmailBodyBytes := htmlMessages[len(htmlMessages) - 1].Body
+		htmlEmailBodyBytes := htmlMessages[len(htmlMessages)-1].Body
 		htmlEmailBody = string(htmlEmailBodyBytes)
 	}
 
@@ -108,7 +110,7 @@ func ForwardEmail(sender string, recipient string, msg *email.Message) {
 		log.Printf("ERROR finding content type 'text/plain': %v\n", err)
 	}
 	if len(textMessages) > 0 {
-		textEmailBodyBytes := textMessages[len(textMessages) - 1].Body
+		textEmailBodyBytes := textMessages[len(textMessages)-1].Body
 		textEmailBody = string(textEmailBodyBytes)
 	} else {
 		textEmailBody = ""
@@ -116,16 +118,52 @@ func ForwardEmail(sender string, recipient string, msg *email.Message) {
 
 	subject := msg.Header.Get("Subject")
 
-
 	// Obtain the emailTemplateId
 	emailTemplateId := obtainEmailTemplateId(subject, textEmailBody, recipient)
+
+	var listMember *ListMember
+	recipients := append(append(msg.Header.To(), msg.Header.Cc()...), msg.Header.Bcc()...)
+	for _, fullEmail := range recipients {
+		address, err := mail.ParseAddress(fullEmail)
+		if fullEmail != "" && address.Address == recipient {
+			var exists bool
+			listMember, exists, err = GetListMemberByEmail(recipient)
+			if err != nil {
+				log.Printf("ERROR retrieving list member while forwaring email: %s, %v\n", fullEmail, err)
+			}
+			if !exists {
+				// If didn't find this list member, then create a new 'unsubscribed' list member.
+				now := time.Now()
+				listMember.Unsubscribed = &now
+				var firstName = strings.Split(address.Name, " ")[0]
+				if firstName == "" {
+					// If the email didn't contain a name, then try to extract the first 
+					// name from the email address using a couple common name separators
+					firstName = strings.Split(address.Address, "@")[0]
+					firstName = strings.Split(address.Address, ".")[0]
+					firstName = strings.Split(address.Address, "-")[0]
+					firstName = strings.Split(address.Address, "+")[0]
+				}
+				listMember.FirstName = strings.Title(strings.ToLower(firstName))
+				listMember.Email = recipient
+				err := SoftsideDB.Insert(listMember)
+				if err != nil {
+					log.Printf("ERROR inserting ListMember while forwarding email: %s, %v\n", fullEmail, err)
+				} else {
+					log.Printf("Added new ListMember: %s\n", fullEmail)
+				}
+			}
+		}
+	}
+
+	if err != nil {
+		log.Printf("ERROR retrieving list member by email during email forwarding: %v\n", err)
+	}
 
 	// Create a SentEmail record
 	sentEmail := &SentEmail{
 		EmailTemplateId: emailTemplateId,
-		ListMemberId:    0, // This is a direct email, not a list email, so a ListMemberId might not exist. Using the phantom list member "0" to represent this case.
-		// todo: save the email address being sent to 
-		// (maybe insert a new type of non-subscribed user into list members?)
+		ListMemberId:    listMember.Id,
 	}
 	err = SoftsideDB.Insert(sentEmail)
 	if err != nil {
@@ -144,7 +182,7 @@ func ForwardEmail(sender string, recipient string, msg *email.Message) {
 	if len(htmlMessages) > 0 {
 		htmlMessages[len(htmlMessages)-1].Body = []byte(htmlEmailBody)
 	}
-	
+
 	// Re-set the Received header to make sure the recipient is the only thing there
 	msg.Header.Set("Received", fmt.Sprintf("by softsideoftech.com with SMTP for <%s>", recipient))
 
@@ -158,11 +196,8 @@ func ForwardEmail(sender string, recipient string, msg *email.Message) {
 	auth := smtp.PlainAuth("", awsSmtpUsername, awsSmtpPassword, "email-smtp.us-west-2.amazonaws.com")
 	awsResponse, err := SendMail("email-smtp.us-west-2.amazonaws.com:587", auth, sender, []string{recipient}, msgBytes)
 	log.Printf("\nAWS SMTP RESPONSE:%s,%v\n:", awsResponse, err);
-
 	processSentEmail(err, htmlEmailBody, textEmailBody, awsResponse[3:], sentEmail)
 }
-
-
 
 // todo: not using this right now
 func obtainTrackingSuffix(encodedSentEmailId string) string {
@@ -189,7 +224,6 @@ func obtainTrackingPrefix(encodedSentEmailId string) string {
 	// Parse and render the suffix template
 	return fmt.Sprintf("<img src=\"https://softsideoftech.com/pixie/%s.png\"/>", encodedSentEmailId);
 }
-
 
 func SendEmailToGroup(subject string, templateFileName string, fromEmail string, memberGroupName string) error {
 
@@ -259,7 +293,7 @@ func obtainEmailTemplateId(subject string, emailBody string, recipient string) (
 	emailTemplate := EmailTemplate{Id: emailTemplateId}
 	err := SoftsideDB.Select(&emailTemplate)
 	if err != nil {
-		if strings.Contains(err.Error(), "no rows in result set") {
+		if IsPgSelectEmpty(err) {
 			emailTemplate.Subject = subject
 			emailTemplate.Body = emailBody
 			err = SoftsideDB.Insert(&emailTemplate)
@@ -267,7 +301,7 @@ func obtainEmailTemplateId(subject string, emailBody string, recipient string) (
 				panic(err)
 			}
 		} else {
-			log.Panicf("Problem obtaining email template ID: %v",err)
+			log.Panicf("Problem obtaining email template ID: %v", err)
 		}
 	}
 	return emailTemplateId
@@ -318,11 +352,11 @@ func processSentEmail(err error, htmlEmailString string, textEmailString string,
 		fmt.Printf("Sent email: %s\n\n\n%s\n\n\nawsMessageId: %s\n", htmlEmailString, textEmailString, awsMessageId)
 	} else {
 		log.Printf("ERROR sending email: %v\n", err)
-		return 
+		return
 	}
 	// Record the email sent event if we didn't get an error from AWS
 	SoftsideDB.Insert(&EmailAction{SentEmailId: sentEmail.Id, Action: "sent"})
-	
+
 	// Update the sent email with the AWS MessageId
 	sentEmail.ThirdPartyId = awsMessageId
 	err = SoftsideDB.Update(sentEmail)

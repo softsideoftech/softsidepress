@@ -110,10 +110,9 @@ func (ctx *RequestContext) TryToCreateShortTrackedUrl(targetUrl string, sentEmai
 	trackedUrl := &TrackedUrl{Id: UrlToId(url), SentEmailId: sentEmailId}
 
 	err := ctx.db.Select(trackedUrl)
-	// todo: refactor checking for no results in select
 	if err != nil {
 		// Only continue if we didn't collide with an existing url.
-		if strings.Contains(err.Error(), "no rows in result set") {
+		if IsPgSelectEmpty(err) {
 			trackedUrl.Url = url
 			trackedUrl.TargetUrl = targetUrl
 			err := ctx.db.Insert(trackedUrl)
@@ -304,7 +303,7 @@ func (ctx *RequestContext) obtainOrCreateTrackedUrl(urlPath string) (*TrackedUrl
 	err := ctx.db.Select(trackedUrl)
 	if err != nil {
 		// todo: refactor checking for no results in select
-		if strings.Contains(err.Error(), "no rows in result set") {
+		if IsPgSelectEmpty(err) {
 			trackedUrl.Url = urlPath
 			err = ctx.db.Insert(trackedUrl)
 			if err != nil {
@@ -418,7 +417,7 @@ func (ctx *RequestContext) ObtainOrCreateMemberCookie(listMemberId ListMemberId,
 		} else {
 			err := ctx.db.Select(memberCookie)
 			if err != nil {
-				if strings.Contains(err.Error(), "no rows in result set") {
+				if IsPgSelectEmpty(err) {
 					// Since we didn't find a cookie in the db, save it if a listMemberId is present
 					if (listMemberId != 0) {
 						memberCookie.ListMemberId = listMemberId

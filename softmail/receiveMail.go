@@ -108,7 +108,7 @@ func handleSqsMessage(msg *sqs.Message) error {
 	var sentEmail = &SentEmail{}
 	err = SoftsideDB.Model(sentEmail).Where("third_party_id = ?", sesMessage.Mail.MessageId).Select()
 	if err != nil {
-		if strings.Contains(err.Error(), "no rows in result set") {
+		if IsPgSelectEmpty(err) {
 			fmt.Printf("Couldn't find SendEmail with third_party_id: %s. ignoring.", sesMessage.Mail.MessageId)
 			return nil
 		} else {
