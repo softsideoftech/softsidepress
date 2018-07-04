@@ -70,6 +70,8 @@ insert into list_members (first_name, member_role, company, position, email) sel
 drop table csv_import;
 
 
--- select t.subject, s
+select t.subject, s.id as sent_email_id, s.created as email_sent, a.action, a.created as action_time from list_members l, email_templates t, email_actions a, sent_emails s where t.id = s.email_template_id and s.list_member_id = l.id and a.sent_email_id = s.id order by s.id desc limit 20;
 
-select * from list_members where email = 'vgiverts+123@gmail.com';
+select * from list_members where id = 2;
+
+select * from sent_emails where id = 13;
