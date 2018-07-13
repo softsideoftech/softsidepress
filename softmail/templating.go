@@ -105,7 +105,5 @@ func renderMarkdownToHtmlTemplate(c MarkdownTemplateConfig) error {
 	}
 
 	template := fullPageTemplate.(*htmlTemplate.Template)
-	template.Execute(c.Writer, c.PerRequestParams)
-
-	return nil
+	return template.Execute(c.Writer, c.PerRequestParams)
 }
