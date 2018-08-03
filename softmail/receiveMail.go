@@ -10,7 +10,6 @@ import (
 	"strings"
 	"net/mail"
 	"bytes"
-	"regexp"
 	"time"
 )
 
@@ -58,8 +57,6 @@ type Mail struct {
 	Headers          []map[string]string    `json headers`
 	CommonHeaders    map[string]interface{} `json commonHeaders`
 }
-
-var extractNameAndEmailRegex = regexp.MustCompile("EMAIL\\[\\[(.+?)]].*FIRSTNAME\\[\\[(.+?)]]")
 
 func StartSqs() error {
 
