@@ -7,11 +7,11 @@ import (
 	"github.com/h2ik/go-sqs-poller/worker"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"encoding/json"
+				"time"
+	"log"
 	"strings"
 	"net/mail"
 	"bytes"
-	"time"
-	"log"
 )
 
 type SqsMessage struct {
@@ -104,6 +104,24 @@ func handleSqsMessage(msg *sqs.Message) error {
 		return err
 	}
 
+	// todo: this is old dead code for reading incoming emails
+	// Parse the email content
+	if true {
+		reader := strings.NewReader(sesMessage.Content)
+		mailMsg, err := mail.ReadMessage(reader)
+		if err != nil {
+			return err
+		}
+
+		// Obtain the email body
+		buf := new(bytes.Buffer)
+		buf.ReadFrom(mailMsg.Body)
+		emailBody := buf.String()
+
+		// debug statement
+		log.Printf("Received email:\n\n%s", emailBody)
+	}
+
 	// Retrieve the sent message id
 	var sentEmail = &SentEmail{}
 	err = SoftsideDB.Model(sentEmail).Where("third_party_id = ?", sesMessage.Mail.MessageId).Select()
@@ -158,23 +176,7 @@ func handleSqsMessage(msg *sqs.Message) error {
 		log.Printf("Unexpected SES message:\n%s\n\n\n", sqsMessage.Message)
 	}
 
-	// todo: this is old dead code for reading incoming emails
-	// Parse the email content
-	if true {
-		reader := strings.NewReader(sesMessage.Content)
-		mailMsg, err := mail.ReadMessage(reader)
-		if err != nil {
-			return err
-		}
-
-		// Obtain the email body
-		buf := new(bytes.Buffer)
-		buf.ReadFrom(mailMsg.Body)
-		emailBody := buf.String()
-
-		// debug statement
-		log.Printf("Received email:\n\n%s", emailBody)
-	}
+	
 
 	return err
 }
