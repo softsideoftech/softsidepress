@@ -8,6 +8,7 @@ import (
 	"log"
 )
 
+// This is meant to be run manually because the environment needs to have the translation service credentials.
 func TestTranslationParsing(t *testing.T) {
 	sourceText := softmail.ParseTextFromHtml(sampleTranslationHtml.TranslationSample)
 	if len(sourceText) < 50 {

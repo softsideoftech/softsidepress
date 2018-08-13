@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"softside/softmail"
 	"softside/forwardEmail"
+	"log"
 )
 
 func main() {
@@ -11,7 +12,7 @@ func main() {
 }
 
 func runService() {
-
+	log.Println("Starting website")
 
 	if !softmail.DevelopmentMode {
 		// Start processing SQS messages from SES in the background

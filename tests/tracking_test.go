@@ -23,7 +23,7 @@ func TestDecodeSentMailLinkFromUri(t *testing.T) {
 		t.Error(fmt.Sprintf("decodedID != sentMailId --- %d != %d", decodedID, actualId))
 	}
 	if (*decodedTargetLink != targetLink) {
-		t.Error(fmt.Sprintf("decodedTargetLink != targetLink --- %s != %s", decodedTargetLink, targetLink))
+		t.Error(fmt.Sprintf("decodedTargetLink != targetLink --- %v != %v", decodedTargetLink, targetLink))
 	}
 }
 
@@ -36,6 +36,6 @@ func TestDecodeTrackingPixel(t *testing.T) {
 		t.Error(fmt.Sprintf("decodedID != sentMailId --- %d != %d", decodedID, actualId))
 	}
 	if (decodedTargetLink != nil) {
-		t.Error(fmt.Sprintf("decodedTargetLink not nil as expected: ", decodedTargetLink))
+		t.Error(fmt.Sprintf("decodedTargetLink not nil as expected: %v", decodedTargetLink))
 	}
 }

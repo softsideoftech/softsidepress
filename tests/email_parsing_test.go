@@ -33,7 +33,7 @@ func testEmail(emailMessageString string, t *testing.T) {
 	
 	fmt.Printf("%s\n\n\n\n\n", string(htmlBody[0].Body))
 	fmt.Printf("%s\n\n\n\n\n", string(textBody[0].Body))
-	fmt.Printf("SUBJECT: %", msg.Header.Get("Subject"))
+	fmt.Printf("SUBJECT: %v", msg.Header.Get("Subject"))
 
 	bytes, err := msg.Bytes()
 	println(string(bytes))
