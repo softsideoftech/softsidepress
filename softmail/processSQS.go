@@ -125,12 +125,19 @@ func handleEmail(emailString string) bool {
 			log.Printf("ERROR retrieving translated email message bytes: %v", err)
 		}
 
-		// Use the From header for the recipient
+		// Use the Return-Path header for the recipient
 		recipient := strings.Trim(msg.Header.Get("Return-Path"), "<>")
-
+		// todo vg: make all this stuff configurable, particularly the sender 
+		sender := "vlad@softsideoftech.com"
+		msg.Header.Set("To", recipient)
+		msg.Header.Set("From", sender)
+		msg.Header.Set("Return-Path", sender)
+		
 		// Actually send the email
 		auth := smtp.PlainAuth("", awsSmtpUsername, awsSmtpPassword, "email-smtp.us-west-2.amazonaws.com")
-		awsResponse, err := SendMail("email-smtp.us-west-2.amazonaws.com:587", auth, "vlad@softsideoftech.com", []string{recipient}, msgBytes)
+		
+		
+		awsResponse, err := SendMail("email-smtp.us-west-2.amazonaws.com:587", auth, sender, []string{recipient}, msgBytes)
 		log.Printf("\nAWS SMTP RESPONSE:%s,%v\n:", awsResponse, err);
 
 	}
