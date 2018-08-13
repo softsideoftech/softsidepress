@@ -11,6 +11,7 @@ import (
 	"net/mail"
 	"bytes"
 	"time"
+	"log"
 )
 
 type SqsMessage struct {
@@ -93,6 +94,8 @@ func handleSqsMessage(msg *sqs.Message) error {
 	if err != nil {
 		return err
 	}
+	
+	
 
 	// Parse the SNS/SES message from the SQS message
 	var sesMessage SesMessage
@@ -106,7 +109,7 @@ func handleSqsMessage(msg *sqs.Message) error {
 	err = SoftsideDB.Model(sentEmail).Where("third_party_id = ?", sesMessage.Mail.MessageId).Select()
 	if err != nil {
 		if IsPgSelectEmpty(err) {
-			fmt.Printf("Couldn't find SendEmail with third_party_id: %s. ignoring.", sesMessage.Mail.MessageId)
+			log.Printf("Couldn't find SendEmail with third_party_id: %s. ignoring.", sesMessage.Mail.MessageId)
 			return nil
 		} else {
 			return err
@@ -152,12 +155,12 @@ func handleSqsMessage(msg *sqs.Message) error {
 			}
 		}
 	default:
-		fmt.Printf("Unexpected SES message:\n%s\n\n\n", sqsMessage.Message)
+		log.Printf("Unexpected SES message:\n%s\n\n\n", sqsMessage.Message)
 	}
 
 	// todo: this is old dead code for reading incoming emails
 	// Parse the email content
-	if false {
+	if true {
 		reader := strings.NewReader(sesMessage.Content)
 		mailMsg, err := mail.ReadMessage(reader)
 		if err != nil {
@@ -170,7 +173,7 @@ func handleSqsMessage(msg *sqs.Message) error {
 		emailBody := buf.String()
 
 		// debug statement
-		fmt.Print(emailBody)
+		log.Printf("Received email:\n\n%s", emailBody)
 	}
 
 	return err

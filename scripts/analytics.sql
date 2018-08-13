@@ -7,5 +7,5 @@ select url, count(*), sum(time_on_page) from tracked_urls u, tracking_hits h whe
 -- Signups Per Month
 select date_part('month', subscribed) as month, count(*) from list_members where subscribed is not null group by date_part('month', subscribed);
 
--- Unsubscribes
+-- Unsubscribes per month
 select date_part('month', unsubscribed) as month, count(*) from list_members where unsubscribed is not null group by date_part('month', unsubscribed);
