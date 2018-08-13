@@ -10,8 +10,7 @@ import (
 				"time"
 	"log"
 	"strings"
-	"net/mail"
-	"bytes"
+			"github.com/veqryn/go-email/email"
 )
 
 type SqsMessage struct {
@@ -107,19 +106,21 @@ func handleSqsMessage(msg *sqs.Message) error {
 	// todo: this is old dead code for reading incoming emails
 	// Parse the email content
 	if true {
-		reader := strings.NewReader(sesMessage.Content)
-		mailMsg, err := mail.ReadMessage(reader)
+		contentReader := strings.NewReader(sesMessage.Content)
+		log.Printf("Received email content:\n\n%s", sesMessage.Content)
+		mailMsg, err := email.ParseMessage(contentReader)
 		if err != nil {
 			return err
 		}
-
-		// Obtain the email body
-		buf := new(bytes.Buffer)
-		buf.ReadFrom(mailMsg.Body)
-		emailBody := buf.String()
-
-		// debug statement
-		log.Printf("Received email:\n\n%s", emailBody)
+		log.Printf("\n\nMail msg:\n\n%s", mailMsg)
+		//
+		//// Obtain the email body
+		//buf := new(bytes.Buffer)
+		//buf.ReadFrom(mailMsg.Body)
+		//emailBody := buf.String()
+		//
+		//// debug statement
+		//log.Printf("Received email:\n\n%s", emailBody)
 	}
 
 	// Retrieve the sent message id
