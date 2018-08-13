@@ -130,7 +130,7 @@ func handleEmail(emailString string) bool {
 
 		// Actually send the email
 		auth := smtp.PlainAuth("", awsSmtpUsername, awsSmtpPassword, "email-smtp.us-west-2.amazonaws.com")
-		awsResponse, err := SendMail("email-smtp.us-west-2.amazonaws.com:587", auth, "vlad@softsideoftech", []string{recipient}, msgBytes)
+		awsResponse, err := SendMail("email-smtp.us-west-2.amazonaws.com:587", auth, "vlad@softsideoftech.com", []string{recipient}, msgBytes)
 		log.Printf("\nAWS SMTP RESPONSE:%s,%v\n:", awsResponse, err);
 
 	}
