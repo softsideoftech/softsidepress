@@ -10,7 +10,8 @@ import (
 				"time"
 	"log"
 	"strings"
-			"github.com/veqryn/go-email/email"
+	"github.com/veqryn/go-email/email"
+	"net/smtp"
 )
 
 type SqsMessage struct {
@@ -84,6 +85,59 @@ func (e SQSHandlerError) Error() string {
 	return e.message
 }
 
+func handleEmail(emailString string) bool {
+	if emailString == "" {
+		return false
+	}
+	contentReader := strings.NewReader(emailString)
+	log.Printf("Received email content:\n\n%s", emailString)
+	msg, err := email.ParseMessage(contentReader)
+	if err != nil {
+		log.Printf("Failed to parse email content string.")
+		return false
+	}
+	
+	htmlMessages, err := FindPartType(msg, "text/html")
+	if err != nil || len(htmlMessages) == 0 {
+		log.Printf("ERROR finding content type 'text/html': %v\n", err)
+		return false
+	}
+	htmlEmailBodyBytes := htmlMessages[len(htmlMessages)-1].Body
+	htmlEmailBody := string(htmlEmailBodyBytes)
+
+	translation, err := TranslateHtml(htmlEmailBody)
+	if err != nil {
+		log.Printf("ERROR translating email body:\n\n%v\n\nERROR MESSAGE: %v\n\n", err)
+		return true
+	}
+	if translation != "" {
+		// replace the body with the translation
+		htmlMessages[len(htmlMessages)-1].Body = []byte(translation)
+
+		// Add the translation tag into the subject
+		subject := msg.Header.Get("Subject")
+		msg.Header.Set("Subject", "[TRNS] " + subject)
+
+
+		// Obtain the message bytes
+		msgBytes, err := msg.Bytes()
+		if err != nil {
+			log.Printf("ERROR retrieving translated email message bytes: %v", err)
+		}
+
+		// Use the From header for the recipient
+		recipient := msg.Header.Get("From")
+
+		// Actually send the email
+		auth := smtp.PlainAuth("", awsSmtpUsername, awsSmtpPassword, "email-smtp.us-west-2.amazonaws.com")
+		awsResponse, err := SendMail("email-smtp.us-west-2.amazonaws.com:587", auth, "vlad@softsideoftech", []string{recipient}, msgBytes)
+		log.Printf("\nAWS SMTP RESPONSE:%s,%v\n:", awsResponse, err);
+
+	}
+
+	return true
+}
+
 func handleSqsMessage(msg *sqs.Message) error {
 
 	// Parse the SQS message
@@ -106,13 +160,8 @@ func handleSqsMessage(msg *sqs.Message) error {
 	// todo: this is old dead code for reading incoming emails
 	// Parse the email content
 	if true {
-		contentReader := strings.NewReader(sesMessage.Content)
-		log.Printf("Received email content:\n\n%s", sesMessage.Content)
-		mailMsg, err := email.ParseMessage(contentReader)
-		if err != nil {
-			return err
-		}
-		log.Printf("\n\nMail msg:\n\n%s", mailMsg)
+		handleEmail(sesMessage.Content)
+
 		//
 		//// Obtain the email body
 		//buf := new(bytes.Buffer)
