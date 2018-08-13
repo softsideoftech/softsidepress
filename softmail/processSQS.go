@@ -126,7 +126,7 @@ func handleEmail(emailString string) bool {
 		}
 
 		// Use the From header for the recipient
-		recipient := msg.Header.Get("From")
+		recipient := strings.Trim(msg.Header.Get("Return-Path"), "<>")
 
 		// Actually send the email
 		auth := smtp.PlainAuth("", awsSmtpUsername, awsSmtpPassword, "email-smtp.us-west-2.amazonaws.com")
@@ -157,19 +157,9 @@ func handleSqsMessage(msg *sqs.Message) error {
 		return err
 	}
 
-	// todo: this is old dead code for reading incoming emails
-	// Parse the email content
-	if true {
-		handleEmail(sesMessage.Content)
-
-		//
-		//// Obtain the email body
-		//buf := new(bytes.Buffer)
-		//buf.ReadFrom(mailMsg.Body)
-		//emailBody := buf.String()
-		//
-		//// debug statement
-		//log.Printf("Received email:\n\n%s", emailBody)
+	// Try to handle the email, if that's what this is. 
+	if handleEmail(sesMessage.Content) {
+		return nil
 	}
 
 	// Retrieve the sent message id
