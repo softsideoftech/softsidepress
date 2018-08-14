@@ -11,7 +11,7 @@ import (
 	"log"
 	"strings"
 	"github.com/veqryn/go-email/email"
-	"net/smtp"
+		"github.com/sourcegraph/go-ses"
 )
 
 type SqsMessage struct {
@@ -111,33 +111,16 @@ func handleEmail(emailString string) bool {
 		return true
 	}
 	if translation != "" {
-		// replace the body with the translation
-		htmlMessages[len(htmlMessages)-1].Body = []byte(translation)
-
 		// Add the translation tag into the subject
-		subject := msg.Header.Get("Subject")
-		msg.Header.Set("Subject", "[TRNS] " + subject)
-
-
-		// Obtain the message bytes
-		msgBytes, err := msg.Bytes()
-		if err != nil {
-			log.Printf("ERROR retrieving translated email message bytes: %v", err)
-		}
+		subject := "[TRNS] " + msg.Header.Get("Subject")
 
 		// Use the Return-Path header for the recipient
 		recipient := strings.Trim(msg.Header.Get("Return-Path"), "<>")
 		// todo vg: make all this stuff configurable, particularly the sender 
 		sender := "vlad@softsideoftech.com"
-		msg.Header.Set("To", recipient)
-		msg.Header.Set("From", sender)
-		msg.Header.Set("Return-Path", sender)
+
+		awsResponse, err := ses.EnvConfig.SendEmailHTML(sender, recipient, subject, "", translation)
 		
-		// Actually send the email
-		auth := smtp.PlainAuth("", awsSmtpUsername, awsSmtpPassword, "email-smtp.us-west-2.amazonaws.com")
-		
-		
-		awsResponse, err := SendMail("email-smtp.us-west-2.amazonaws.com:587", auth, sender, []string{recipient}, msgBytes)
 		log.Printf("\nAWS SMTP RESPONSE:%s,%v\n:", awsResponse, err);
 
 	}
