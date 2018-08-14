@@ -90,16 +90,17 @@ func handleEmail(emailString string) bool {
 		return false
 	}
 	contentReader := strings.NewReader(emailString)
-	log.Printf("Received email content:\n\n%s", emailString)
+	
+	log.Printf("Received email content...")
 	msg, err := email.ParseMessage(contentReader)
 	if err != nil {
-		log.Printf("Failed to parse email content string.")
+		log.Printf("Failed to parse email content string: \n%v\v", emailString)
 		return false
 	}
 	
 	htmlMessages, err := FindPartType(msg, "text/html")
 	if err != nil || len(htmlMessages) == 0 {
-		log.Printf("ERROR finding content type 'text/html': %v\n", err)
+		log.Printf("ERROR finding content type 'text/html': %v\n\nMESSAGE: %v\v", emailString, err)
 		return false
 	}
 	htmlEmailBodyBytes := htmlMessages[len(htmlMessages)-1].Body
@@ -107,7 +108,7 @@ func handleEmail(emailString string) bool {
 
 	translation, err := TranslateHtml(htmlEmailBody)
 	if err != nil {
-		log.Printf("ERROR translating email body:\n\n%v\n\nERROR MESSAGE: %v\n\n", err)
+		log.Printf("ERROR translating email body:\n\n%v\n\nERROR MESSAGE: %v\n\n", htmlEmailBody, err)
 		return true
 	}
 	if translation != "" {
