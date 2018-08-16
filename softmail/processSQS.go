@@ -91,7 +91,7 @@ func handleEmail(emailString string) bool {
 	}
 	contentReader := strings.NewReader(emailString)
 	
-	log.Printf("Received email content...")
+	log.Printf("Received email content...:%v\n\n", emailString)
 	msg, err := email.ParseMessage(contentReader)
 	if err != nil {
 		log.Printf("Failed to parse email content string: \n%v\v", emailString)
