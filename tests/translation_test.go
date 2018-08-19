@@ -12,12 +12,14 @@ import (
 )
 
 func TestTranslationParsing(t *testing.T) {
-	//sourceText := softmail.ParseTextFromHtml(sampleTranslationHtml.TranslationHtml)
-	//print(sourceText)
+	sourceText := softmail.ParseTextFromHtml(sampleTranslationHtml.TranslationHtml)
+	print(sourceText)
 
-	// This is meant to be run manually because the environment needs to have the translation service credentials.
-	translateEmail(t)
-	//doNonTranslation(sourceText, t)
+	// This is meant to be run locally because the environment needs to have the translation service credentials.
+	if softmail.DevelopmentMode {
+		translateEmail(t)
+		doNonTranslation(sourceText, t)
+	}
 }
 
 func translateEmail(t *testing.T) {
