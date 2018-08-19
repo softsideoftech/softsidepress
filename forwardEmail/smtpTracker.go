@@ -15,6 +15,12 @@ import (
 var softmailPassword string = os.Getenv("SOFTMAIL_FORWARDING_PASSWORD")
 type Backend struct{}
 
+type User struct{}
+
+type AnnonymousUser struct {
+	*User
+}
+
 func (bkd *Backend) Login(username, password string) (smtp.User, error) {
 	log.Println("received email from username: %v, password: %v", username, password)
 	if true {
@@ -28,10 +34,9 @@ func (bkd *Backend) Login(username, password string) (smtp.User, error) {
 
 // Require clients to authenticate using SMTP AUTH before sending emails
 func (bkd *Backend) AnonymousLogin() (smtp.User, error) {
-	return nil, smtp.ErrAuthRequired
+	return AnnonymousUser{}, nil
 }
 
-type User struct{}
 
 func (u *User) Send(from string, to []string, r io.Reader) error {
 	log.Println("Sending message:", from, to)
