@@ -21,12 +21,12 @@ func TestTranslationParsing(t *testing.T) {
 
 func doTranslation(sourceText []string, t *testing.T) {
 	translate(sourceText, t)
-	TestNonTranslation(t)
+	testNonTranslation(t)
 	user := forwardEmail.AnnonymousUser{}
 	user.Send("vgiverts@gmail.com", []string{"test@mail.softsideoftech.com"}, strings.NewReader(sampleEmails.EmailSample))
 }
 
-func TestNonTranslation(t *testing.T) {
+func testNonTranslation(t *testing.T) {
 	translationMap, err := softmail.TranslateText([]string{"the quick brown fox jumped over the lazy dog"})
 	if err != nil {
 		t.Error(fmt.Sprintf("Problem translating text: %v", err))
