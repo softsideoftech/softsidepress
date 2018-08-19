@@ -6,6 +6,7 @@ import (
 	"golang.org/x/text/language"
 	"golang.org/x/net/context"
 	"cloud.google.com/go/translate"
+	"log"
 )
 
 var matchWhitespace = regexp.MustCompile("\\s+")
@@ -68,6 +69,7 @@ func TranslateText(sourceText []string) (map[string]string, error) {
 		if sourceLangCount > maxLangaugeCount {
 			maxLangaugeCount = sourceLangCount
 			sourceLanguage = sourceLangCandidate
+			log.Println("sourceLangCandidate: %s, sourceLangCount: %s", sourceLangCount, sourceLangCandidate)
 		}
 	} 
 	
@@ -113,7 +115,7 @@ func TranslateHtml(htmlString string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	if translations == nil {
+	if translations == nil || len(translations) == 0 {
 		return "", nil
 	}
 	
