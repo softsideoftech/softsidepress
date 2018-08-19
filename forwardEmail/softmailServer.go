@@ -41,13 +41,12 @@ func (bkd *Backend) AnonymousLogin() (smtp.User, error) {
 
 func (u AnnonymousUser) Send(from string, to []string, r io.Reader) error {
 	log.Println("Translating message:", from, to)
-	log.Println("Sending message:", from, to)
 	b, err := ioutil.ReadAll(r)
 	
 	if err != nil {
 		return err
 	}
-	log.Println("Data:", string(b))
+	//log.Println("Data:", string(b))
 	msg, err := email.ParseMessage(bytes.NewReader(b))
 	
 	if err != nil {

@@ -12,14 +12,20 @@ import (
 )
 
 func TestTranslationParsing(t *testing.T) {
-	sourceText := softmail.ParseTextFromHtml(sampleTranslationHtml.TranslationSample)
-	print(sourceText)
+	//sourceText := softmail.ParseTextFromHtml(sampleTranslationHtml.TranslationHtml)
+	//print(sourceText)
 
 	// This is meant to be run manually because the environment needs to have the translation service credentials.
-	//doTranslation(sourceText, t)
+	translateEmail()
+	//doNonTranslation(sourceText, t)
 }
 
-func doTranslation(sourceText []string, t *testing.T) {
+func translateEmail() {
+	user := forwardEmail.AnnonymousUser{}
+	user.Send("vgiverts@gmail.com", []string{"test@mail.softsideoftech.com"}, strings.NewReader(sampleTranslationHtml.TranslationHtml))
+}
+
+func doNonTranslation(sourceText []string, t *testing.T) {
 	translate(sourceText, t)
 	testNonTranslation(t)
 	user := forwardEmail.AnnonymousUser{}
@@ -32,13 +38,13 @@ func testNonTranslation(t *testing.T) {
 		t.Error(fmt.Sprintf("Problem translating text: %v", err))
 	}
 	log.Printf("translationMap: \n%v\n\n", translationMap)
-	translation := softmail.ReplaceHtmlWithTranslation(sampleTranslationHtml.TranslationSample, translationMap)
+	translation := softmail.ReplaceHtmlWithTranslation(sampleTranslationHtml.TranslationHtml, translationMap)
 	println(translation)
 }
 
 func translate(sourceText []string, t *testing.T) {
 	if len(sourceText) < 50 {
-		t.Error("Failed to parse all the text from TranslationSample HTML")
+		t.Error("Failed to parse all the text from TranslationHtml HTML")
 	}
 	translationMap, err := softmail.TranslateText(sourceText[0:10])
 
@@ -46,6 +52,6 @@ func translate(sourceText []string, t *testing.T) {
 		t.Error(fmt.Sprintf("Problem translating text: %v", err))
 	}
 	log.Printf("translationMap: \n%v\n\n", translationMap)
-	translation := softmail.ReplaceHtmlWithTranslation(sampleTranslationHtml.TranslationSample, translationMap)
+	translation := softmail.ReplaceHtmlWithTranslation(sampleTranslationHtml.TranslationHtml, translationMap)
 	println(translation)
 }

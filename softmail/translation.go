@@ -7,12 +7,11 @@ import (
 	"golang.org/x/net/context"
 	"cloud.google.com/go/translate"
 	"log"
-	"math/rand"
 )
 
 var matchWhitespace = regexp.MustCompile("\\s+")
 var matchSingleWhitespace = regexp.MustCompile(">\\s<")
-var extractText = regexp.MustCompile(">([^<>]+)[\\s]*")
+var extractText = regexp.MustCompile(">([^<>]+)")
 
 func ParseTextFromHtml(htmlStr string) []string {
 
@@ -22,8 +21,7 @@ func ParseTextFromHtml(htmlStr string) []string {
 
 	toTranslate := make([]string, 0, len(matches)/2)
 	for _, matchArray := range matches {
-		//toTranslate = append(toTranslate, strings.Trim(matchArray[1], " "))
-		toTranslate = append(toTranslate, matchArray[1])
+		toTranslate = append(toTranslate, strings.Trim(matchArray[1], " "))
 	}
 
 	return toTranslate
@@ -34,15 +32,6 @@ func min(a, b int) int {
 		return a
 	}
 	return b
-}
-
-func shuffle(src []string) []string {
-	dest := make([]string, len(src))
-	perm := rand.Perm(len(src))
-	for i, v := range perm {
-		dest[v] = src[i]
-	}
-	return dest
 }
 
 func TranslateText(sourceText []string) (map[string]string, error) {
@@ -58,11 +47,9 @@ func TranslateText(sourceText []string) (map[string]string, error) {
 	
 	
 	// Call the DetectLanguage api to figure out what we're dealing with
-	// Pick 20 strings at random just in case there's some leading text in one lang when the body is in another
 	sliceLen := min(20, len(sourceText))
-	sampleText := shuffle(sourceText)
-	sampleTextSample := sampleText[0:sliceLen]
-	detections, err := client.DetectLanguage(ctx, sampleTextSample)
+	sourceTextSample := sourceText[0:sliceLen]
+	detections, err := client.DetectLanguage(ctx, sourceTextSample)
 	if err != nil {
 		return nil, err
 	}

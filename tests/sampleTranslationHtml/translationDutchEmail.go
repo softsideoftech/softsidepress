@@ -1,6 +1,1752 @@
 package sampleTranslationHtml
 
-const TranslationSample = `
+const TranslationEmail = `
+Received: by mail-lj1-f172.google.com with SMTP id j19-v6so9664314ljc.7
+        for <test@mail.softsideoftech.com>; Sun, 19 Aug 2018 07:19:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
+        bh=1FK5sYGMntm3tca2yVhZS+ujGRsz14LXQFr1IQat1RQ=;
+        b=WFlHzuTIMZZpsO1EASsiBofsFhFt9bP3CCny1vm3YCNT9Yf2haaP2Sdd0IlTzLRBw9
+         xUSIzjYuPak7zVv267Q1lCAsRS++YqRuLP9YzBiE+b7tIuPDGaVtBjXuZ8nnZYLJ1egK
+         O06wurNpU7IgdwfN57jqxA4TKOdggUPKT3D1HAimRe1c/1VRQ2Gh0gTJWjamWoR+0zTt
+         1QIveVroy589LR+kJMc01MRe0cRdi7Py+WwbYWXcAeIJuiXRyj09ELlhvVngojvf4iTX
+         nzNEchIrEukXwK/PCta5WbcileXYKVCm8UiP1n/iDXRdF6ozAGwPJPuLw/io6Higl4VQ
+         woEA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to;
+        bh=1FK5sYGMntm3tca2yVhZS+ujGRsz14LXQFr1IQat1RQ=;
+        b=bm8pDjQsFGndqt1XMdc7DwfxVuzRUVQ4lDNOgLaGN4R4Wv9mWjLu/zxlzODbMy5eWB
+         VHC/NsrhceJa3sPc6ITAHOOv1nWlr+s0QEZsVvV4DP6SuQ+ntcRkrCqrx6nJr8N8M86g
+         ZJ7AqQqIh7/5LmOXnLb2rL3Ui6uEB3AgcpRwjkr7D4YhBBm2tENPIdk68Yl8BJDEZQr5
+         0j31+PxQ1Vr8Nv+NncRASP1owlVozwJMweke+9CbxGZhQSufzj9YoLHjwei2t8uZjbeX
+         WUqYWNLShl8/Sy9kXB6tQYvCwJUMmJv6cDgyC63soyKGUvsq870fD2wdsUoXoCC/Jen3
+         2wmA==
+X-Gm-Message-State: AOUpUlEYuHqPyLlTWfm9WdxnhDalIBQ1kw4QHhJhDytdqWXv+hZ9N1Ye
+	Q2KTAEmMOW9jXFe1HquXe+f5AXvKSBJqn4J9WyWmtw==
+X-Google-Smtp-Source: AA+uWPxLBvrGcSIhd5XXMGFTXKORQCFBYjYIUMUSTO7Zrg2HaSYc+3oPno0TIoJk1MYj3MFJl25ZEvY2Rrd6Y/Y+Plg=
+X-Received: by 2002:a2e:29da:: with SMTP id p87-v6mr27846154ljp.12.1534688377161;
+ Sun, 19 Aug 2018 07:19:37 -0700 (PDT)
+MIME-Version: 1.0
+References: <ca30d087f19bc6314ddd0b69a.4d36b500a6.20180815131813.a5ec811c70.9b707dc2@mail215.atl221.rsgsv.net>
+In-Reply-To: <ca30d087f19bc6314ddd0b69a.4d36b500a6.20180815131813.a5ec811c70.9b707dc2@mail215.atl221.rsgsv.net>
+From: Vlad Giverts <vgiverts@gmail.com>
+Date: Sun, 19 Aug 2018 16:19:25 +0200
+Message-ID: <CAP-N5vRgrzHtHg5NMHbqDm7hWpEOfquV1WdZ_UbC3hf=rZTTpg@mail.gmail.com>
+Subject: =?UTF-8?Q?Fwd=3A_=F0=9F=8F=A1_Bieden_zonder_financieringsvoorbehoud=3A_doe?=
+	=?UTF-8?Q?n_of_niet=3F_=7C_Dit_is_Viisi_=7C_Nieuwe_Viisionairs_=7C_Seminar_Eig?=
+	=?UTF-8?Q?en_Woning_=7C_Video_Viisionairs_op_het_strand?=
+To: "test@mail.softsideoftech.com" <test@mail.softsideoftech.com>
+Content-Type: multipart/alternative; boundary="0000000000008fcd1a0573ca7ba6"
+
+--0000000000008fcd1a0573ca7ba6
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+---------- Forwarded message ---------
+From: Ricardo van Viisi <hello@viisi.nl>
+Date: Wed, Aug 15, 2018 at 3:30 PM
+Subject: =F0=9F=8F=A1 Bieden zonder financieringsvoorbehoud: doen of niet? =
+| Dit is
+Viisi | Nieuwe Viisionairs | Seminar Eigen Woning | Video Viisionairs op
+het strand
+To: Vlad <vgiverts@gmail.com>
+
+
+We stellen je voor aan nieuwe Viisionairs! Verder leggen we je uit hoe je
+biedt zonder voorbehoud van financiering en hebben we een leuke strandvideo=
+.
+
+Beste Vlad,
+
+Het is halverwege augustus: tijd voor de Viisi nieuwsbrief! We stellen je
+graag voor aan de volgende twee *nieuwe Viisionairs: Hansje en Tom*!
+Verder een leuk interview met drie andere Viisionairs: *Heather, Margy en
+Fedor*. We leggen je uit hoe je in een oververhitte woningmarkt biedt *zond=
+er
+financieringsvoorbehoud* en waar je op moet letten. Kom naar ons *Seminar
+Eigen Woning!* Last but not least blikken we terug op een *prachtige
+stranddag*!
+In deze Viisi nieuwsbrief
+
+   1. Nieuwe Viisionairs: Hansje en Tom
+   2. Woning kopen zonder financieringsvoorbehoud
+   3. DitIsViisi: Heather, Margy en Fedor
+   4. Kom naar/Wijs iemand op ons Seminar Eigen Woning
+   5. We blikken terug op een prachtige stranddag
+
+Nieuwe Viisionairs: Hansje en Tom
+Begin augustus zijn er weer twee nieuwe Viisionairs gestart. Hansje gaat
+aan de slag als Expat Consultant en Tom als Team Member Support.
+
+Hansje is gek op reizen, lezen en dansen. Bij Viisi wil Hansje graag
+Nederlanders en buitenlanders helpen hun woondroom in Nederland te
+realiseren.
+
+Tom woont samen met twee vrienden in Amsterdam. In zijn vrije tijd gaat hij
+graag hardlopen, fitnessen, tennissen, wintersporten en borrelen met
+vrienden.
+Woning kopen zonder financieringsvoorbehoud: doen of niet?
+<https://viisi.us4.list-manage.com/track/click?u=3Dca30d087f19bc6314ddd0b69=
+a&id=3Dbf17188f75&e=3D4d36b500a6>
+
+In een oververhitte huizenmarkt zoals die in de Randstad, neemt de druk op
+huizenkopers toe. De verkoper kan je vragen een bod te doen zonder
+=E2=80=98financieringsvoorbehoud=E2=80=99. Is het verstandig om hiermee akk=
+oord te gaan of
+niet? We zetten de aandachtspunten voor je op een rij.
+
+Lees hier
+<https://viisi.us4.list-manage.com/track/click?u=3Dca30d087f19bc6314ddd0b69=
+a&id=3Dec35ab9f2b&e=3D4d36b500a6>
+wat waar je op moet letten.
+DitIsViisi: Heather, Margy en Fedor
+<https://viisi.us4.list-manage.com/track/click?u=3Dca30d087f19bc6314ddd0b69=
+a&id=3D51e40c4c7b&e=3D4d36b500a6>
+
+Viisi is een bedrijf met een missie: Let=E2=80=99s change Finance. En zo=E2=
+=80=99n missie
+vraagt erom goed uitgedragen te worden. Dat wordt gedaan door een hecht
+team van meer dan 35 Viisionairs, die zich elke dag met hart en ziel
+inzetten voor de purpose.
+
+In de serie DitIsViisi is het nu de beurt aan Heather
+<https://viisi.us4.list-manage.com/track/click?u=3Dca30d087f19bc6314ddd0b69=
+a&id=3D1e37438588&e=3D4d36b500a6>,
+Margy
+<https://viisi.us4.list-manage.com/track/click?u=3Dca30d087f19bc6314ddd0b69=
+a&id=3Dc88b7106db&e=3D4d36b500a6>
+en Fedor
+<https://viisi.us4.list-manage.com/track/click?u=3Dca30d087f19bc6314ddd0b69=
+a&id=3D26bf576618&e=3D4d36b500a6>
+.
+Seminar Eigen Woning
+<https://viisi.us4.list-manage.com/track/click?u=3Dca30d087f19bc6314ddd0b69=
+a&id=3D65edd7cbd9&e=3D4d36b500a6>
+
+Voor iedereen die zich ori=C3=ABnteert op het kopen van een woning biedt on=
+s
+seminar een uitstekende start. Na het seminar:
+
+   - ben je goed voorbereid op de aankoop en financiering van jouw nieuwe
+   woning;
+   - zijn al je vragen beantwoord;
+   - weet je wat de ervaringen en tips van gelijkgestemden zijn.
+
+Kom naar ons Seminar Eigen Woning
+<https://viisi.us4.list-manage.com/track/click?u=3Dca30d087f19bc6314ddd0b69=
+a&id=3Dac71bf5dd5&e=3D4d36b500a6>
+Alle Viisionairs op het strand in Den Haag!
+<https://viisi.us4.list-manage.com/track/click?u=3Dca30d087f19bc6314ddd0b69=
+a&id=3Ded712d2fbb&e=3D4d36b500a6>
+We blikken met dit filmpje terug op een prachtige stranddag! Wil je hard
+werken ook combineren met een flinke dosis gezelligheid?
+
+Kijk op werkenbij.viisi.nl voor een overzicht van alle vacatures
+<https://viisi.us4.list-manage.com/track/click?u=3Dca30d087f19bc6314ddd0b69=
+a&id=3D2264ce7117&e=3D4d36b500a6>
+Wat vinden onze klanten van Viisi?
+We are very pleased with Viisi's services and our advisor, Arjen Goedmakers
+in particular. He's made buying a home a simple and straight forward
+process and we would highly recommend him in the future. Thanks!
+Viisi heeft binnen 3 weken een hypotheek geregeld, terwijl ik op reis was.
+Zeer goed geholpen door Deni, en zeer tevreden met de pro-actieve houding
+van Viisi.
+Geweldige ervaring! Uitstekende snelle begeleiding en duidelijke
+communicatie tijdens het gehele proces, en zeer behulpzaam met al onze
+vragen. Robert en zijn collega's hebben het super gedaan, zeker aan te
+raden!
+
+Lees meer reviews
+<https://viisi.us4.list-manage.com/track/click?u=3Dca30d087f19bc6314ddd0b69=
+a&id=3D7d60654910&e=3D4d36b500a6>
+*"Een gezonde financi=C3=ABle wereld die beter, duurzamer en meer lange ter=
+mijn
+gericht is."*
+<https://viisi.us4.list-manage.com/track/click?u=3Dca30d087f19bc6314ddd0b69=
+a&id=3D2b2886edb7&e=3D4d36b500a6>
+<https://viisi.us4.list-manage.com/track/click?u=3Dca30d087f19bc6314ddd0b69=
+a&id=3D5e8c74a3ce&e=3D4d36b500a6>
+<https://viisi.us4.list-manage.com/track/click?u=3Dca30d087f19bc6314ddd0b69=
+a&id=3Dc7efe5cf94&e=3D4d36b500a6>
+<hello@viisi.nl>
+--=20
+Purposeful Leadership Coaching
+softsideoftech.com
+
+--0000000000008fcd1a0573ca7ba6
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr"><br><br><div class=3D"gmail_quote"><div dir=3D"ltr">------=
+---- Forwarded message ---------<br>From: Ricardo van Viisi &lt;<a href=3D"=
+mailto:hello@viisi.nl">hello@viisi.nl</a>&gt;<br>Date: Wed, Aug 15, 2018 at=
+ 3:30 PM<br>Subject: =F0=9F=8F=A1=C2=A0Bieden zonder financieringsvoorbehou=
+d: doen of niet? | Dit is Viisi | Nieuwe Viisionairs | Seminar Eigen Woning=
+ | Video Viisionairs op het strand<br>To: Vlad &lt;<a href=3D"mailto:vgiver=
+ts@gmail.com">vgiverts@gmail.com</a>&gt;<br></div><br><br><u></u>
+
+=09
+	=09
+	=09
+	=09
+       =20
+       =20
+	=09
+
+   =20
+    <div style=3D"height:100%;margin:0;padding:0;width:100%">
+	=09
+		<span class=3D"m_782797844714898698mcnPreviewText" style=3D"display:none;=
+font-size:0px;line-height:0px;max-height:0px;max-width:0px;opacity:0;overfl=
+ow:hidden">We stellen je voor aan nieuwe Viisionairs! Verder leggen we je u=
+it hoe je biedt zonder voorbehoud van financiering en hebben we een leuke s=
+trandvideo.</span>
+	=09
+        <center>
+            <table align=3D"center" border=3D"0" cellpadding=3D"0" cellspac=
+ing=3D"0" height=3D"100%" width=3D"100%" id=3D"m_782797844714898698bodyTabl=
+e" style=3D"border-collapse:collapse;height:100%;margin:0;padding:0;width:1=
+00%">
+                <tbody><tr>
+                    <td align=3D"center" valign=3D"top" id=3D"m_78279784471=
+4898698bodyCell" style=3D"height:100%;margin:0;padding:0;width:100%">
+                       =20
+                        <table border=3D"0" cellpadding=3D"0" cellspacing=
+=3D"0" width=3D"100%" style=3D"border-collapse:collapse">
+							<tbody><tr>
+								<td align=3D"center" valign=3D"top" id=3D"m_782797844714898698templ=
+ateHeader" style=3D"background:#ffffff none no-repeat 50% 50%/contain;backg=
+round-color:#ffffff;background-image:none;background-repeat:no-repeat;backg=
+round-position:50% 50%;background-size:contain;border-top:0;border-bottom:0=
+;padding-top:0px;padding-bottom:0px">
+								=09
+									<table align=3D"center" border=3D"0" cellpadding=3D"0" cellspacing=
+=3D"0" width=3D"100%" class=3D"m_782797844714898698templateContainer" style=
+=3D"border-collapse:collapse;max-width:600px!important">
+										<tbody><tr>
+                                			<td valign=3D"top" class=3D"m_7827978447=
+14898698headerContainer" style=3D"background:#transparent none no-repeat ce=
+nter/cover;background-color:#transparent;background-image:none;background-r=
+epeat:no-repeat;background-position:center;background-size:cover;border-top=
+:0;border-bottom:0;padding-top:0;padding-bottom:0"><table border=3D"0" cell=
+padding=3D"0" cellspacing=3D"0" width=3D"100%" class=3D"m_78279784471489869=
+8mcnImageBlock" style=3D"min-width:100%;border-collapse:collapse">
+    <tbody class=3D"m_782797844714898698mcnImageBlockOuter">
+            <tr>
+                <td valign=3D"top" style=3D"padding:9px" class=3D"m_7827978=
+44714898698mcnImageBlockInner">
+                    <table align=3D"left" width=3D"100%" border=3D"0" cellp=
+adding=3D"0" cellspacing=3D"0" class=3D"m_782797844714898698mcnImageContent=
+Container" style=3D"min-width:100%;border-collapse:collapse">
+                        <tbody><tr>
+                            <td class=3D"m_782797844714898698mcnImageConten=
+t" valign=3D"top" style=3D"padding-right:9px;padding-left:9px;padding-top:0=
+;padding-bottom:0;text-align:center">
+
+
+                                        <img align=3D"center" alt=3D"" src=
+=3D"https://gallery.mailchimp.com/ca30d087f19bc6314ddd0b69a/images/f7502de7=
+-3660-4f33-b860-3cce9d649355.png" width=3D"564" style=3D"max-width:600px;pa=
+dding-bottom:0;display:inline!important;vertical-align:bottom;border:0;heig=
+ht:auto;outline:none;text-decoration:none" class=3D"m_782797844714898698mcn=
+Image">
+
+
+                            </td>
+                        </tr>
+                    </tbody></table>
+                </td>
+            </tr>
+    </tbody>
+</table></td>
+										</tr>
+									</tbody></table>
+								=09
+								</td>
+                            </tr>
+							<tr>
+								<td align=3D"center" valign=3D"top" id=3D"m_782797844714898698templ=
+ateBody" style=3D"background:#ffffff none no-repeat center/cover;background=
+-color:#ffffff;background-image:none;background-repeat:no-repeat;background=
+-position:center;background-size:cover;border-top:0;border-bottom:0;padding=
+-top:13px;padding-bottom:13px">
+								=09
+									<table align=3D"center" border=3D"0" cellpadding=3D"0" cellspacing=
+=3D"0" width=3D"100%" class=3D"m_782797844714898698templateContainer" style=
+=3D"border-collapse:collapse;max-width:600px!important">
+										<tbody><tr>
+                                			<td valign=3D"top" class=3D"m_7827978447=
+14898698bodyContainer" style=3D"background:#transparent none no-repeat cent=
+er/cover;background-color:#transparent;background-image:none;background-rep=
+eat:no-repeat;background-position:center;background-size:cover;border-top:0=
+;border-bottom:0;padding-top:0;padding-bottom:0"><table border=3D"0" cellpa=
+dding=3D"0" cellspacing=3D"0" width=3D"100%" class=3D"m_782797844714898698m=
+cnTextBlock" style=3D"min-width:100%;border-collapse:collapse">
+    <tbody class=3D"m_782797844714898698mcnTextBlockOuter">
+        <tr>
+            <td valign=3D"top" class=3D"m_782797844714898698mcnTextBlockInn=
+er" style=3D"padding-top:9px">
+              =09
+		=09
+			=09
+                <table align=3D"left" border=3D"0" cellpadding=3D"0" cellsp=
+acing=3D"0" style=3D"max-width:100%;min-width:100%;border-collapse:collapse=
+" width=3D"100%" class=3D"m_782797844714898698mcnTextContentContainer">
+                    <tbody><tr>
+
+                        <td valign=3D"top" class=3D"m_782797844714898698mcn=
+TextContent" style=3D"padding-top:0;padding-right:18px;padding-bottom:9px;p=
+adding-left:18px;word-break:break-word;color:#374a5e;font-family:&#39;Open =
+Sans&#39;,&#39;Helvetica Neue&#39;,Helvetica,Arial,sans-serif;font-size:14p=
+x;line-height:150%;text-align:left">
+
+                            <p style=3D"text-align:left;margin:10px 0;paddi=
+ng:0;color:#374a5e;font-family:&#39;Open Sans&#39;,&#39;Helvetica Neue&#39;=
+,Helvetica,Arial,sans-serif;font-size:14px;line-height:150%">Beste=C2=A0Vla=
+d,<br>
+<br>
+Het is halverwege augustus: tijd voor de Viisi nieuwsbrief! We stellen je g=
+raag voor aan de volgende twee <strong>nieuwe Viisionairs: Hansje en Tom</s=
+trong>! Verder=C2=A0een leuk interview met drie andere Viisionairs: <strong=
+>Heather, Margy en Fedor</strong>. We leggen je uit hoe je in een oververhi=
+tte woningmarkt biedt <strong>zonder financieringsvoorbehoud</strong> en wa=
+ar je op moet letten. Kom naar=C2=A0ons <strong>Seminar Eigen Woning!</stro=
+ng>=C2=A0Last but not least blikken we terug op een <strong>prachtige stran=
+ddag</strong>!=C2=A0</p>
+
+                        </td>
+                    </tr>
+                </tbody></table>
+			=09
+
+			=09
+            </td>
+        </tr>
+    </tbody>
+</table><table border=3D"0" cellpadding=3D"0" cellspacing=3D"0" width=3D"10=
+0%" class=3D"m_782797844714898698mcnTextBlock" style=3D"min-width:100%;bord=
+er-collapse:collapse">
+    <tbody class=3D"m_782797844714898698mcnTextBlockOuter">
+        <tr>
+            <td valign=3D"top" class=3D"m_782797844714898698mcnTextBlockInn=
+er" style=3D"padding-top:9px">
+              =09
+		=09
+			=09
+                <table align=3D"left" border=3D"0" cellpadding=3D"0" cellsp=
+acing=3D"0" style=3D"max-width:100%;min-width:100%;border-collapse:collapse=
+" width=3D"100%" class=3D"m_782797844714898698mcnTextContentContainer">
+                    <tbody><tr>
+
+                        <td valign=3D"top" class=3D"m_782797844714898698mcn=
+TextContent" style=3D"padding-top:0;padding-right:18px;padding-bottom:9px;p=
+adding-left:18px;word-break:break-word;color:#374a5e;font-family:&#39;Open =
+Sans&#39;,&#39;Helvetica Neue&#39;,Helvetica,Arial,sans-serif;font-size:14p=
+x;line-height:150%;text-align:left">
+
+                            <h3 class=3D"m_782797844714898698null" style=3D=
+"display:block;margin:0;padding:0;color:#00aeff;font-family:&#39;Open Sans&=
+#39;,&#39;Helvetica Neue&#39;,Helvetica,Arial,sans-serif;font-size:18px;fon=
+t-style:normal;font-weight:bold;line-height:150%;letter-spacing:normal;text=
+-align:left">In deze Viisi nieuwsbrief</h3>
+
+                        </td>
+                    </tr>
+                </tbody></table>
+			=09
+
+			=09
+            </td>
+        </tr>
+    </tbody>
+</table><table border=3D"0" cellpadding=3D"0" cellspacing=3D"0" width=3D"10=
+0%" class=3D"m_782797844714898698mcnTextBlock" style=3D"min-width:100%;bord=
+er-collapse:collapse">
+    <tbody class=3D"m_782797844714898698mcnTextBlockOuter">
+        <tr>
+            <td valign=3D"top" class=3D"m_782797844714898698mcnTextBlockInn=
+er" style=3D"padding-top:9px">
+              =09
+		=09
+			=09
+                <table align=3D"left" border=3D"0" cellpadding=3D"0" cellsp=
+acing=3D"0" style=3D"max-width:100%;min-width:100%;border-collapse:collapse=
+" width=3D"100%" class=3D"m_782797844714898698mcnTextContentContainer">
+                    <tbody><tr>
+
+                        <td valign=3D"top" class=3D"m_782797844714898698mcn=
+TextContent" style=3D"padding-top:0;padding-right:18px;padding-bottom:9px;p=
+adding-left:18px;word-break:break-word;color:#374a5e;font-family:&#39;Open =
+Sans&#39;,&#39;Helvetica Neue&#39;,Helvetica,Arial,sans-serif;font-size:14p=
+x;line-height:150%;text-align:left">
+
+                            <ol>
+	<li>Nieuwe Viisionairs: Hansje en Tom</li>
+	<li>Woning kopen zonder financieringsvoorbehoud</li>
+	<li>DitIsViisi: Heather, Margy en Fedor</li>
+	<li>Kom naar/Wijs iemand op ons Seminar Eigen Woning</li>
+	<li>We blikken terug op een prachtige stranddag</li>
+</ol>
+
+                        </td>
+                    </tr>
+                </tbody></table>
+			=09
+
+			=09
+            </td>
+        </tr>
+    </tbody>
+</table><table border=3D"0" cellpadding=3D"0" cellspacing=3D"0" width=3D"10=
+0%" class=3D"m_782797844714898698mcnDividerBlock" style=3D"min-width:100%;b=
+order-collapse:collapse;table-layout:fixed!important">
+    <tbody class=3D"m_782797844714898698mcnDividerBlockOuter">
+        <tr>
+            <td class=3D"m_782797844714898698mcnDividerBlockInner" style=3D=
+"min-width:100%;padding:18px">
+                <table class=3D"m_782797844714898698mcnDividerContent" bord=
+er=3D"0" cellpadding=3D"0" cellspacing=3D"0" width=3D"100%" style=3D"min-wi=
+dth:100%;border-top:2px solid #cfcfcf;border-collapse:collapse">
+                    <tbody><tr>
+                        <td>
+                            <span></span>
+                        </td>
+                    </tr>
+                </tbody></table>
+
+            </td>
+        </tr>
+    </tbody>
+</table><table border=3D"0" cellpadding=3D"0" cellspacing=3D"0" width=3D"10=
+0%" class=3D"m_782797844714898698mcnTextBlock" style=3D"min-width:100%;bord=
+er-collapse:collapse">
+    <tbody class=3D"m_782797844714898698mcnTextBlockOuter">
+        <tr>
+            <td valign=3D"top" class=3D"m_782797844714898698mcnTextBlockInn=
+er" style=3D"padding-top:9px">
+              =09
+		=09
+			=09
+                <table align=3D"left" border=3D"0" cellpadding=3D"0" cellsp=
+acing=3D"0" style=3D"max-width:100%;min-width:100%;border-collapse:collapse=
+" width=3D"100%" class=3D"m_782797844714898698mcnTextContentContainer">
+                    <tbody><tr>
+
+                        <td valign=3D"top" class=3D"m_782797844714898698mcn=
+TextContent" style=3D"padding-top:0;padding-right:18px;padding-bottom:9px;p=
+adding-left:18px;word-break:break-word;color:#374a5e;font-family:&#39;Open =
+Sans&#39;,&#39;Helvetica Neue&#39;,Helvetica,Arial,sans-serif;font-size:14p=
+x;line-height:150%;text-align:left">
+
+                            <h3 style=3D"display:block;margin:0;padding:0;c=
+olor:#00aeff;font-family:&#39;Open Sans&#39;,&#39;Helvetica Neue&#39;,Helve=
+tica,Arial,sans-serif;font-size:18px;font-style:normal;font-weight:bold;lin=
+e-height:150%;letter-spacing:normal;text-align:left">Nieuwe Viisionairs: Ha=
+nsje en Tom</h3>
+
+                        </td>
+                    </tr>
+                </tbody></table>
+			=09
+
+			=09
+            </td>
+        </tr>
+    </tbody>
+</table><table border=3D"0" cellpadding=3D"0" cellspacing=3D"0" width=3D"10=
+0%" class=3D"m_782797844714898698mcnImageGroupBlock" style=3D"border-collap=
+se:collapse">
+    <tbody class=3D"m_782797844714898698mcnImageGroupBlockOuter">
+
+            <tr>
+                <td valign=3D"top" style=3D"padding:9px" class=3D"m_7827978=
+44714898698mcnImageGroupBlockInner">
+
+                    <table align=3D"left" width=3D"273" border=3D"0" cellpa=
+dding=3D"0" cellspacing=3D"0" class=3D"m_782797844714898698mcnImageGroupCon=
+tentContainer" style=3D"border-collapse:collapse">
+                            <tbody><tr>
+                                <td class=3D"m_782797844714898698mcnImageGr=
+oupContent" valign=3D"top" style=3D"padding-left:9px;padding-top:0;padding-=
+bottom:0">
+
+
+                                        <img alt=3D"" src=3D"https://galler=
+y.mailchimp.com/ca30d087f19bc6314ddd0b69a/images/e9a29338-32b4-48d7-be9b-2e=
+8166a594ed.jpg" width=3D"264" style=3D"max-width:600px;padding-bottom:0;bor=
+der:0;height:auto;outline:none;text-decoration:none;vertical-align:bottom" =
+class=3D"m_782797844714898698mcnImage">
+
+
+                                </td>
+                            </tr>
+                        </tbody></table>
+
+                    <table align=3D"right" width=3D"273" border=3D"0" cellp=
+adding=3D"0" cellspacing=3D"0" class=3D"m_782797844714898698mcnImageGroupCo=
+ntentContainer" style=3D"border-collapse:collapse">
+                            <tbody><tr>
+                                <td class=3D"m_782797844714898698mcnImageGr=
+oupContent" valign=3D"top" style=3D"padding-right:9px;padding-top:0;padding=
+-bottom:0">
+
+
+                                        <img alt=3D"" src=3D"https://galler=
+y.mailchimp.com/ca30d087f19bc6314ddd0b69a/images/9896d27f-fafc-42bd-95e6-e6=
+fa2aba6272.jpg" width=3D"264" style=3D"max-width:600px;padding-bottom:0;bor=
+der:0;height:auto;outline:none;text-decoration:none;vertical-align:bottom" =
+class=3D"m_782797844714898698mcnImage">
+
+
+                                </td>
+                            </tr>
+                        </tbody></table>
+
+                </td>
+            </tr>
+
+    </tbody>
+</table><table border=3D"0" cellpadding=3D"0" cellspacing=3D"0" width=3D"10=
+0%" class=3D"m_782797844714898698mcnTextBlock" style=3D"min-width:100%;bord=
+er-collapse:collapse">
+    <tbody class=3D"m_782797844714898698mcnTextBlockOuter">
+        <tr>
+            <td valign=3D"top" class=3D"m_782797844714898698mcnTextBlockInn=
+er" style=3D"padding-top:9px">
+              =09
+		=09
+			=09
+                <table align=3D"left" border=3D"0" cellpadding=3D"0" cellsp=
+acing=3D"0" style=3D"max-width:100%;min-width:100%;border-collapse:collapse=
+" width=3D"100%" class=3D"m_782797844714898698mcnTextContentContainer">
+                    <tbody><tr>
+
+                        <td valign=3D"top" class=3D"m_782797844714898698mcn=
+TextContent" style=3D"padding-top:0;padding-right:18px;padding-bottom:9px;p=
+adding-left:18px;word-break:break-word;color:#374a5e;font-family:&#39;Open =
+Sans&#39;,&#39;Helvetica Neue&#39;,Helvetica,Arial,sans-serif;font-size:14p=
+x;line-height:150%;text-align:left">
+
+                            Begin augustus zijn er weer twee nieuwe Viision=
+airs gestart. Hansje gaat aan de slag als Expat Consultant en Tom als Team =
+Member Support.<br>
+<br>
+Hansje is gek op reizen, lezen en dansen.=C2=A0Bij Viisi wil Hansje graag N=
+ederlanders en buitenlanders helpen hun woondroom in Nederland te realisere=
+n.<br>
+<br>
+Tom woont samen met twee vrienden in Amsterdam. In zijn vrije tijd gaat hij=
+ graag hardlopen, fitnessen, tennissen, wintersporten en borrelen met vrien=
+den.
+                        </td>
+                    </tr>
+                </tbody></table>
+			=09
+
+			=09
+            </td>
+        </tr>
+    </tbody>
+</table><table border=3D"0" cellpadding=3D"0" cellspacing=3D"0" width=3D"10=
+0%" class=3D"m_782797844714898698mcnDividerBlock" style=3D"min-width:100%;b=
+order-collapse:collapse;table-layout:fixed!important">
+    <tbody class=3D"m_782797844714898698mcnDividerBlockOuter">
+        <tr>
+            <td class=3D"m_782797844714898698mcnDividerBlockInner" style=3D=
+"min-width:100%;padding:18px">
+                <table class=3D"m_782797844714898698mcnDividerContent" bord=
+er=3D"0" cellpadding=3D"0" cellspacing=3D"0" width=3D"100%" style=3D"min-wi=
+dth:100%;border-top:2px solid #cfcfcf;border-collapse:collapse">
+                    <tbody><tr>
+                        <td>
+                            <span></span>
+                        </td>
+                    </tr>
+                </tbody></table>
+
+            </td>
+        </tr>
+    </tbody>
+</table><table border=3D"0" cellpadding=3D"0" cellspacing=3D"0" width=3D"10=
+0%" class=3D"m_782797844714898698mcnTextBlock" style=3D"min-width:100%;bord=
+er-collapse:collapse">
+    <tbody class=3D"m_782797844714898698mcnTextBlockOuter">
+        <tr>
+            <td valign=3D"top" class=3D"m_782797844714898698mcnTextBlockInn=
+er" style=3D"padding-top:9px">
+              =09
+		=09
+			=09
+                <table align=3D"left" border=3D"0" cellpadding=3D"0" cellsp=
+acing=3D"0" style=3D"max-width:100%;min-width:100%;border-collapse:collapse=
+" width=3D"100%" class=3D"m_782797844714898698mcnTextContentContainer">
+                    <tbody><tr>
+
+                        <td valign=3D"top" class=3D"m_782797844714898698mcn=
+TextContent" style=3D"padding-top:0;padding-right:18px;padding-bottom:9px;p=
+adding-left:18px;word-break:break-word;color:#374a5e;font-family:&#39;Open =
+Sans&#39;,&#39;Helvetica Neue&#39;,Helvetica,Arial,sans-serif;font-size:14p=
+x;line-height:150%;text-align:left">
+
+                            <h3 style=3D"display:block;margin:0;padding:0;c=
+olor:#00aeff;font-family:&#39;Open Sans&#39;,&#39;Helvetica Neue&#39;,Helve=
+tica,Arial,sans-serif;font-size:18px;font-style:normal;font-weight:bold;lin=
+e-height:150%;letter-spacing:normal;text-align:left">Woning kopen zonder fi=
+nancieringsvoorbehoud: doen of niet?</h3>
+
+                        </td>
+                    </tr>
+                </tbody></table>
+			=09
+
+			=09
+            </td>
+        </tr>
+    </tbody>
+</table><table border=3D"0" cellpadding=3D"0" cellspacing=3D"0" width=3D"10=
+0%" class=3D"m_782797844714898698mcnCaptionBlock" style=3D"border-collapse:=
+collapse">
+    <tbody class=3D"m_782797844714898698mcnCaptionBlockOuter">
+        <tr>
+            <td class=3D"m_782797844714898698mcnCaptionBlockInner" valign=
+=3D"top" style=3D"padding:9px">
+
+
+<table border=3D"0" cellpadding=3D"0" cellspacing=3D"0" class=3D"m_78279784=
+4714898698mcnCaptionLeftContentOuter" width=3D"100%" style=3D"border-collap=
+se:collapse">
+    <tbody><tr>
+        <td valign=3D"top" class=3D"m_782797844714898698mcnCaptionLeftConte=
+ntInner" style=3D"padding:0 9px">
+            <table align=3D"right" border=3D"0" cellpadding=3D"0" cellspaci=
+ng=3D"0" class=3D"m_782797844714898698mcnCaptionLeftImageContentContainer" =
+width=3D"264" style=3D"border-collapse:collapse">
+                <tbody><tr>
+                    <td class=3D"m_782797844714898698mcnCaptionLeftImageCon=
+tent" align=3D"center" valign=3D"top">
+
+
+                        <a href=3D"https://viisi.us4.list-manage.com/track/=
+click?u=3Dca30d087f19bc6314ddd0b69a&amp;id=3Dbf17188f75&amp;e=3D4d36b500a6"=
+ title=3D"" target=3D"_blank">
+
+                        <img alt=3D"" src=3D"https://gallery.mailchimp.com/=
+ca30d087f19bc6314ddd0b69a/images/a50a0ebd-0d50-4ac5-9fae-733a6f589850.jpeg"=
+ width=3D"264" style=3D"max-width:1280px;border:0;height:auto;outline:none;=
+text-decoration:none;vertical-align:bottom" class=3D"m_782797844714898698mc=
+nImage">
+                        </a>
+
+                    </td>
+                </tr>
+            </tbody></table>
+            <table class=3D"m_782797844714898698mcnCaptionLeftTextContentCo=
+ntainer" align=3D"left" border=3D"0" cellpadding=3D"0" cellspacing=3D"0" wi=
+dth=3D"264" style=3D"border-collapse:collapse">
+                <tbody><tr>
+                    <td valign=3D"top" class=3D"m_782797844714898698mcnText=
+Content" style=3D"word-break:break-word;color:#374a5e;font-family:&#39;Open=
+ Sans&#39;,&#39;Helvetica Neue&#39;,Helvetica,Arial,sans-serif;font-size:14=
+px;line-height:150%;text-align:left">
+                        <p style=3D"text-align:left;margin:10px 0;padding:0=
+;color:#374a5e;font-family:&#39;Open Sans&#39;,&#39;Helvetica Neue&#39;,Hel=
+vetica,Arial,sans-serif;font-size:14px;line-height:150%">In een oververhitt=
+e huizenmarkt zoals die in de Randstad, neemt de druk op huizenkopers toe. =
+De verkoper kan je vragen een bod te doen zonder =E2=80=98financieringsvoor=
+behoud=E2=80=99.=C2=A0Is het verstandig om hiermee akkoord te gaan of niet?=
+ We zetten de aandachtspunten voor je op een rij.<br>
+<br>
+Lees <a href=3D"https://viisi.us4.list-manage.com/track/click?u=3Dca30d087f=
+19bc6314ddd0b69a&amp;id=3Dec35ab9f2b&amp;e=3D4d36b500a6" style=3D"color:#00=
+aeff;font-weight:normal;text-decoration:underline" target=3D"_blank">hier</=
+a> wat waar je op moet letten.</p>
+
+                    </td>
+                </tr>
+            </tbody></table>
+        </td>
+    </tr>
+</tbody></table>
+
+
+
+
+
+            </td>
+        </tr>
+    </tbody>
+</table><table border=3D"0" cellpadding=3D"0" cellspacing=3D"0" width=3D"10=
+0%" class=3D"m_782797844714898698mcnDividerBlock" style=3D"min-width:100%;b=
+order-collapse:collapse;table-layout:fixed!important">
+    <tbody class=3D"m_782797844714898698mcnDividerBlockOuter">
+        <tr>
+            <td class=3D"m_782797844714898698mcnDividerBlockInner" style=3D=
+"min-width:100%;padding:18px">
+                <table class=3D"m_782797844714898698mcnDividerContent" bord=
+er=3D"0" cellpadding=3D"0" cellspacing=3D"0" width=3D"100%" style=3D"min-wi=
+dth:100%;border-top:2px solid #cfcfcf;border-collapse:collapse">
+                    <tbody><tr>
+                        <td>
+                            <span></span>
+                        </td>
+                    </tr>
+                </tbody></table>
+
+            </td>
+        </tr>
+    </tbody>
+</table><table border=3D"0" cellpadding=3D"0" cellspacing=3D"0" width=3D"10=
+0%" class=3D"m_782797844714898698mcnTextBlock" style=3D"min-width:100%;bord=
+er-collapse:collapse">
+    <tbody class=3D"m_782797844714898698mcnTextBlockOuter">
+        <tr>
+            <td valign=3D"top" class=3D"m_782797844714898698mcnTextBlockInn=
+er" style=3D"padding-top:9px">
+              =09
+		=09
+			=09
+                <table align=3D"left" border=3D"0" cellpadding=3D"0" cellsp=
+acing=3D"0" style=3D"max-width:100%;min-width:100%;border-collapse:collapse=
+" width=3D"100%" class=3D"m_782797844714898698mcnTextContentContainer">
+                    <tbody><tr>
+
+                        <td valign=3D"top" class=3D"m_782797844714898698mcn=
+TextContent" style=3D"padding-top:0;padding-right:18px;padding-bottom:9px;p=
+adding-left:18px;word-break:break-word;color:#374a5e;font-family:&#39;Open =
+Sans&#39;,&#39;Helvetica Neue&#39;,Helvetica,Arial,sans-serif;font-size:14p=
+x;line-height:150%;text-align:left">
+
+                            <h3 style=3D"display:block;margin:0;padding:0;c=
+olor:#00aeff;font-family:&#39;Open Sans&#39;,&#39;Helvetica Neue&#39;,Helve=
+tica,Arial,sans-serif;font-size:18px;font-style:normal;font-weight:bold;lin=
+e-height:150%;letter-spacing:normal;text-align:left">DitIsViisi: Heather, M=
+argy en Fedor</h3>
+
+                        </td>
+                    </tr>
+                </tbody></table>
+			=09
+
+			=09
+            </td>
+        </tr>
+    </tbody>
+</table><table border=3D"0" cellpadding=3D"0" cellspacing=3D"0" width=3D"10=
+0%" class=3D"m_782797844714898698mcnCaptionBlock" style=3D"border-collapse:=
+collapse">
+    <tbody class=3D"m_782797844714898698mcnCaptionBlockOuter">
+        <tr>
+            <td class=3D"m_782797844714898698mcnCaptionBlockInner" valign=
+=3D"top" style=3D"padding:9px">
+
+
+
+
+<table border=3D"0" cellpadding=3D"0" cellspacing=3D"0" class=3D"m_78279784=
+4714898698mcnCaptionRightContentOuter" width=3D"100%" style=3D"border-colla=
+pse:collapse">
+    <tbody><tr>
+        <td valign=3D"top" class=3D"m_782797844714898698mcnCaptionRightCont=
+entInner" style=3D"padding:0 9px">
+            <table align=3D"left" border=3D"0" cellpadding=3D"0" cellspacin=
+g=3D"0" class=3D"m_782797844714898698mcnCaptionRightImageContentContainer" =
+width=3D"264" style=3D"border-collapse:collapse">
+                <tbody><tr>
+                    <td class=3D"m_782797844714898698mcnCaptionRightImageCo=
+ntent" align=3D"center" valign=3D"top">
+
+
+                        <a href=3D"https://viisi.us4.list-manage.com/track/=
+click?u=3Dca30d087f19bc6314ddd0b69a&amp;id=3D51e40c4c7b&amp;e=3D4d36b500a6"=
+ title=3D"" target=3D"_blank">
+
+
+                        <img alt=3D"" src=3D"https://gallery.mailchimp.com/=
+ca30d087f19bc6314ddd0b69a/images/711e7387-9191-473d-9a01-60accb755cac.jpg" =
+width=3D"264" style=3D"max-width:500px;border:0;height:auto;outline:none;te=
+xt-decoration:none;vertical-align:bottom" class=3D"m_782797844714898698mcnI=
+mage">
+                        </a>
+
+
+                    </td>
+                </tr>
+            </tbody></table>
+            <table class=3D"m_782797844714898698mcnCaptionRightTextContentC=
+ontainer" align=3D"right" border=3D"0" cellpadding=3D"0" cellspacing=3D"0" =
+width=3D"264" style=3D"border-collapse:collapse">
+                <tbody><tr>
+                    <td valign=3D"top" class=3D"m_782797844714898698mcnText=
+Content" style=3D"word-break:break-word;color:#374a5e;font-family:&#39;Open=
+ Sans&#39;,&#39;Helvetica Neue&#39;,Helvetica,Arial,sans-serif;font-size:14=
+px;line-height:150%;text-align:left">
+                        <p style=3D"text-align:left;margin:10px 0;padding:0=
+;color:#374a5e;font-family:&#39;Open Sans&#39;,&#39;Helvetica Neue&#39;,Hel=
+vetica,Arial,sans-serif;font-size:14px;line-height:150%">Viisi is een bedri=
+jf met een missie: Let=E2=80=99s change Finance. En zo=E2=80=99n missie vra=
+agt erom goed uitgedragen te worden. Dat wordt gedaan door een hecht team v=
+an meer dan 35 Viisionairs, die zich elke dag met hart en ziel inzetten voo=
+r de purpose.<br>
+<br>
+In de serie DitIsViisi is het nu de beurt aan <a href=3D"https://viisi.us4.=
+list-manage.com/track/click?u=3Dca30d087f19bc6314ddd0b69a&amp;id=3D1e374385=
+88&amp;e=3D4d36b500a6" style=3D"color:#00aeff;font-weight:normal;text-decor=
+ation:underline" target=3D"_blank">Heather</a>, <a href=3D"https://viisi.us=
+4.list-manage.com/track/click?u=3Dca30d087f19bc6314ddd0b69a&amp;id=3Dc88b71=
+06db&amp;e=3D4d36b500a6" style=3D"color:#00aeff;font-weight:normal;text-dec=
+oration:underline" target=3D"_blank">Margy</a> en <a href=3D"https://viisi.=
+us4.list-manage.com/track/click?u=3Dca30d087f19bc6314ddd0b69a&amp;id=3D26bf=
+576618&amp;e=3D4d36b500a6" style=3D"color:#00aeff;font-weight:normal;text-d=
+ecoration:underline" target=3D"_blank">Fedor</a>.</p>
+
+                    </td>
+                </tr>
+            </tbody></table>
+        </td>
+    </tr>
+</tbody></table>
+
+
+
+
+            </td>
+        </tr>
+    </tbody>
+</table><table border=3D"0" cellpadding=3D"0" cellspacing=3D"0" width=3D"10=
+0%" class=3D"m_782797844714898698mcnDividerBlock" style=3D"min-width:100%;b=
+order-collapse:collapse;table-layout:fixed!important">
+    <tbody class=3D"m_782797844714898698mcnDividerBlockOuter">
+        <tr>
+            <td class=3D"m_782797844714898698mcnDividerBlockInner" style=3D=
+"min-width:100%;padding:18px">
+                <table class=3D"m_782797844714898698mcnDividerContent" bord=
+er=3D"0" cellpadding=3D"0" cellspacing=3D"0" width=3D"100%" style=3D"min-wi=
+dth:100%;border-top:2px solid #cfcfcf;border-collapse:collapse">
+                    <tbody><tr>
+                        <td>
+                            <span></span>
+                        </td>
+                    </tr>
+                </tbody></table>
+
+            </td>
+        </tr>
+    </tbody>
+</table><table border=3D"0" cellpadding=3D"0" cellspacing=3D"0" width=3D"10=
+0%" class=3D"m_782797844714898698mcnTextBlock" style=3D"min-width:100%;bord=
+er-collapse:collapse">
+    <tbody class=3D"m_782797844714898698mcnTextBlockOuter">
+        <tr>
+            <td valign=3D"top" class=3D"m_782797844714898698mcnTextBlockInn=
+er" style=3D"padding-top:9px">
+              =09
+		=09
+			=09
+                <table align=3D"left" border=3D"0" cellpadding=3D"0" cellsp=
+acing=3D"0" style=3D"max-width:100%;min-width:100%;border-collapse:collapse=
+" width=3D"100%" class=3D"m_782797844714898698mcnTextContentContainer">
+                    <tbody><tr>
+
+                        <td valign=3D"top" class=3D"m_782797844714898698mcn=
+TextContent" style=3D"padding-top:0;padding-right:18px;padding-bottom:9px;p=
+adding-left:18px;word-break:break-word;color:#374a5e;font-family:&#39;Open =
+Sans&#39;,&#39;Helvetica Neue&#39;,Helvetica,Arial,sans-serif;font-size:14p=
+x;line-height:150%;text-align:left">
+
+                            <h3 style=3D"display:block;margin:0;padding:0;c=
+olor:#00aeff;font-family:&#39;Open Sans&#39;,&#39;Helvetica Neue&#39;,Helve=
+tica,Arial,sans-serif;font-size:18px;font-style:normal;font-weight:bold;lin=
+e-height:150%;letter-spacing:normal;text-align:left">Seminar Eigen Woning</=
+h3>
+
+                        </td>
+                    </tr>
+                </tbody></table>
+			=09
+
+			=09
+            </td>
+        </tr>
+    </tbody>
+</table><table border=3D"0" cellpadding=3D"0" cellspacing=3D"0" width=3D"10=
+0%" class=3D"m_782797844714898698mcnCaptionBlock" style=3D"border-collapse:=
+collapse">
+    <tbody class=3D"m_782797844714898698mcnCaptionBlockOuter">
+        <tr>
+            <td class=3D"m_782797844714898698mcnCaptionBlockInner" valign=
+=3D"top" style=3D"padding:9px">
+
+
+<table border=3D"0" cellpadding=3D"0" cellspacing=3D"0" class=3D"m_78279784=
+4714898698mcnCaptionLeftContentOuter" width=3D"100%" style=3D"border-collap=
+se:collapse">
+    <tbody><tr>
+        <td valign=3D"top" class=3D"m_782797844714898698mcnCaptionLeftConte=
+ntInner" style=3D"padding:0 9px">
+            <table align=3D"right" border=3D"0" cellpadding=3D"0" cellspaci=
+ng=3D"0" class=3D"m_782797844714898698mcnCaptionLeftImageContentContainer" =
+width=3D"264" style=3D"border-collapse:collapse">
+                <tbody><tr>
+                    <td class=3D"m_782797844714898698mcnCaptionLeftImageCon=
+tent" align=3D"center" valign=3D"top">
+
+
+                        <a href=3D"https://viisi.us4.list-manage.com/track/=
+click?u=3Dca30d087f19bc6314ddd0b69a&amp;id=3D65edd7cbd9&amp;e=3D4d36b500a6"=
+ title=3D"" target=3D"_blank">
+
+                        <img alt=3D"" src=3D"https://gallery.mailchimp.com/=
+ca30d087f19bc6314ddd0b69a/images/7e7a65ac-d50e-4faf-832f-cec14d0169b8.jpg" =
+width=3D"264" style=3D"max-width:400px;border:0;height:auto;outline:none;te=
+xt-decoration:none;vertical-align:bottom" class=3D"m_782797844714898698mcnI=
+mage">
+                        </a>
+
+                    </td>
+                </tr>
+            </tbody></table>
+            <table class=3D"m_782797844714898698mcnCaptionLeftTextContentCo=
+ntainer" align=3D"left" border=3D"0" cellpadding=3D"0" cellspacing=3D"0" wi=
+dth=3D"264" style=3D"border-collapse:collapse">
+                <tbody><tr>
+                    <td valign=3D"top" class=3D"m_782797844714898698mcnText=
+Content" style=3D"word-break:break-word;color:#374a5e;font-family:&#39;Open=
+ Sans&#39;,&#39;Helvetica Neue&#39;,Helvetica,Arial,sans-serif;font-size:14=
+px;line-height:150%;text-align:left">
+                        <p style=3D"text-align:left;margin:10px 0;padding:0=
+;color:#374a5e;font-family:&#39;Open Sans&#39;,&#39;Helvetica Neue&#39;,Hel=
+vetica,Arial,sans-serif;font-size:14px;line-height:150%">Voor iedereen die =
+zich ori=C3=ABnteert op het kopen van een woning biedt ons seminar een uits=
+tekende start. Na het seminar:</p>
+
+<ul>
+	<li style=3D"text-align:left">ben je goed voorbereid op de aankoop en fina=
+nciering van jouw nieuwe woning;</li>
+	<li style=3D"text-align:left">zijn al je vragen beantwoord;</li>
+	<li style=3D"text-align:left">weet je wat de ervaringen en tips van gelijk=
+gestemden zijn.</li>
+</ul>
+
+<div style=3D"text-align:left"><a href=3D"https://viisi.us4.list-manage.com=
+/track/click?u=3Dca30d087f19bc6314ddd0b69a&amp;id=3Dac71bf5dd5&amp;e=3D4d36=
+b500a6" style=3D"color:#00aeff;font-weight:normal;text-decoration:underline=
+" target=3D"_blank">Kom naar ons Seminar Eigen Woning</a></div>
+
+                    </td>
+                </tr>
+            </tbody></table>
+        </td>
+    </tr>
+</tbody></table>
+
+
+
+
+
+            </td>
+        </tr>
+    </tbody>
+</table><table border=3D"0" cellpadding=3D"0" cellspacing=3D"0" width=3D"10=
+0%" class=3D"m_782797844714898698mcnDividerBlock" style=3D"min-width:100%;b=
+order-collapse:collapse;table-layout:fixed!important">
+    <tbody class=3D"m_782797844714898698mcnDividerBlockOuter">
+        <tr>
+            <td class=3D"m_782797844714898698mcnDividerBlockInner" style=3D=
+"min-width:100%;padding:18px">
+                <table class=3D"m_782797844714898698mcnDividerContent" bord=
+er=3D"0" cellpadding=3D"0" cellspacing=3D"0" width=3D"100%" style=3D"min-wi=
+dth:100%;border-top:2px solid #cfcfcf;border-collapse:collapse">
+                    <tbody><tr>
+                        <td>
+                            <span></span>
+                        </td>
+                    </tr>
+                </tbody></table>
+
+            </td>
+        </tr>
+    </tbody>
+</table><table border=3D"0" cellpadding=3D"0" cellspacing=3D"0" width=3D"10=
+0%" class=3D"m_782797844714898698mcnTextBlock" style=3D"min-width:100%;bord=
+er-collapse:collapse">
+    <tbody class=3D"m_782797844714898698mcnTextBlockOuter">
+        <tr>
+            <td valign=3D"top" class=3D"m_782797844714898698mcnTextBlockInn=
+er" style=3D"padding-top:9px">
+              =09
+		=09
+			=09
+                <table align=3D"left" border=3D"0" cellpadding=3D"0" cellsp=
+acing=3D"0" style=3D"max-width:100%;min-width:100%;border-collapse:collapse=
+" width=3D"100%" class=3D"m_782797844714898698mcnTextContentContainer">
+                    <tbody><tr>
+
+                        <td valign=3D"top" class=3D"m_782797844714898698mcn=
+TextContent" style=3D"padding-top:0;padding-right:18px;padding-bottom:9px;p=
+adding-left:18px;word-break:break-word;color:#374a5e;font-family:&#39;Open =
+Sans&#39;,&#39;Helvetica Neue&#39;,Helvetica,Arial,sans-serif;font-size:14p=
+x;line-height:150%;text-align:left">
+
+                            <h3 style=3D"display:block;margin:0;padding:0;c=
+olor:#00aeff;font-family:&#39;Open Sans&#39;,&#39;Helvetica Neue&#39;,Helve=
+tica,Arial,sans-serif;font-size:18px;font-style:normal;font-weight:bold;lin=
+e-height:150%;letter-spacing:normal;text-align:left">Alle Viisionairs op he=
+t strand in Den Haag!</h3>
+
+                        </td>
+                    </tr>
+                </tbody></table>
+			=09
+
+			=09
+            </td>
+        </tr>
+    </tbody>
+</table><table border=3D"0" cellpadding=3D"0" cellspacing=3D"0" width=3D"10=
+0%" class=3D"m_782797844714898698mcnImageCardBlock" style=3D"border-collaps=
+e:collapse">
+    <tbody class=3D"m_782797844714898698mcnImageCardBlockOuter">
+        <tr>
+            <td class=3D"m_782797844714898698mcnImageCardBlockInner" valign=
+=3D"top" style=3D"padding-top:9px;padding-right:18px;padding-bottom:9px;pad=
+ding-left:18px">
+
+<table align=3D"left" border=3D"0" cellpadding=3D"0" cellspacing=3D"0" clas=
+s=3D"m_782797844714898698mcnImageCardBottomContent" width=3D"100%" style=3D=
+"border-collapse:collapse">
+    <tbody><tr>
+        <td class=3D"m_782797844714898698mcnImageCardBottomImageContent" al=
+ign=3D"left" valign=3D"top" style=3D"padding-top:0px;padding-right:0px;padd=
+ing-bottom:0;padding-left:0px">
+
+
+            <a href=3D"https://viisi.us4.list-manage.com/track/click?u=3Dca=
+30d087f19bc6314ddd0b69a&amp;id=3Ded712d2fbb&amp;e=3D4d36b500a6" title=3D"" =
+target=3D"_blank">
+
+
+            <img alt=3D"" src=3D"https://gallery.mailchimp.com/video_thumbn=
+ails_new/22bc9b7578f7f29d3645e422a30c0bba.png" width=3D"564" style=3D"max-w=
+idth:640px;border:0;height:auto;outline:none;text-decoration:none;vertical-=
+align:bottom" class=3D"m_782797844714898698mcnImage">
+            </a>
+
+        </td>
+    </tr>
+    <tr>
+        <td class=3D"m_782797844714898698mcnTextContent" valign=3D"top" sty=
+le=3D"padding:9px 18px;color:#f2f2f2;font-family:Helvetica;font-size:14px;f=
+ont-weight:normal;text-align:center;word-break:break-word;line-height:150%"=
+ width=3D"546">
+
+        </td>
+    </tr>
+</tbody></table>
+
+
+
+
+            </td>
+        </tr>
+    </tbody>
+</table><table border=3D"0" cellpadding=3D"0" cellspacing=3D"0" width=3D"10=
+0%" class=3D"m_782797844714898698mcnTextBlock" style=3D"min-width:100%;bord=
+er-collapse:collapse">
+    <tbody class=3D"m_782797844714898698mcnTextBlockOuter">
+        <tr>
+            <td valign=3D"top" class=3D"m_782797844714898698mcnTextBlockInn=
+er" style=3D"padding-top:9px">
+              =09
+		=09
+			=09
+                <table align=3D"left" border=3D"0" cellpadding=3D"0" cellsp=
+acing=3D"0" style=3D"max-width:100%;min-width:100%;border-collapse:collapse=
+" width=3D"100%" class=3D"m_782797844714898698mcnTextContentContainer">
+                    <tbody><tr>
+
+                        <td valign=3D"top" class=3D"m_782797844714898698mcn=
+TextContent" style=3D"padding-top:0;padding-right:18px;padding-bottom:9px;p=
+adding-left:18px;word-break:break-word;color:#374a5e;font-family:&#39;Open =
+Sans&#39;,&#39;Helvetica Neue&#39;,Helvetica,Arial,sans-serif;font-size:14p=
+x;line-height:150%;text-align:left">
+
+                            We blikken met dit filmpje terug op een prachti=
+ge stranddag! Wil je hard werken ook combineren met een flinke dosis gezell=
+igheid?=C2=A0<br>
+=C2=A0
+                        </td>
+                    </tr>
+                </tbody></table>
+			=09
+
+			=09
+            </td>
+        </tr>
+    </tbody>
+</table><table border=3D"0" cellpadding=3D"0" cellspacing=3D"0" width=3D"10=
+0%" class=3D"m_782797844714898698mcnButtonBlock" style=3D"min-width:100%;bo=
+rder-collapse:collapse">
+    <tbody class=3D"m_782797844714898698mcnButtonBlockOuter">
+        <tr>
+            <td style=3D"padding-top:0;padding-right:18px;padding-bottom:18=
+px;padding-left:18px" valign=3D"top" align=3D"center" class=3D"m_7827978447=
+14898698mcnButtonBlockInner">
+                <table border=3D"0" cellpadding=3D"0" cellspacing=3D"0" wid=
+th=3D"100%" class=3D"m_782797844714898698mcnButtonContentContainer" style=
+=3D"border-collapse:separate!important;border-radius:0px;background-color:#=
+4bd89f">
+                    <tbody>
+                        <tr>
+                            <td align=3D"center" valign=3D"middle" class=3D=
+"m_782797844714898698mcnButtonContent" style=3D"font-family:&quot;Open Sans=
+&quot;,&quot;Helvetica Neue&quot;,Helvetica,Arial,sans-serif;font-size:16px=
+;padding:25px">
+                                <a class=3D"m_782797844714898698mcnButton" =
+title=3D"Kijk op werkenbij.viisi.nl voor een overzicht van alle vacatures" =
+href=3D"https://viisi.us4.list-manage.com/track/click?u=3Dca30d087f19bc6314=
+ddd0b69a&amp;id=3D2264ce7117&amp;e=3D4d36b500a6" style=3D"font-weight:bold;=
+letter-spacing:0px;line-height:100%;text-align:center;text-decoration:none;=
+color:#ffffff;display:block" target=3D"_blank">Kijk op werkenbij.viisi.nl v=
+oor een overzicht van alle vacatures</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+    </tbody>
+</table><table border=3D"0" cellpadding=3D"0" cellspacing=3D"0" width=3D"10=
+0%" class=3D"m_782797844714898698mcnDividerBlock" style=3D"min-width:100%;b=
+order-collapse:collapse;table-layout:fixed!important">
+    <tbody class=3D"m_782797844714898698mcnDividerBlockOuter">
+        <tr>
+            <td class=3D"m_782797844714898698mcnDividerBlockInner" style=3D=
+"min-width:100%;padding:18px">
+                <table class=3D"m_782797844714898698mcnDividerContent" bord=
+er=3D"0" cellpadding=3D"0" cellspacing=3D"0" width=3D"100%" style=3D"min-wi=
+dth:100%;border-top:2px none #eaeaea;border-collapse:collapse">
+                    <tbody><tr>
+                        <td>
+                            <span></span>
+                        </td>
+                    </tr>
+                </tbody></table>
+
+            </td>
+        </tr>
+    </tbody>
+</table><table border=3D"0" cellpadding=3D"0" cellspacing=3D"0" width=3D"10=
+0%" class=3D"m_782797844714898698mcnTextBlock" style=3D"min-width:100%;bord=
+er-collapse:collapse">
+    <tbody class=3D"m_782797844714898698mcnTextBlockOuter">
+        <tr>
+            <td valign=3D"top" class=3D"m_782797844714898698mcnTextBlockInn=
+er" style=3D"padding-top:9px">
+              =09
+		=09
+			=09
+                <table align=3D"left" border=3D"0" cellpadding=3D"0" cellsp=
+acing=3D"0" style=3D"max-width:100%;min-width:100%;border-collapse:collapse=
+" width=3D"100%" class=3D"m_782797844714898698mcnTextContentContainer">
+                    <tbody><tr>
+
+                        <td valign=3D"top" class=3D"m_782797844714898698mcn=
+TextContent" style=3D"padding-top:0;padding-right:18px;padding-bottom:9px;p=
+adding-left:18px;word-break:break-word;color:#374a5e;font-family:&#39;Open =
+Sans&#39;,&#39;Helvetica Neue&#39;,Helvetica,Arial,sans-serif;font-size:14p=
+x;line-height:150%;text-align:left">
+
+                            <h3 style=3D"display:block;margin:0;padding:0;c=
+olor:#00aeff;font-family:&#39;Open Sans&#39;,&#39;Helvetica Neue&#39;,Helve=
+tica,Arial,sans-serif;font-size:18px;font-style:normal;font-weight:bold;lin=
+e-height:150%;letter-spacing:normal;text-align:left">Wat vinden onze klante=
+n van Viisi?</h3>
+
+                        </td>
+                    </tr>
+                </tbody></table>
+			=09
+
+			=09
+            </td>
+        </tr>
+    </tbody>
+</table><table border=3D"0" cellpadding=3D"0" cellspacing=3D"0" width=3D"10=
+0%" class=3D"m_782797844714898698mcnCaptionBlock" style=3D"border-collapse:=
+collapse">
+    <tbody class=3D"m_782797844714898698mcnCaptionBlockOuter">
+        <tr>
+            <td class=3D"m_782797844714898698mcnCaptionBlockInner" valign=
+=3D"top" style=3D"padding:9px">
+
+
+
+
+<table border=3D"0" cellpadding=3D"0" cellspacing=3D"0" class=3D"m_78279784=
+4714898698mcnCaptionRightContentOuter" width=3D"100%" style=3D"border-colla=
+pse:collapse">
+    <tbody><tr>
+        <td valign=3D"top" class=3D"m_782797844714898698mcnCaptionRightCont=
+entInner" style=3D"padding:0 9px">
+            <table align=3D"left" border=3D"0" cellpadding=3D"0" cellspacin=
+g=3D"0" class=3D"m_782797844714898698mcnCaptionRightImageContentContainer" =
+width=3D"132" style=3D"border-collapse:collapse">
+                <tbody><tr>
+                    <td class=3D"m_782797844714898698mcnCaptionRightImageCo=
+ntent" align=3D"center" valign=3D"top">
+
+
+
+                        <img alt=3D"" src=3D"https://gallery.mailchimp.com/=
+ca30d087f19bc6314ddd0b69a/images/8fce7070-8e14-46d5-995e-c175e453b146.jpg" =
+width=3D"121" style=3D"max-width:121px;border:0;height:auto;outline:none;te=
+xt-decoration:none;vertical-align:bottom" class=3D"m_782797844714898698mcnI=
+mage">
+
+
+
+                    </td>
+                </tr>
+            </tbody></table>
+            <table class=3D"m_782797844714898698mcnCaptionRightTextContentC=
+ontainer" align=3D"right" border=3D"0" cellpadding=3D"0" cellspacing=3D"0" =
+width=3D"396" style=3D"border-collapse:collapse">
+                <tbody><tr>
+                    <td valign=3D"top" class=3D"m_782797844714898698mcnText=
+Content" style=3D"word-break:break-word;color:#374a5e;font-family:&#39;Open=
+ Sans&#39;,&#39;Helvetica Neue&#39;,Helvetica,Arial,sans-serif;font-size:14=
+px;line-height:150%;text-align:left">
+                        We are very pleased with Viisi&#39;s services and o=
+ur advisor, Arjen Goedmakers in particular. He&#39;s made buying a home a s=
+imple and straight forward process and we would highly recommend him in the=
+ future. Thanks!
+                    </td>
+                </tr>
+            </tbody></table>
+        </td>
+    </tr>
+</tbody></table>
+
+
+
+
+            </td>
+        </tr>
+    </tbody>
+</table><table border=3D"0" cellpadding=3D"0" cellspacing=3D"0" width=3D"10=
+0%" class=3D"m_782797844714898698mcnDividerBlock" style=3D"min-width:100%;b=
+order-collapse:collapse;table-layout:fixed!important">
+    <tbody class=3D"m_782797844714898698mcnDividerBlockOuter">
+        <tr>
+            <td class=3D"m_782797844714898698mcnDividerBlockInner" style=3D=
+"min-width:100%;padding:10px 18px">
+                <table class=3D"m_782797844714898698mcnDividerContent" bord=
+er=3D"0" cellpadding=3D"0" cellspacing=3D"0" width=3D"100%" style=3D"min-wi=
+dth:100%;border-top:2px none #eaeaea;border-collapse:collapse">
+                    <tbody><tr>
+                        <td>
+                            <span></span>
+                        </td>
+                    </tr>
+                </tbody></table>
+
+            </td>
+        </tr>
+    </tbody>
+</table><table border=3D"0" cellpadding=3D"0" cellspacing=3D"0" width=3D"10=
+0%" class=3D"m_782797844714898698mcnCaptionBlock" style=3D"border-collapse:=
+collapse">
+    <tbody class=3D"m_782797844714898698mcnCaptionBlockOuter">
+        <tr>
+            <td class=3D"m_782797844714898698mcnCaptionBlockInner" valign=
+=3D"top" style=3D"padding:9px">
+
+
+<table border=3D"0" cellpadding=3D"0" cellspacing=3D"0" class=3D"m_78279784=
+4714898698mcnCaptionLeftContentOuter" width=3D"100%" style=3D"border-collap=
+se:collapse">
+    <tbody><tr>
+        <td valign=3D"top" class=3D"m_782797844714898698mcnCaptionLeftConte=
+ntInner" style=3D"padding:0 9px">
+            <table align=3D"right" border=3D"0" cellpadding=3D"0" cellspaci=
+ng=3D"0" class=3D"m_782797844714898698mcnCaptionLeftImageContentContainer" =
+width=3D"132" style=3D"border-collapse:collapse">
+                <tbody><tr>
+                    <td class=3D"m_782797844714898698mcnCaptionLeftImageCon=
+tent" align=3D"center" valign=3D"top">
+
+
+                        <img alt=3D"" src=3D"https://gallery.mailchimp.com/=
+ca30d087f19bc6314ddd0b69a/images/f24dee56-2124-4360-ba69-e68850dd47c2.jpg" =
+width=3D"121" style=3D"max-width:121px;border:0;height:auto;outline:none;te=
+xt-decoration:none;vertical-align:bottom" class=3D"m_782797844714898698mcnI=
+mage">
+
+
+                    </td>
+                </tr>
+            </tbody></table>
+            <table class=3D"m_782797844714898698mcnCaptionLeftTextContentCo=
+ntainer" align=3D"left" border=3D"0" cellpadding=3D"0" cellspacing=3D"0" wi=
+dth=3D"396" style=3D"border-collapse:collapse">
+                <tbody><tr>
+                    <td valign=3D"top" class=3D"m_782797844714898698mcnText=
+Content" style=3D"word-break:break-word;color:#374a5e;font-family:&#39;Open=
+ Sans&#39;,&#39;Helvetica Neue&#39;,Helvetica,Arial,sans-serif;font-size:14=
+px;line-height:150%;text-align:left">
+                        Viisi heeft binnen 3 weken een hypotheek geregeld, =
+terwijl ik op reis was. Zeer goed geholpen door Deni, en zeer tevreden met =
+de pro-actieve houding van Viisi.
+                    </td>
+                </tr>
+            </tbody></table>
+        </td>
+    </tr>
+</tbody></table>
+
+
+
+
+
+            </td>
+        </tr>
+    </tbody>
+</table><table border=3D"0" cellpadding=3D"0" cellspacing=3D"0" width=3D"10=
+0%" class=3D"m_782797844714898698mcnDividerBlock" style=3D"min-width:100%;b=
+order-collapse:collapse;table-layout:fixed!important">
+    <tbody class=3D"m_782797844714898698mcnDividerBlockOuter">
+        <tr>
+            <td class=3D"m_782797844714898698mcnDividerBlockInner" style=3D=
+"min-width:100%;padding:10px 18px">
+                <table class=3D"m_782797844714898698mcnDividerContent" bord=
+er=3D"0" cellpadding=3D"0" cellspacing=3D"0" width=3D"100%" style=3D"min-wi=
+dth:100%;border-top:2px none #eaeaea;border-collapse:collapse">
+                    <tbody><tr>
+                        <td>
+                            <span></span>
+                        </td>
+                    </tr>
+                </tbody></table>
+
+            </td>
+        </tr>
+    </tbody>
+</table><table border=3D"0" cellpadding=3D"0" cellspacing=3D"0" width=3D"10=
+0%" class=3D"m_782797844714898698mcnCaptionBlock" style=3D"border-collapse:=
+collapse">
+    <tbody class=3D"m_782797844714898698mcnCaptionBlockOuter">
+        <tr>
+            <td class=3D"m_782797844714898698mcnCaptionBlockInner" valign=
+=3D"top" style=3D"padding:9px">
+
+
+
+
+<table border=3D"0" cellpadding=3D"0" cellspacing=3D"0" class=3D"m_78279784=
+4714898698mcnCaptionRightContentOuter" width=3D"100%" style=3D"border-colla=
+pse:collapse">
+    <tbody><tr>
+        <td valign=3D"top" class=3D"m_782797844714898698mcnCaptionRightCont=
+entInner" style=3D"padding:0 9px">
+            <table align=3D"left" border=3D"0" cellpadding=3D"0" cellspacin=
+g=3D"0" class=3D"m_782797844714898698mcnCaptionRightImageContentContainer" =
+width=3D"132" style=3D"border-collapse:collapse">
+                <tbody><tr>
+                    <td class=3D"m_782797844714898698mcnCaptionRightImageCo=
+ntent" align=3D"center" valign=3D"top">
+
+
+
+                        <img alt=3D"" src=3D"https://gallery.mailchimp.com/=
+ca30d087f19bc6314ddd0b69a/images/ee66667e-c3f4-4267-8809-701eea92ae88.jpg" =
+width=3D"121" style=3D"max-width:121px;border:0;height:auto;outline:none;te=
+xt-decoration:none;vertical-align:bottom" class=3D"m_782797844714898698mcnI=
+mage">
+
+
+
+                    </td>
+                </tr>
+            </tbody></table>
+            <table class=3D"m_782797844714898698mcnCaptionRightTextContentC=
+ontainer" align=3D"right" border=3D"0" cellpadding=3D"0" cellspacing=3D"0" =
+width=3D"396" style=3D"border-collapse:collapse">
+                <tbody><tr>
+                    <td valign=3D"top" class=3D"m_782797844714898698mcnText=
+Content" style=3D"word-break:break-word;color:#374a5e;font-family:&#39;Open=
+ Sans&#39;,&#39;Helvetica Neue&#39;,Helvetica,Arial,sans-serif;font-size:14=
+px;line-height:150%;text-align:left">
+                        Geweldige ervaring! Uitstekende snelle begeleiding =
+en duidelijke communicatie tijdens het gehele proces, en zeer behulpzaam me=
+t al onze vragen. Robert en zijn collega&#39;s hebben het super gedaan, zek=
+er aan te raden!
+                    </td>
+                </tr>
+            </tbody></table>
+        </td>
+    </tr>
+</tbody></table>
+
+
+
+
+            </td>
+        </tr>
+    </tbody>
+</table><table border=3D"0" cellpadding=3D"0" cellspacing=3D"0" width=3D"10=
+0%" class=3D"m_782797844714898698mcnDividerBlock" style=3D"min-width:100%;b=
+order-collapse:collapse;table-layout:fixed!important">
+    <tbody class=3D"m_782797844714898698mcnDividerBlockOuter">
+        <tr>
+            <td class=3D"m_782797844714898698mcnDividerBlockInner" style=3D=
+"min-width:100%;padding:10px 18px">
+                <table class=3D"m_782797844714898698mcnDividerContent" bord=
+er=3D"0" cellpadding=3D"0" cellspacing=3D"0" width=3D"100%" style=3D"min-wi=
+dth:100%;border-top:2px none #eaeaea;border-collapse:collapse">
+                    <tbody><tr>
+                        <td>
+                            <span></span>
+                        </td>
+                    </tr>
+                </tbody></table>
+
+            </td>
+        </tr>
+    </tbody>
+</table><table border=3D"0" cellpadding=3D"0" cellspacing=3D"0" width=3D"10=
+0%" class=3D"m_782797844714898698mcnTextBlock" style=3D"min-width:100%;bord=
+er-collapse:collapse">
+    <tbody class=3D"m_782797844714898698mcnTextBlockOuter">
+        <tr>
+            <td valign=3D"top" class=3D"m_782797844714898698mcnTextBlockInn=
+er" style=3D"padding-top:9px">
+              =09
+		=09
+			=09
+                <table align=3D"left" border=3D"0" cellpadding=3D"0" cellsp=
+acing=3D"0" style=3D"max-width:100%;min-width:100%;border-collapse:collapse=
+" width=3D"100%" class=3D"m_782797844714898698mcnTextContentContainer">
+                    <tbody><tr>
+
+                        <td valign=3D"top" class=3D"m_782797844714898698mcn=
+TextContent" style=3D"padding-top:0;padding-right:18px;padding-bottom:9px;p=
+adding-left:18px;word-break:break-word;color:#374a5e;font-family:&#39;Open =
+Sans&#39;,&#39;Helvetica Neue&#39;,Helvetica,Arial,sans-serif;font-size:14p=
+x;line-height:150%;text-align:left">
+
+                            <div style=3D"text-align:center"><a href=3D"htt=
+ps://viisi.us4.list-manage.com/track/click?u=3Dca30d087f19bc6314ddd0b69a&am=
+p;id=3D7d60654910&amp;e=3D4d36b500a6" style=3D"color:#00aeff;font-weight:no=
+rmal;text-decoration:underline" target=3D"_blank">Lees meer reviews</a></di=
+v>
+
+                        </td>
+                    </tr>
+                </tbody></table>
+			=09
+
+			=09
+            </td>
+        </tr>
+    </tbody>
+</table></td>
+										</tr>
+									</tbody></table>
+								=09
+								</td>
+                            </tr>
+                            <tr>
+								<td align=3D"center" valign=3D"top" id=3D"m_782797844714898698templ=
+ateFooter" style=3D"background:#00aeff none no-repeat center/cover;backgrou=
+nd-color:#00aeff;background-image:none;background-repeat:no-repeat;backgrou=
+nd-position:center;background-size:cover;border-top:0;border-bottom:0;paddi=
+ng-top:52px;padding-bottom:52px">
+								=09
+									<table align=3D"center" border=3D"0" cellpadding=3D"0" cellspacing=
+=3D"0" width=3D"100%" class=3D"m_782797844714898698templateContainer" style=
+=3D"border-collapse:collapse;max-width:600px!important">
+										<tbody><tr>
+                                			<td valign=3D"top" class=3D"m_7827978447=
+14898698footerContainer" style=3D"background:#transparent none no-repeat ce=
+nter/cover;background-color:#transparent;background-image:none;background-r=
+epeat:no-repeat;background-position:center;background-size:cover;border-top=
+:0;border-bottom:0;padding-top:0;padding-bottom:0"><table border=3D"0" cell=
+padding=3D"0" cellspacing=3D"0" width=3D"100%" class=3D"m_78279784471489869=
+8mcnTextBlock" style=3D"min-width:100%;border-collapse:collapse">
+    <tbody class=3D"m_782797844714898698mcnTextBlockOuter">
+        <tr>
+            <td valign=3D"top" class=3D"m_782797844714898698mcnTextBlockInn=
+er" style=3D"padding-top:9px">
+              =09
+		=09
+			=09
+                <table align=3D"left" border=3D"0" cellpadding=3D"0" cellsp=
+acing=3D"0" style=3D"max-width:100%;min-width:100%;border-collapse:collapse=
+" width=3D"100%" class=3D"m_782797844714898698mcnTextContentContainer">
+                    <tbody><tr>
+
+                        <td valign=3D"top" class=3D"m_782797844714898698mcn=
+TextContent" style=3D"padding-top:0;padding-right:18px;padding-bottom:9px;p=
+adding-left:18px;word-break:break-word;color:#ffffff;font-family:Helvetica;=
+font-size:12px;line-height:150%;text-align:center">
+
+                            <div style=3D"text-align:center"><em><span styl=
+e=3D"font-size:24px"><span style=3D"font-family:merriweather sans,helvetica=
+ neue,helvetica,arial,sans-serif">&quot;Een gezonde financi=C3=ABle wereld =
+die beter, duurzamer en meer lange termijn gericht is.&quot;</span></span><=
+/em></div>
+
+                        </td>
+                    </tr>
+                </tbody></table>
+			=09
+
+			=09
+            </td>
+        </tr>
+    </tbody>
+</table><table border=3D"0" cellpadding=3D"0" cellspacing=3D"0" width=3D"10=
+0%" class=3D"m_782797844714898698mcnFollowBlock" style=3D"min-width:100%;bo=
+rder-collapse:collapse">
+    <tbody class=3D"m_782797844714898698mcnFollowBlockOuter">
+        <tr>
+            <td align=3D"center" valign=3D"top" style=3D"padding:9px" class=
+=3D"m_782797844714898698mcnFollowBlockInner">
+                <table border=3D"0" cellpadding=3D"0" cellspacing=3D"0" wid=
+th=3D"100%" class=3D"m_782797844714898698mcnFollowContentContainer" style=
+=3D"min-width:100%;border-collapse:collapse">
+    <tbody><tr>
+        <td align=3D"center" style=3D"padding-left:9px;padding-right:9px">
+            <table border=3D"0" cellpadding=3D"0" cellspacing=3D"0" width=
+=3D"100%" style=3D"min-width:100%;border-collapse:collapse" class=3D"m_7827=
+97844714898698mcnFollowContent">
+                <tbody><tr>
+                    <td align=3D"center" valign=3D"top" style=3D"padding-to=
+p:9px;padding-right:9px;padding-left:9px">
+                        <table align=3D"center" border=3D"0" cellpadding=3D=
+"0" cellspacing=3D"0" style=3D"border-collapse:collapse">
+                            <tbody><tr>
+                                <td align=3D"center" valign=3D"top">
+                                   =20
+
+                                       =20
+
+
+                                            <table align=3D"left" border=3D=
+"0" cellpadding=3D"0" cellspacing=3D"0" style=3D"display:inline;border-coll=
+apse:collapse">
+                                                <tbody><tr>
+                                                    <td valign=3D"top" styl=
+e=3D"padding-right:10px;padding-bottom:9px" class=3D"m_782797844714898698mc=
+nFollowContentItemContainer">
+                                                        <table border=3D"0"=
+ cellpadding=3D"0" cellspacing=3D"0" width=3D"100%" class=3D"m_782797844714=
+898698mcnFollowContentItem" style=3D"border-collapse:collapse">
+                                                            <tbody><tr>
+                                                                <td align=
+=3D"left" valign=3D"middle" style=3D"padding-top:5px;padding-right:10px;pad=
+ding-bottom:5px;padding-left:9px">
+                                                                    <table =
+align=3D"left" border=3D"0" cellpadding=3D"0" cellspacing=3D"0" width=3D"" =
+style=3D"border-collapse:collapse">
+                                                                        <tb=
+ody><tr>
+
+                                                                           =
+     <td align=3D"center" valign=3D"middle" width=3D"24" class=3D"m_7827978=
+44714898698mcnFollowIconContent">
+                                                                           =
+         <a href=3D"https://viisi.us4.list-manage.com/track/click?u=3Dca30d=
+087f19bc6314ddd0b69a&amp;id=3D2b2886edb7&amp;e=3D4d36b500a6" target=3D"_bla=
+nk"><img src=3D"https://cdn-images.mailchimp.com/icons/social-block-v2/outl=
+ine-light-facebook-48.png" style=3D"display:block;border:0;height:auto;outl=
+ine:none;text-decoration:none" height=3D"24" width=3D"24"></a>
+                                                                           =
+     </td>
+
+
+                                                                        </t=
+r>
+                                                                    </tbody=
+></table>
+                                                                </td>
+                                                            </tr>
+                                                        </tbody></table>
+                                                    </td>
+                                                </tr>
+                                            </tbody></table>
+
+                                       =20
+
+                                       =20
+
+
+                                            <table align=3D"left" border=3D=
+"0" cellpadding=3D"0" cellspacing=3D"0" style=3D"display:inline;border-coll=
+apse:collapse">
+                                                <tbody><tr>
+                                                    <td valign=3D"top" styl=
+e=3D"padding-right:10px;padding-bottom:9px" class=3D"m_782797844714898698mc=
+nFollowContentItemContainer">
+                                                        <table border=3D"0"=
+ cellpadding=3D"0" cellspacing=3D"0" width=3D"100%" class=3D"m_782797844714=
+898698mcnFollowContentItem" style=3D"border-collapse:collapse">
+                                                            <tbody><tr>
+                                                                <td align=
+=3D"left" valign=3D"middle" style=3D"padding-top:5px;padding-right:10px;pad=
+ding-bottom:5px;padding-left:9px">
+                                                                    <table =
+align=3D"left" border=3D"0" cellpadding=3D"0" cellspacing=3D"0" width=3D"" =
+style=3D"border-collapse:collapse">
+                                                                        <tb=
+ody><tr>
+
+                                                                           =
+     <td align=3D"center" valign=3D"middle" width=3D"24" class=3D"m_7827978=
+44714898698mcnFollowIconContent">
+                                                                           =
+         <a href=3D"https://viisi.us4.list-manage.com/track/click?u=3Dca30d=
+087f19bc6314ddd0b69a&amp;id=3D5e8c74a3ce&amp;e=3D4d36b500a6" target=3D"_bla=
+nk"><img src=3D"https://cdn-images.mailchimp.com/icons/social-block-v2/outl=
+ine-light-twitter-48.png" style=3D"display:block;border:0;height:auto;outli=
+ne:none;text-decoration:none" height=3D"24" width=3D"24"></a>
+                                                                           =
+     </td>
+
+
+                                                                        </t=
+r>
+                                                                    </tbody=
+></table>
+                                                                </td>
+                                                            </tr>
+                                                        </tbody></table>
+                                                    </td>
+                                                </tr>
+                                            </tbody></table>
+
+                                       =20
+
+                                       =20
+
+
+                                            <table align=3D"left" border=3D=
+"0" cellpadding=3D"0" cellspacing=3D"0" style=3D"display:inline;border-coll=
+apse:collapse">
+                                                <tbody><tr>
+                                                    <td valign=3D"top" styl=
+e=3D"padding-right:10px;padding-bottom:9px" class=3D"m_782797844714898698mc=
+nFollowContentItemContainer">
+                                                        <table border=3D"0"=
+ cellpadding=3D"0" cellspacing=3D"0" width=3D"100%" class=3D"m_782797844714=
+898698mcnFollowContentItem" style=3D"border-collapse:collapse">
+                                                            <tbody><tr>
+                                                                <td align=
+=3D"left" valign=3D"middle" style=3D"padding-top:5px;padding-right:10px;pad=
+ding-bottom:5px;padding-left:9px">
+                                                                    <table =
+align=3D"left" border=3D"0" cellpadding=3D"0" cellspacing=3D"0" width=3D"" =
+style=3D"border-collapse:collapse">
+                                                                        <tb=
+ody><tr>
+
+                                                                           =
+     <td align=3D"center" valign=3D"middle" width=3D"24" class=3D"m_7827978=
+44714898698mcnFollowIconContent">
+                                                                           =
+         <a href=3D"https://viisi.us4.list-manage.com/track/click?u=3Dca30d=
+087f19bc6314ddd0b69a&amp;id=3Dc7efe5cf94&amp;e=3D4d36b500a6" target=3D"_bla=
+nk"><img src=3D"https://cdn-images.mailchimp.com/icons/social-block-v2/outl=
+ine-light-link-48.png" style=3D"display:block;border:0;height:auto;outline:=
+none;text-decoration:none" height=3D"24" width=3D"24"></a>
+                                                                           =
+     </td>
+
+
+                                                                        </t=
+r>
+                                                                    </tbody=
+></table>
+                                                                </td>
+                                                            </tr>
+                                                        </tbody></table>
+                                                    </td>
+                                                </tr>
+                                            </tbody></table>
+
+                                       =20
+
+                                       =20
+
+
+                                            <table align=3D"left" border=3D=
+"0" cellpadding=3D"0" cellspacing=3D"0" style=3D"display:inline;border-coll=
+apse:collapse">
+                                                <tbody><tr>
+                                                    <td valign=3D"top" styl=
+e=3D"padding-right:10px;padding-bottom:9px" class=3D"m_782797844714898698mc=
+nFollowContentItemContainer">
+                                                        <table border=3D"0"=
+ cellpadding=3D"0" cellspacing=3D"0" width=3D"100%" class=3D"m_782797844714=
+898698mcnFollowContentItem" style=3D"border-collapse:collapse">
+                                                            <tbody><tr>
+                                                                <td align=
+=3D"left" valign=3D"middle" style=3D"padding-top:5px;padding-right:10px;pad=
+ding-bottom:5px;padding-left:9px">
+                                                                    <table =
+align=3D"left" border=3D"0" cellpadding=3D"0" cellspacing=3D"0" width=3D"" =
+style=3D"border-collapse:collapse">
+                                                                        <tb=
+ody><tr>
+
+                                                                           =
+     <td align=3D"center" valign=3D"middle" width=3D"24" class=3D"m_7827978=
+44714898698mcnFollowIconContent">
+                                                                           =
+         <a href=3D"mailto:hello@viisi.nl" target=3D"_blank"><img src=3D"ht=
+tps://cdn-images.mailchimp.com/icons/social-block-v2/outline-light-forwardt=
+ofriend-48.png" style=3D"display:block;border:0;height:auto;outline:none;te=
+xt-decoration:none" height=3D"24" width=3D"24"></a>
+                                                                           =
+     </td>
+
+
+                                                                        </t=
+r>
+                                                                    </tbody=
+></table>
+                                                                </td>
+                                                            </tr>
+                                                        </tbody></table>
+                                                    </td>
+                                                </tr>
+                                            </tbody></table>
+
+                                       =20
+
+                                       =20
+
+
+                                            <table align=3D"left" border=3D=
+"0" cellpadding=3D"0" cellspacing=3D"0" style=3D"display:inline;border-coll=
+apse:collapse">
+                                                <tbody><tr>
+                                                    <td valign=3D"top" styl=
+e=3D"padding-right:0;padding-bottom:9px" class=3D"m_782797844714898698mcnFo=
+llowContentItemContainer"></td></tr></tbody></table></td></tr></tbody></tab=
+le></td></tr></tbody></table></td></tr></tbody></table></td></tr></tbody></=
+table></td></tr></tbody></table></td></tr></tbody></table></td></tr></tbody=
+></table></center></div></div></div>-- <br><div dir=3D"ltr" class=3D"gmail_=
+signature" data-smartmail=3D"gmail_signature"><div dir=3D"ltr">Purposeful L=
+eadership Coaching<div><a href=3D"http://softsideoftech.com">softsideoftech=
+.com</a></div></div></div>
+
+--0000000000008fcd1a0573ca7ba6--
+`
+const TranslationHtml = `
 <body data-editmode="false">
         <header class="header" data-controller="generic/ui/Header" data-noindex="true">
     <div class="container header__content">
