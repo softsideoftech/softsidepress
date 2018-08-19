@@ -66,10 +66,11 @@ func TranslateText(sourceText []string) (map[string]string, error) {
 	sourceLanguage := language.English
 	maxLangaugeCount := 0
 	for sourceLangCandidate, sourceLangCount := range detectionMap {
-		if sourceLangCount > maxLangaugeCount {
+		// Ignore Und (undetermined)
+		if sourceLangCount > maxLangaugeCount && sourceLanguage != language.Und {
 			maxLangaugeCount = sourceLangCount
 			sourceLanguage = sourceLangCandidate
-			log.Println("sourceLangCandidate: %s, sourceLangCount: %s", sourceLangCount, sourceLangCandidate)
+			log.Printf("sourceLangCandidate: %s, sourceLangCount: %s\n", sourceLangCount, sourceLangCandidate)
 		}
 	} 
 	
