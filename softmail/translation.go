@@ -7,6 +7,7 @@ import (
 	"golang.org/x/net/context"
 	"cloud.google.com/go/translate"
 	"log"
+	"math/rand"
 )
 
 var matchWhitespace = regexp.MustCompile("\\s+")
@@ -34,6 +35,15 @@ func min(a, b int) int {
 	return b
 }
 
+func shuffle(src []string) []string {
+	dest := make([]string, len(src))
+	perm := rand.Perm(len(src))
+	for i, v := range perm {
+		dest[v] = src[i]
+	}
+	return dest
+}
+
 func TranslateText(sourceText []string) (map[string]string, error) {
 
 	// TODO: Move this to a global context somewhere?
@@ -44,10 +54,14 @@ func TranslateText(sourceText []string) (map[string]string, error) {
 		return nil, err
 	}
 
+	
+	
 	// Call the DetectLanguage api to figure out what we're dealing with
-	sliceLen := min(10, len(sourceText))
-	sourceTextSample := sourceText[0:sliceLen]
-	detections, err := client.DetectLanguage(ctx, sourceTextSample)
+	// Pick 20 strings at random just in case there's some leading text in one lang when the body is in another
+	sliceLen := min(20, len(sourceText))
+	sampleText := shuffle(sourceText)
+	sampleTextSample := sampleText[0:sliceLen]
+	detections, err := client.DetectLanguage(ctx, sampleTextSample)
 	if err != nil {
 		return nil, err
 	}
