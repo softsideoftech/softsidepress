@@ -108,7 +108,7 @@ func ReplaceHtmlWithTranslation(htmlStr string, translationMap map[string]string
 
 func TranslateHtml(htmlString string) (string, error) {
 	sourceText := ParseTextFromHtml(htmlString)
-	translations, err := TranslateText(sourceText[0:10])
+	translations, err := TranslateText(sourceText)
 
 	if err != nil {
 		return "", err
