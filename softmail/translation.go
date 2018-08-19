@@ -113,5 +113,9 @@ func TranslateHtml(htmlString string) (string, error) {
 	if err != nil {
 		return "", err
 	}
+	if translations == nil {
+		return "", nil
+	}
+	
 	return ReplaceHtmlWithTranslation(htmlString, translations), nil
 }
