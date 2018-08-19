@@ -12,7 +12,7 @@ import (
 
 var matchWhitespace = regexp.MustCompile("\\s+")
 var matchSingleWhitespace = regexp.MustCompile(">\\s<")
-var extractText = regexp.MustCompile(">([^<>]+)")
+var extractText = regexp.MustCompile(">[\\s]*([^<>]+)[\\s]*")
 
 func ParseTextFromHtml(htmlStr string) []string {
 
@@ -22,7 +22,8 @@ func ParseTextFromHtml(htmlStr string) []string {
 
 	toTranslate := make([]string, 0, len(matches)/2)
 	for _, matchArray := range matches {
-		toTranslate = append(toTranslate, strings.Trim(matchArray[1], " "))
+		//toTranslate = append(toTranslate, strings.Trim(matchArray[1], " "))
+		toTranslate = append(toTranslate, matchArray[1])
 	}
 
 	return toTranslate

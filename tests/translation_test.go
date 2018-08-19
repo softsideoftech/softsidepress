@@ -7,15 +7,21 @@ import (
 	"fmt"
 	"log"
 	"softside/forwardEmail"
-	"softside/tests/sampleEmails"
 	"strings"
+	"softside/tests/sampleEmails"
 )
 
-// This is meant to be run manually because the environment needs to have the translation service credentials.
 func TestTranslationParsing(t *testing.T) {
-	//sourceText := softmail.ParseTextFromHtml(sampleTranslationHtml.TranslationSample)
-	//translate(sourceText, t)
-	//TestNonTranslation(t)
+	sourceText := softmail.ParseTextFromHtml(sampleTranslationHtml.TranslationSample)
+	print(sourceText)
+
+	// This is meant to be run manually because the environment needs to have the translation service credentials.
+	//doTranslation(sourceText, t)
+}
+
+func doTranslation(sourceText []string, t *testing.T) {
+	translate(sourceText, t)
+	TestNonTranslation(t)
 	user := forwardEmail.AnnonymousUser{}
 	user.Send("vgiverts@gmail.com", []string{"test@mail.softsideoftech.com"}, strings.NewReader(sampleEmails.EmailSample))
 }
