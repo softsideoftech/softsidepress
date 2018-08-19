@@ -7,8 +7,10 @@ import (
 	"golang.org/x/net/context"
 	"cloud.google.com/go/translate"
 	"log"
+	"math/rand"
 )
 
+var matchLeadingWhitespace = regexp.MustCompile(">(\\s+)")
 var matchWhitespace = regexp.MustCompile("\\s+")
 var matchSingleWhitespace = regexp.MustCompile(">\\s<")
 var extractText = regexp.MustCompile(">([^<>]+)")
@@ -34,6 +36,15 @@ func min(a, b int) int {
 	return b
 }
 
+func shuffle(src []string) []string {
+	dest := make([]string, len(src))
+	perm := rand.Perm(len(src))
+	for i, v := range perm {
+		dest[v] = src[i]
+	}
+	return dest
+}
+
 func TranslateText(sourceText []string) (map[string]string, error) {
 
 	// TODO: Move this to a global context somewhere?
@@ -47,8 +58,10 @@ func TranslateText(sourceText []string) (map[string]string, error) {
 	
 	
 	// Call the DetectLanguage api to figure out what we're dealing with
-	sliceLen := min(20, len(sourceText))
-	sourceTextSample := sourceText[0:sliceLen]
+	sampleSize := 15
+	sliceLen := min(sampleSize, len(sourceText))
+	sampleText := shuffle(sourceText)
+	sourceTextSample := sampleText[0:sliceLen]
 	detections, err := client.DetectLanguage(ctx, sourceTextSample)
 	if err != nil {
 		return nil, err
@@ -106,8 +119,16 @@ func ReplaceHtmlWithTranslation(htmlStr string, translationMap map[string]string
 	cleanedHtml = matchSingleWhitespace.ReplaceAllString(cleanedHtml, "><")
 
 	return extractText.ReplaceAllStringFunc(cleanedHtml, func(str string) string {
+		var prefix = ""
+		var suffix = ""
+		if strings.HasPrefix(str, "> ") {
+			prefix = "&nbsp;"
+		}
+		if strings.HasSuffix(str, " ") {
+			suffix = "&nbsp;"
+		}
 		str = strings.Trim(str, "> ")
-		return ">" + translationMap[str]
+		return ">" + prefix + translationMap[str] + suffix
 	})
 }
 

@@ -16,13 +16,16 @@ func TestTranslationParsing(t *testing.T) {
 	//print(sourceText)
 
 	// This is meant to be run manually because the environment needs to have the translation service credentials.
-	translateEmail()
+	translateEmail(t)
 	//doNonTranslation(sourceText, t)
 }
 
-func translateEmail() {
+func translateEmail(t *testing.T) {
 	user := forwardEmail.AnnonymousUser{}
-	user.Send("vgiverts@gmail.com", []string{"test@mail.softsideoftech.com"}, strings.NewReader(sampleTranslationHtml.TranslationHtml))
+	err := user.Send("vgiverts@gmail.com", []string{"test@mail.softsideoftech.com"}, strings.NewReader(sampleTranslationHtml.TranslationEmail))
+	if err != nil {
+		t.Errorf("failed to send email: %v\n", err)
+	}
 }
 
 func doNonTranslation(sourceText []string, t *testing.T) {
