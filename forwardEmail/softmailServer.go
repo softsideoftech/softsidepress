@@ -10,6 +10,8 @@ import (
 	"github.com/veqryn/go-email/email"
 	"bytes"
 	"os"
+	"strings"
+	"github.com/sourcegraph/go-ses"
 )
 
 var softmailPassword string = os.Getenv("SOFTMAIL_FORWARDING_PASSWORD")
@@ -37,6 +39,52 @@ func (bkd *Backend) AnonymousLogin() (smtp.User, error) {
 	return AnnonymousUser{}, nil
 }
 
+
+func (u AnnonymousUser) Send(from string, to []string, r io.Reader) error {
+	log.Println("Translating message:", from, to)
+
+	if b, err := ioutil.ReadAll(r); err != nil {
+		return err
+	} else {
+		log.Println("Data:", string(b))
+		msg, err := email.ParseMessage(bytes.NewReader(b))
+		if err != nil {
+			return err
+		}
+
+
+
+		htmlMessages, err := softmail.FindPartType(msg, "text/html")
+		if err != nil || len(htmlMessages) == 0 {
+			log.Printf("ERROR finding content type 'text/html': %v\n\nMESSAGE: %v\v", string(b), err)
+			return errors.New("ERROR finding content type 'text/html'")
+		}
+		htmlEmailBodyBytes := htmlMessages[len(htmlMessages)-1].Body
+		htmlEmailBody := string(htmlEmailBodyBytes)
+
+		translation, err := softmail.TranslateHtml(htmlEmailBody)
+		if err != nil {
+			log.Printf("ERROR translating email body:\n\n%v\n\nERROR MESSAGE: %v\n\n", htmlEmailBody, err)
+			return errors.New("ERROR translating email body")
+		}
+		if translation != "" {
+			// Add the translation tag into the subject
+			subject := "[TRNS] " + msg.Header.Get("Subject")
+
+			// Use the Return-Path header for the recipient
+			recipient := strings.Trim(msg.Header.Get("Return-Path"), "<>")
+			// todo vg: make all this stuff configurable, particularly the sender 
+			sender := "vlad@softsideoftech.com"
+
+			awsResponse, err := ses.EnvConfig.SendEmailHTML(sender, recipient, subject, "", translation)
+
+			log.Printf("\nAWS SMTP RESPONSE:%s,%v\n:", awsResponse, err);
+
+		}
+	}
+	return nil
+
+}
 
 func (u *User) Send(from string, to []string, r io.Reader) error {
 	log.Println("Sending message:", from, to)

@@ -7,11 +7,8 @@ import (
 	"github.com/h2ik/go-sqs-poller/worker"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"encoding/json"
-				"time"
+	"time"
 	"log"
-	"strings"
-	"github.com/veqryn/go-email/email"
-		"github.com/sourcegraph/go-ses"
 )
 
 type SqsMessage struct {
@@ -86,47 +83,8 @@ func (e SQSHandlerError) Error() string {
 }
 
 func handleEmail(emailString string) bool {
-	if emailString == "" {
-		return false
-	}
-	contentReader := strings.NewReader(emailString)
-	
-	log.Printf("Received email content...:%v\n\n", emailString)
-	msg, err := email.ParseMessage(contentReader)
-	if err != nil {
-		log.Printf("Failed to parse email content string: \n%v\v", emailString)
-		return false
-	}
-	
-	htmlMessages, err := FindPartType(msg, "text/html")
-	if err != nil || len(htmlMessages) == 0 {
-		log.Printf("ERROR finding content type 'text/html': %v\n\nMESSAGE: %v\v", emailString, err)
-		return false
-	}
-	htmlEmailBodyBytes := htmlMessages[len(htmlMessages)-1].Body
-	htmlEmailBody := string(htmlEmailBodyBytes)
-
-	translation, err := TranslateHtml(htmlEmailBody)
-	if err != nil {
-		log.Printf("ERROR translating email body:\n\n%v\n\nERROR MESSAGE: %v\n\n", htmlEmailBody, err)
-		return true
-	}
-	if translation != "" {
-		// Add the translation tag into the subject
-		subject := "[TRNS] " + msg.Header.Get("Subject")
-
-		// Use the Return-Path header for the recipient
-		recipient := strings.Trim(msg.Header.Get("Return-Path"), "<>")
-		// todo vg: make all this stuff configurable, particularly the sender 
-		sender := "vlad@softsideoftech.com"
-
-		awsResponse, err := ses.EnvConfig.SendEmailHTML(sender, recipient, subject, "", translation)
-		
-		log.Printf("\nAWS SMTP RESPONSE:%s,%v\n:", awsResponse, err);
-
-	}
-
-	return true
+	log.Println("ERROR: Received message content via SQS but handler not implemented...")
+	return false
 }
 
 func handleSqsMessage(msg *sqs.Message) error {
