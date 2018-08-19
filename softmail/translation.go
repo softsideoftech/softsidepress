@@ -12,7 +12,7 @@ import (
 
 var matchWhitespace = regexp.MustCompile("\\s+")
 var matchSingleWhitespace = regexp.MustCompile(">\\s<")
-var extractText = regexp.MustCompile(">[\\s]*([^<>]+)[\\s]*")
+var extractText = regexp.MustCompile(">([^<>]+)[\\s]*")
 
 func ParseTextFromHtml(htmlStr string) []string {
 
