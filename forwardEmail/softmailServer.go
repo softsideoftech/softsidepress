@@ -10,7 +10,6 @@ import (
 	"github.com/veqryn/go-email/email"
 	"bytes"
 	"os"
-	"strings"
 	"github.com/sourcegraph/go-ses"
 )
 
@@ -72,9 +71,9 @@ func (u AnnonymousUser) Send(from string, to []string, r io.Reader) error {
 			subject := "[TRNS] " + msg.Header.Get("Subject")
 
 			// Use the Return-Path header for the recipient
-			recipient := strings.Trim(msg.Header.Get("From"), "<>")
+			recipient := msg.Header.Get("From")
 			// todo vg: make all this stuff configurable, particularly the sender 
-			sender := "vlad@softsideoftech.com"
+			sender := "Translator<vlad@softsideoftech.com>"
 
 			awsResponse, err := ses.EnvConfig.SendEmailHTML(sender, recipient, subject, "", translation)
 
