@@ -63,19 +63,19 @@ func TranslateText(sourceText []string) (map[string]string, error) {
 	}
 	
 	// Set the source language
-	sourceLanguage := language.English
+	maxSourceLanguage := language.English
 	maxLangaugeCount := 0
 	for sourceLangCandidate, sourceLangCount := range detectionMap {
 		// Ignore Und (undetermined)
-		if sourceLangCount > maxLangaugeCount && sourceLanguage != language.Und {
+		if sourceLangCount > maxLangaugeCount && sourceLangCandidate != language.Und {
 			maxLangaugeCount = sourceLangCount
-			sourceLanguage = sourceLangCandidate
-			log.Printf("sourceLangCandidate: %s, sourceLangCount: %s\n", sourceLangCount, sourceLangCandidate)
+			maxSourceLanguage = sourceLangCandidate
+			log.Printf("sourceLangCandidate: %s, sourceLangCount: %d\n", sourceLangCandidate, sourceLangCount)
 		}
 	} 
 	
 	// Don't bother translating if the source language is English
-	if sourceLanguage == language.English {
+	if maxSourceLanguage == language.English {
 		return nil, nil
 	}
 	
@@ -83,7 +83,7 @@ func TranslateText(sourceText []string) (map[string]string, error) {
 	translations, err := client.Translate(ctx,
 		sourceText, language.English,
 		&translate.Options{
-			Source: sourceLanguage,
+			Source: maxSourceLanguage,
 			Format: translate.Text,
 		})
 	if err != nil {
