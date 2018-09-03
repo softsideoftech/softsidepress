@@ -2,7 +2,20 @@
 select  t.id, t.created, count(*) cnt from sent_emails s, email_actions a, email_templates t where a.sent_email_id = s.id and t.id = email_template_id and action = 'opened' group by t.id, t.created   order by cnt desc;
 
 -- Visits & Time per page
-select url, count(*), sum(time_on_page) from tracked_urls u, tracking_hits h where u.id = h.tracked_url_id group by url order by count desc;
+select url, count(*), sum(time_on_page) from tracked_urls u, tracking_hits h where u.id = h.tracked_url_id and time_on_page > 15 group by url order by count desc;
+
+-- Time per word on page (for people who stayed for more than 5 min)
+select w.url, count(*) as reads, sum(time_on_page) as seconds,  round((1000.0 * sum(time_on_page)/count(*))/wordcount) as time_per_visit_per_word
+from tracked_urls u, tracking_hits h,
+(values 
+  ('/motivation-at-clara', 3331),
+  ('/the-safety-bubble', 1880),
+  ('/startup-humiliation', 3401),
+  ('/personality-parts', 1104),
+  ('/purposeful-leadership-coaching', 636)
+) as w (url, wordcount) 
+where u.id = h.tracked_url_id and u.url = w.url and time_on_page > 300 group by w.url, wordcount order by count(*) desc;
+
 
 -- Signups Per Month
 select date_part('month', subscribed) as month, count(*) from list_members where subscribed is not null group by date_part('month', subscribed);
