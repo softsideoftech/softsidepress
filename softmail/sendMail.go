@@ -196,7 +196,7 @@ func ForwardEmail(sender string, recipient string, msg *email.Message) {
 	auth := smtp.PlainAuth("", awsSmtpUsername, awsSmtpPassword, "email-smtp.us-west-2.amazonaws.com")
 	awsResponse, err := SendMail("email-smtp.us-west-2.amazonaws.com:587", auth, sender, []string{recipient}, msgBytes)
 	log.Printf("\nAWS SMTP RESPONSE:%s,%v\n:", awsResponse, err);
-	processSentEmail(err, htmlEmailBody, textEmailBody, awsResponse[3:], sentEmail)
+	processSentEmail(err, htmlEmailBody, textEmailBody, awsResponse[3:], sentEmail, listMember)
 }
 
 // todo: not using this right now
@@ -344,12 +344,12 @@ func sendEmailToListMember(emailTemplateId EmailTemplateId, listMember ListMembe
 		panic(err)
 	}
 
-	processSentEmail(err, htmlEmailString, textEmailString, awsMessageId, sentEmail)
+	processSentEmail(err, htmlEmailString, textEmailString, awsMessageId, sentEmail, &listMember)
 }
 
-func processSentEmail(err error, htmlEmailString string, textEmailString string, awsMessageId string, sentEmail *SentEmail) {
+func processSentEmail(err error, htmlEmailString string, textEmailString string, awsMessageId string, sentEmail *SentEmail, listMember *ListMember) {
 	if err == nil {
-		fmt.Printf("Sent email: %s\n\n\n%s\n\n\nawsMessageId: %s\n", htmlEmailString, textEmailString, awsMessageId)
+		fmt.Printf("Sent email to: %s,\n\nhtml: %s\n\n\n%s\n\n\nawsMessageId: %s\n", listMember.Email,htmlEmailString, textEmailString, awsMessageId)
 	} else {
 		log.Printf("ERROR sending email: %v\n", err)
 		return

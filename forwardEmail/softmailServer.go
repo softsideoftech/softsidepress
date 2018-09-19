@@ -95,7 +95,9 @@ func (u *User) Send(from string, to []string, r io.Reader) error {
 		if err != nil {
 			return err
 		}
-		softmail.ForwardEmail(from, to[0], msg)
+		for _, recipient := range to {
+			softmail.ForwardEmail(from, recipient, msg)
+		}
 	}
 	return nil
 }
