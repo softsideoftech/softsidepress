@@ -90,4 +90,6 @@ CREATE TABLE course_cohorts (
 
 select * from course_cohorts;
 
-select * from list_members l where email = 'vgiverts@gmail.com';
+select id, first_name, last_name, email from list_members l where email in ();
+
+;
