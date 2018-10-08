@@ -29,6 +29,10 @@ const trackingPixelMarkdown = "![](https://{{.SiteDomain}}" + trackingPixelPath 
 var awsSmtpUsername string = os.Getenv("AWS_SES_SMTP_USER")
 var awsSmtpPassword string = os.Getenv("AWS_SES_SMTP_PASSWORD")
 
+var linkRegExString = "\\((https://%s)(.+?)\\)";
+var extractSentEmailIdFromUrlEndSlash = regexp.MustCompile("/.*/(.*)")
+
+
 type EmailTemplateParams struct {
 	FirstName          string
 	SentEmailId        string
@@ -72,8 +76,6 @@ func emailTemplateToId(subject string, body []byte, recipient string) EmailTempl
 	return EmailTemplateId(int64(hash64.Sum64())) // make it signed to conform with the Postgres "bigint" type
 }
 
-var linkRegex = regexp.MustCompile("\\((https://)(.+?)\\)")
-var extractSentEmailIdFromUrlEndSlash = regexp.MustCompile("/.*/(.*)")
 
 type SendEmailResponse struct {
 	MessageId string `xml:"SendEmailResult>MessageId"`
@@ -273,6 +275,7 @@ func (ctx *RequestContext) SendTemplatedEmail(subject string, templateFileName s
 	emailTemplateId := obtainEmailTemplateId(subject, markdownEmailBody, "")
 
 	// Add the SendEmailId template parameter to all internal links
+	var linkRegex = regexp.MustCompile(fmt.Sprintf(linkRegExString, siteDomain))
 	markdownEmailBody = linkRegex.ReplaceAllString(markdownEmailBody, "($1$2-{{.SentEmailId}})")
 
 	if opts.UseSuffix {
