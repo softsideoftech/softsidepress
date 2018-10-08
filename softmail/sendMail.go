@@ -223,7 +223,7 @@ func createListMember(address *mail.Address, subscribed bool) *ListMember {
 	}
 	listMember.FirstName = strings.Title(strings.ToLower(firstName))
 	listMember.Email = address.Address
-	err := SoftsideDB.Insert(listMember)
+	err := SoftsideDB.Insert(&listMember)
 	if err != nil {
 		log.Printf("ERROR inserting ListMember while forwarding email: %s, %v\n", address.Address, err)
 	} else {
