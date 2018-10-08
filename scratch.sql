@@ -90,6 +90,8 @@ CREATE TABLE course_cohorts (
 
 select * from course_cohorts;
 
-select id, first_name, last_name, email from list_members l where email in ();
+select id, first_name, last_name, email from list_members l where email in ('akilburn924@gmail.com', 'gregsilin@gmail.com', 'myblake@gmail.com', 'julie.michelle.smith@gmail.com', 'michael.dore@gmail.com', 'dustin@dustinbuss.com', 'ferhat.hatay@gmail.com', 'alexcloudcto@gmail.com', 'kringotime@me.com', 'cshenoy@gmail.com', 'benvnguyen@gmail.com', 'john.celenza@gmail.com', 'brendan.hayes@gmail.com', 'shane.kelly@gmail.com', 'evan.hourigan@gmail.com', 'endre.soos@gmail.com', 'armen.abrahamian@gmail.com');
 
-;
+update list_members set first_name = 'Alex' where email = 'alexcloudcto@gmail.com';
+
+select * from member_groups;
