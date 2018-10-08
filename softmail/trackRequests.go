@@ -168,7 +168,7 @@ func HandleNormalRequest(ctx *RequestContext) {
 
 		// Get the cookie from the request so we could look it up in the
 		// database and create a new record if it doesn't already exist
-		ctx.InitMemberCookie(sentEmail.ListMemberId)
+		ctx.InitMemberCookie(sentEmail)
 
 		// Obtain or save the url if it's not an email tracking pixel
 		if !strings.HasSuffix(urlPath, ".png") {
@@ -416,9 +416,15 @@ func decodeIpAddress(remoteAddr string) (string, IpAddress) {
 	return ipAddressString, (firstOctet * 16777216) + (secondOctet * 65536) + (thirdOctet * 256) + (fourthOctet)
 }
 
-func (ctx *RequestContext) InitMemberCookie(listMemberId ListMemberId) {
+func (ctx *RequestContext) InitMemberCookie(sentEmail *SentEmail) {
 	httpCookie, err := ctx.R.Cookie(cookieName)
 
+	// See if we have a ListMemberId. If not, default to 0
+	var listMemberId ListMemberId = 0
+	if sentEmail != nil {
+		listMemberId = sentEmail.ListMemberId
+	}
+	
 	// Create a MemberCookie in the db to link the tracking back to the ListMember and set the browser cookie in case it wasn't already set
 	ctx.MemberCookie = ctx.ObtainOrCreateMemberCookie(listMemberId, httpCookie)
 
