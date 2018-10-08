@@ -314,16 +314,17 @@ func (ctx *RequestContext) obtainListMembers(memberEmailOrGroupName string, opts
 		// Select all members where unsubscribed is nil (ie, they never explicitly unsubscribed)
 		err = SoftsideDB.Model(&listMembers).Where("unsubscribed IS NULL", nil).Select()
 	} else if strings.Contains(memberEmailOrGroupName, "@") {
+		address, _ := mail.ParseAddress(memberEmailOrGroupName)
+
 		// If an email was supplied, then select that member.
-		listMember, found, err := ctx.GetListMemberByEmail(memberEmailOrGroupName)
+		listMember, found, err := ctx.GetListMemberByEmail(address.Address)
 		if err != nil {
 			panic(err)
 		}
 		
 		if !found {
 			// Add the email to list_members if it doesn't already exist.
-			log.Printf("Couldn't find a member with the email: %s. Creating one now.", memberEmailOrGroupName)
-			address, _ := mail.ParseAddress(memberEmailOrGroupName)
+			log.Printf("Couldn't find a member with the email: %s. Creating one now.", address.Address)
 
 			// Only subscribe the list member if they are logging in (that means they're interested)
 			listMember = createListMember(address, opts.Login)
