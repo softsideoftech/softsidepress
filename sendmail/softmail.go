@@ -1,20 +1,29 @@
 package main
 
 import (
-	"softside/softmail"
-	"fmt"
+	"log"
 	"os"
+	"runtime/debug"
+	"softside/softmail"
 )
 
 func main() {
+	defer (func() {
+		if r := recover(); r != nil {
+			log.Printf("PANIC: %v\n", r, string(debug.Stack()))
+		}
+	})();
+	
 	args := os.Args[1:]
 	subject := args[0]
 	emailTemplateFile := args[1]
-	fromEmail := args[2]
-	memberGroupName := args[3]
+	memberEmailOrGroupName := args[2]
+	login := args[3]
 
-	err := softmail.SendEmailToGroup(subject, emailTemplateFile, fromEmail, memberGroupName)
-	if err != nil {
-		fmt.Println(err)
-	}
+	softmail.NewRawRequestCtx().SendTemplatedEmail(
+		subject,
+		emailTemplateFile,
+		memberEmailOrGroupName,
+		softmail.SendEmailOpts{Login: login == "login",
+		})
 }

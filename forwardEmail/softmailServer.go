@@ -87,6 +87,8 @@ func (u AnnonymousUser) Send(from string, to []string, r io.Reader) error {
 func (u *User) Send(from string, to []string, r io.Reader) error {
 	log.Println("Sending message:", from, to)
 
+	ctx := softmail.NewRawRequestCtx()
+
 	if b, err := ioutil.ReadAll(r); err != nil {
 		return err
 	} else {
@@ -96,7 +98,7 @@ func (u *User) Send(from string, to []string, r io.Reader) error {
 			return err
 		}
 		for _, recipient := range to {
-			softmail.ForwardEmail(from, recipient, msg)
+			ctx.ForwardEmail(from, recipient, msg)
 		}
 	}
 	return nil

@@ -9,21 +9,32 @@ CREATE TABLE member_roles (
   id VARCHAR(128) PRIMARY KEY
 );
 INSERT INTO member_roles (id)
-VALUES ('founder'), ('executive'), ('manager'), ('engineer'), ('ic');
+VALUES ('founder'),
+       ('executive'),
+       ('manager'),
+       ('engineer'),
+       ('ic');
 
 CREATE TABLE email_actions_enum (
   action CHAR(16) PRIMARY KEY
 );
 
 INSERT INTO email_actions_enum (action)
-VALUES ('sent'), ('delivered'), ('opened'), ('clicked'), ('hard_bounce'), ('soft_bounce'), ('complaint');
+VALUES ('sent'),
+       ('delivered'),
+       ('opened'),
+       ('clicked'),
+       ('hard_bounce'),
+       ('soft_bounce'),
+       ('complaint');
 
 CREATE TABLE tracked_urls (
   id            BIGINT PRIMARY KEY,
   url           VARCHAR(1024)                       NOT NULL UNIQUE,
   target_url    VARCHAR(1024),
   sent_email_id INT REFERENCES sent_emails (id),
-  created       TIMESTAMP DEFAULT current_timestamp NOT NULL
+  created       TIMESTAMP DEFAULT current_timestamp NOT NULL,
+  login         BOOLEAN DEFAULT FALSE
 );
 
 CREATE TABLE IF NOT EXISTS list_members (
@@ -46,7 +57,7 @@ CREATE TABLE sent_emails (
   email_template_id BIGINT REFERENCES email_templates (id),
   list_member_id    INT REFERENCES list_members (id),
   third_party_id    CHAR(64),
-  created           TIMESTAMP DEFAULT current_timestamp NOT NULL
+  created           TIMESTAMP DEFAULT current_timestamp NOT NULL,
 );
 CREATE INDEX sent_email__third_party_id
   ON sent_emails (third_party_id);
@@ -63,7 +74,8 @@ CREATE TABLE member_cookies (
   id             BIGINT PRIMARY KEY,
   list_member_id INT REFERENCES list_members (id)    NOT NULL,
   created        TIMESTAMP DEFAULT current_timestamp NOT NULL,
-  updated        TIMESTAMP DEFAULT current_timestamp NOT NULL
+  updated        TIMESTAMP DEFAULT current_timestamp NOT NULL,
+  logged_in      TIMESTAMP
 );
 
 CREATE TABLE tracking_hits (
@@ -93,8 +105,18 @@ CREATE TABLE ip2location (
 );
 
 CREATE TABLE member_groups (
-  name VARCHAR(128) NOT NULL,
-  list_member_id INT REFERENCES list_members (id) NOT NULL
+  name           VARCHAR(128)                        NOT NULL,
+  list_member_id INT REFERENCES list_members (id)    NOT NULL,
+  created        TIMESTAMP DEFAULT current_timestamp NOT NULL,
+  PRIMARY KEY (list_member_id, name)
 );
+CREATE INDEX member_groups__list_member_id
+  ON member_groups (list_member_id);
 
-
+drop table course_cohorts;
+CREATE TABLE course_cohorts (
+  name        VARCHAR(128) PRIMARY KEY,
+  course_name VARCHAR(128) NOT NULL,
+  start_date  TIMESTAMP    NOT NULL,
+  end_date    TIMESTAMP    NOT NULL
+)

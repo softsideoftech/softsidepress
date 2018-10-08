@@ -30,9 +30,33 @@ var awsSmtpUsername string = os.Getenv("AWS_SES_SMTP_USER")
 var awsSmtpPassword string = os.Getenv("AWS_SES_SMTP_PASSWORD")
 
 type EmailTemplateParams struct {
-	FirstName   string
-	SentEmailId string
-	SiteDomain  string
+	FirstName          string
+	SentEmailId        string
+	SiteDomain         string
+	SiteOwnerFirstName string
+	DestinationUrl     string
+	PageTitle          string
+	Params             PerRequestParams
+}
+
+type LoginEmailTemplateParams struct {
+	DestinationUrl string
+	PageTitle      string
+}
+
+type SendEmailOpts struct {
+	Login          bool
+	DestinationUrl string
+	PageTitle      string
+	TemplateParams PerRequestParams
+}
+
+type NoSuchListMember struct {
+	msg string
+}
+
+func (err NoSuchListMember) Error() string {
+	return err.msg
 }
 
 func emailTemplateToId(subject string, body []byte, recipient string) EmailTemplateId {
@@ -90,7 +114,7 @@ func FindPartType(msg *email.Message, contentTypePrefix string) ([]*email.Messag
 	return buf, nil
 }
 
-func ForwardEmail(sender string, recipient string, msg *email.Message) {
+func (ctx RequestContext) ForwardEmail(sender string, recipient string, msg *email.Message) {
 
 	var textEmailBody string
 	var htmlEmailBody string
@@ -127,31 +151,13 @@ func ForwardEmail(sender string, recipient string, msg *email.Message) {
 		address, err := mail.ParseAddress(fullEmail)
 		if fullEmail != "" && address.Address == recipient {
 			var exists bool
-			listMember, exists, err = GetListMemberByEmail(recipient)
+			listMember, exists, err = ctx.GetListMemberByEmail(recipient)
 			if err != nil {
 				log.Printf("ERROR retrieving list member while forwaring email: %s, %v\n", fullEmail, err)
 			}
 			if !exists {
 				// If didn't find this list member, then create a new 'unsubscribed' list member.
-				now := time.Now()
-				listMember.Unsubscribed = &now
-				var firstName = strings.Split(address.Name, " ")[0]
-				if firstName == "" {
-					// If the email didn't contain a name, then try to extract the first 
-					// name from the email address using a couple common name separators
-					firstName = strings.Split(address.Address, "@")[0]
-					firstName = strings.Split(address.Address, ".")[0]
-					firstName = strings.Split(address.Address, "-")[0]
-					firstName = strings.Split(address.Address, "+")[0]
-				}
-				listMember.FirstName = strings.Title(strings.ToLower(firstName))
-				listMember.Email = recipient
-				err := SoftsideDB.Insert(listMember)
-				if err != nil {
-					log.Printf("ERROR inserting ListMember while forwarding email: %s, %v\n", fullEmail, err)
-				} else {
-					log.Printf("Added new ListMember: %s\n", fullEmail)
-				}
+				listMember = createListMember(address, false)
 			}
 		}
 	}
@@ -172,7 +178,7 @@ func ForwardEmail(sender string, recipient string, msg *email.Message) {
 	// Base64 encode the SentEmail id
 	encodedSentEmailId := EncodeId(sentEmail.Id)
 
-	// Load the html suffix template
+	// Load the tracking prefix
 	renderedPrefix := obtainTrackingPrefix(encodedSentEmailId)
 
 	// Append the to only the html email
@@ -199,9 +205,36 @@ func ForwardEmail(sender string, recipient string, msg *email.Message) {
 	processSentEmail(err, htmlEmailBody, textEmailBody, awsResponse[3:], sentEmail, listMember)
 }
 
+func createListMember(address *mail.Address, subscribed bool) *ListMember {
+	now := time.Now()
+	var listMember ListMember
+	if !subscribed {
+		listMember.Unsubscribed = &now
+	}
+
+	var firstName = strings.Split(address.Name, " ")[0]
+	if firstName == "" {
+		// If the email didn't contain a name, then try to extract the first 
+		// name from the email address using a couple common name separators
+		firstName = strings.Split(address.Address, "@")[0]
+		firstName = strings.Split(firstName, ".")[0]
+		firstName = strings.Split(firstName, "-")[0]
+		firstName = strings.Split(firstName, "+")[0]
+	}
+	listMember.FirstName = strings.Title(strings.ToLower(firstName))
+	listMember.Email = address.Address
+	err := SoftsideDB.Insert(listMember)
+	if err != nil {
+		log.Printf("ERROR inserting ListMember while forwarding email: %s, %v\n", address.Address, err)
+	} else {
+		log.Printf("Added new ListMember: %v\n", address)
+	}
+	return &listMember
+}
+
 // todo: not using this right now
-func obtainTrackingSuffix(encodedSentEmailId string) string {
-	suffixEmailBodyBytes, err := ioutil.ReadFile(SoftsideContentPath + "/emails/" + forwardedEmailSuffixMdFile)
+func (ctx *RequestContext) obtainTrackingSuffix(encodedSentEmailId string) string {
+	suffixEmailBodyBytes, err := ioutil.ReadFile(ctx.GetFilePath("/emails/" + forwardedEmailSuffixMdFile))
 	if err != nil {
 		panic(err)
 	}
@@ -213,8 +246,9 @@ func obtainTrackingSuffix(encodedSentEmailId string) string {
 	}
 	buffer := &bytes.Buffer{}
 	template.Execute(buffer, &EmailTemplateParams{
-		SentEmailId: encodedSentEmailId,
-		SiteDomain:  siteDomain,
+		SentEmailId:        encodedSentEmailId,
+		SiteDomain:         siteDomain,
+		SiteOwnerFirstName: ownerFirstName,
 	})
 	renderedSuffix := buffer.String()
 	return renderedSuffix
@@ -225,10 +259,10 @@ func obtainTrackingPrefix(encodedSentEmailId string) string {
 	return fmt.Sprintf("<img src=\"https://softsideoftech.com/pixie/%s.png\"/>", encodedSentEmailId);
 }
 
-func SendEmailToGroup(subject string, templateFileName string, fromEmail string, memberGroupName string) error {
+func (ctx *RequestContext) SendTemplatedEmail(subject string, templateFileName string, memberEmailOrGroupName string, opts SendEmailOpts) []ListMember {
 
 	// Load the template file
-	markdownEmailBodyBytes, err := ioutil.ReadFile(templateFileName)
+	markdownEmailBodyBytes, err := ioutil.ReadFile(ctx.GetFilePath(templateFileName))
 	markdownEmailBody := string(markdownEmailBodyBytes)
 	if err != nil {
 		fmt.Printf("Error reading file: %s\n", err)
@@ -241,7 +275,7 @@ func SendEmailToGroup(subject string, templateFileName string, fromEmail string,
 	markdownEmailBody = linkRegex.ReplaceAllString(markdownEmailBody, "($1$2-{{.SentEmailId}})")
 
 	// Load the suffix template and append it to the markdown template
-	suffixEmailBodyBytes, err := ioutil.ReadFile(SoftsideContentPath + "/emails/" + emailSuffixMdFile)
+	suffixEmailBodyBytes, err := ioutil.ReadFile(ctx.GetFilePath("/emails/" + emailSuffixMdFile))
 	suffixEmailBody := string(suffixEmailBodyBytes)
 	if err != nil {
 		panic(err)
@@ -255,24 +289,9 @@ func SendEmailToGroup(subject string, templateFileName string, fromEmail string,
 	parsedEmailTempalte, err := htmlTemplate.New(templateFileName).Parse(htmlEmailTemplateString)
 
 	// Load the email list
-	//var listMembers []ListMember
-	//err = SoftsideDB.Model(&listMembers).Select()
+	listMembers := ctx.obtainListMembers(memberEmailOrGroupName, opts)
 
-	var listMembers []ListMember
-
-	if memberGroupName == "all" {
-		// Select all members where unsubscribed is nil (ie, they never explicitly unsubscribed)
-		err = SoftsideDB.Model(&listMembers).Where("unsubscribed IS NULL", nil).Select()
-	} else {
-		_, err = SoftsideDB.Query(&listMembers, `
-	select l.* from list_members l, member_groups g 
-	where l.id = g.list_member_id and g.name = ? AND l.unsubscribed IS NULL`, memberGroupName)
-	}
-
-	fmt.Printf("listMembers: %v\n", listMembers)
-	if err != nil {
-		panic(err)
-	}
+	fmt.Printf("Sending email to listMembers: %v\n", listMembers)
 
 	// For each member
 	// 		Create a SentEmail record
@@ -280,11 +299,48 @@ func SendEmailToGroup(subject string, templateFileName string, fromEmail string,
 	//		Generate an html version
 	//		Send the email
 	//		Record the fact the email was sent
+	var fromEmail = fmt.Sprintf("%s %s<%s>", ownerFirstName, ownerLastName, ownerEmail)
 	for _, listMember := range listMembers {
-		sendEmailToListMember(emailTemplateId, listMember, parsedEmailTempalte, fromEmail, subject)
+		ctx.sendEmailToListMember(emailTemplateId, listMember, parsedEmailTempalte, fromEmail, subject, opts)
 	}
 
-	return nil
+	return listMembers
+}
+
+func (ctx *RequestContext) obtainListMembers(memberEmailOrGroupName string, opts SendEmailOpts) []ListMember {
+	var err error = nil
+	var listMembers []ListMember
+	if memberEmailOrGroupName == "all" {
+		// Select all members where unsubscribed is nil (ie, they never explicitly unsubscribed)
+		err = SoftsideDB.Model(&listMembers).Where("unsubscribed IS NULL", nil).Select()
+	} else if strings.Contains(memberEmailOrGroupName, "@") {
+		// If an email was supplied, then select that member.
+		listMember, found, err := ctx.GetListMemberByEmail(memberEmailOrGroupName)
+		if err != nil {
+			panic(err)
+		}
+		
+		if !found {
+			// Add the email to list_members if it doesn't already exist.
+			log.Printf("Couldn't find a member with the email: %s. Creating one now.", memberEmailOrGroupName)
+			address, _ := mail.ParseAddress(memberEmailOrGroupName)
+
+			// Only subscribe the list member if they are logging in (that means they're interested)
+			listMember = createListMember(address, opts.Login)
+		}
+		listMembers = append(listMembers, *listMember)
+	} else {
+		_, err = SoftsideDB.Query(&listMembers, `
+		select l.* from list_members l, member_groups g 
+		where l.id = g.list_member_id and g.name = ? AND l.unsubscribed IS NULL`, memberEmailOrGroupName)
+	}
+
+	// Not ok to have an error here. Just do a hard failure.
+	if err != nil {
+		panic(err)
+	}
+
+	return listMembers
 }
 
 func obtainEmailTemplateId(subject string, emailBody string, recipient string) (EmailTemplateId) {
@@ -307,24 +363,40 @@ func obtainEmailTemplateId(subject string, emailBody string, recipient string) (
 	return emailTemplateId
 }
 
-func sendEmailToListMember(emailTemplateId EmailTemplateId, listMember ListMember, parsedEmailTempalte *htmlTemplate.Template, fromEmail string, subject string) {
+func (ctx RequestContext) sendEmailToListMember(emailTemplateId EmailTemplateId, listMember ListMember, parsedEmailTempalte *htmlTemplate.Template, fromEmail string, subject string, opts SendEmailOpts) {
 	// Create a SentEmail record
 	sentEmail := &SentEmail{
 		EmailTemplateId: emailTemplateId,
 		ListMemberId:    listMember.Id,
 	}
-	err := SoftsideDB.Insert(sentEmail)
+	err := ctx.DB.Insert(sentEmail)
 	if err != nil {
 		panic(err)
 	}
+
+	// If we're logging in, then create a unique URL for the link.
+	var destinationUrl string
+	if opts.Login {
+		destinationUrl, err = ctx.TryToCreateShortTrackedUrl(opts.DestinationUrl, sentEmail.Id, opts.Login)
+		if err != nil {
+			panic(fmt.Sprintf("ERROR obtaining TrackedUrl: %v", err))
+		}
+	} else {
+		destinationUrl = opts.DestinationUrl
+	}
+
 	// Base64 encode the SentEmail id
 	encodedSentEmailId := EncodeId(sentEmail.Id)
 	// Render the HTML template
 	buffer := &bytes.Buffer{}
 	err = parsedEmailTempalte.Execute(buffer, &EmailTemplateParams{
-		SentEmailId: encodedSentEmailId,
-		FirstName:   listMember.FirstName,
-		SiteDomain:  siteDomain,
+		SentEmailId:        encodedSentEmailId,
+		FirstName:          listMember.FirstName,
+		SiteDomain:         siteDomain,
+		SiteOwnerFirstName: ownerFirstName,
+		PageTitle:          opts.PageTitle,
+		DestinationUrl:     destinationUrl,
+		Params:             opts.TemplateParams,
 	})
 	if err != nil {
 		panic(err)
@@ -349,10 +421,9 @@ func sendEmailToListMember(emailTemplateId EmailTemplateId, listMember ListMembe
 
 func processSentEmail(err error, htmlEmailString string, textEmailString string, awsMessageId string, sentEmail *SentEmail, listMember *ListMember) {
 	if err == nil {
-		fmt.Printf("Sent email to: %s,\n\nhtml: %s\n\n\n%s\n\n\nawsMessageId: %s\n", listMember.Email,htmlEmailString, textEmailString, awsMessageId)
+		fmt.Printf("Sent email to: %s,\n\nhtml: %s\n\n\n%s\n\n\nawsMessageId: %s\n", listMember.Email, htmlEmailString, textEmailString, awsMessageId)
 	} else {
-		log.Printf("ERROR sending email: %v\n", err)
-		return
+		panic(fmt.Sprintf("ERROR sending email: %v\n", err))
 	}
 	// Record the email sent event if we didn't get an error from AWS
 	SoftsideDB.Insert(&EmailAction{SentEmailId: sentEmail.Id, Action: "sent"})
@@ -361,7 +432,7 @@ func processSentEmail(err error, htmlEmailString string, textEmailString string,
 	sentEmail.ThirdPartyId = awsMessageId
 	err = SoftsideDB.Update(sentEmail)
 	if err != nil {
-		log.Printf("ERROR updating email with AWS MessageId: %v\n", err)
+		log.Printf("ERROR updating SentEmail.ThirdPartyId with AWS MessageId: %v\n", err)
 	}
 }
 

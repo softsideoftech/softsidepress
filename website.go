@@ -1,10 +1,12 @@
 package main
 
 import (
-	"net/http"
-	"softside/softmail"
-	"softside/forwardEmail"
+	"fmt"
 	"log"
+	"net/http"
+	"runtime/debug"
+	"softside/forwardEmail"
+	"softside/softmail"
 )
 
 func main() {
@@ -14,7 +16,7 @@ func main() {
 func runService() {
 	log.Println("Starting website")
 
-	if !softmail.DevelopmentMode {
+	if !softmail.NewRawRequestCtx().DevMode {
 		// Start processing SQS messages from SES in the background
 		go softmail.StartSqs()
 
@@ -27,16 +29,31 @@ func runService() {
 }
 
 func startWebsite() {
-	http.HandleFunc("/yes-please/", softmail.Resubscribe)
-	http.HandleFunc("/bye/", softmail.Unsubscribe)
-	http.HandleFunc("/join/", softmail.Join)
-	http.HandleFunc("/favicon.ico", HandleFavicon)
-	http.HandleFunc("/gen_link", softmail.GenerateTrackingLink)
-	http.HandleFunc("/ping", softmail.TrackTimeOnPage)
-	http.HandleFunc("/", softmail.HandleNormalRequest)
+	registerHandler("/yes-please/", softmail.Resubscribe, false)
+	registerHandler("/bye/", softmail.Unsubscribe, false)
+	registerHandler("/join/", softmail.Join, false)
+	registerHandler("/request-login-link/", softmail.RequestLoginLink, true)
+	registerHandler("/favicon.ico", HandleFavicon, false)
+	registerHandler("/gen_link", softmail.GenerateTrackingLink, false)
+	registerHandler("/ping", softmail.TrackTimeOnPage, false)
+	registerHandler("/", softmail.HandleNormalRequest, false)
 	http.ListenAndServe(":8080", nil)
 }
 
-func HandleFavicon(w http.ResponseWriter, r *http.Request) {
-	http.Redirect(w, r, softmail.FavIconUrl, http.StatusTemporaryRedirect)
+func HandleFavicon(ctx *softmail.RequestContext) {
+	http.Redirect(ctx.W, ctx.R, softmail.FavIconUrl, http.StatusTemporaryRedirect)
+}
+
+func registerHandler(pattern string, httpHandler func(ctx *softmail.RequestContext), initCtx bool) {
+	http.HandleFunc(pattern, func(w http.ResponseWriter, r *http.Request) {
+		ctx := softmail.NewRequestCtx(w, r, initCtx)
+		defer func() {
+			stack := debug.Stack()
+			if r := recover(); r != nil {
+				ctx.SendUserFacingError("ERROR processing pattern: " + pattern, fmt.Sprintf("%v\n%s", r, string(stack)))
+			}
+		}()
+
+		httpHandler(ctx)
+	});
 }

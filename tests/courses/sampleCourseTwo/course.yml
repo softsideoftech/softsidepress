@@ -1,0 +1,7 @@
+sessions: 
+  - name: cat
+    day: 3
+  - name: dan
+    day: 4
+emails:
+  sendhour: 2

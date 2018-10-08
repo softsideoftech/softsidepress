@@ -15,8 +15,8 @@ func TestTranslationParsing(t *testing.T) {
 	sourceText := softmail.ParseTextFromHtml(sampleTranslationHtml.TranslationHtml)
 	print(sourceText)
 
-	// This is meant to be run locally because the environment needs to have the translation service credentials.
-	if softmail.DevelopmentMode {
+	// This is only meant to be run locally because the environment needs to have the translation service credentials.
+	if softmail.NewRawRequestCtx().DevMode {
 		translateEmail(t)
 		doNonTranslation(sourceText, t)
 	}

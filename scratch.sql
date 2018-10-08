@@ -72,6 +72,22 @@ drop table csv_import;
 
 select t.subject, s.id as sent_email_id, s.created as email_sent, a.action, a.created as action_time from list_members l, email_templates t, email_actions a, sent_emails s where t.id = s.email_template_id and s.list_member_id = l.id and a.sent_email_id = s.id order by s.id desc limit 20;
 
-select * from list_members where id = 2;
+select * from list_members where id = 2 and created < now();
 
 select * from sent_emails where id = 13;
+
+-- additions for video course
+alter table member_groups ADD COLUMN created TIMESTAMP DEFAULT current_timestamp NOT NULL;
+alter table member_groups ADD PRIMARY KEY (list_member_id, name);
+CREATE INDEX member_groups__list_member_id ON member_groups (list_member_id);
+CREATE TABLE course_cohorts (
+  course_name VARCHAR(128) NOT NULL,
+  start_date  TIMESTAMP    NOT NULL,
+  end_date    TIMESTAMP    NOT NULL,
+  PRIMARY KEY (course_name, start_date)
+);
+
+
+select * from course_cohorts;
+
+select * from list_members l where email = 'vgiverts@gmail.com';

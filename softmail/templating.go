@@ -1,14 +1,13 @@
 package softmail
 
 import (
-	txtTemplate "text/template"
-	htmlTemplate "html/template"
-	"io"
 	"bytes"
 	"gopkg.in/russross/blackfriday.v2"
+	htmlTemplate "html/template"
 	"io/ioutil"
-	"sync"
 	"regexp"
+	"sync"
+	txtTemplate "text/template"
 )
 
 type HtmlPageParams struct {
@@ -24,39 +23,48 @@ type PerRequestParams interface {
 }
 
 type MarkdownTemplateConfig struct {
-	Writer           io.Writer
 	BaseHtmlFile     string
 	Url              string
-	Title            string
-	Summary          string
+	HtmlTitle        string
+	HtmlSummary      string
 	MarkdownFile     string
 	PerRequestParams PerRequestParams
 }
 
-var cssFile = SoftsideContentPath + "/html/style.css"
-var jsFile = SoftsideContentPath + "/html/javascript.js"
+type CommonMdTemplateParams struct {
+	FirstName  string
+	Email      string
+	EncodedId  string
+	OwnerName  string
+	OwnerEmail string
+	SiteName   string
+	Message    string
+}
+
+var cssFile = "/html/style.css"
+var jsFile = "/html/javascript.js"
 var extractTitle = regexp.MustCompile("^# (.+)")
 var templateCache = sync.Map{}
 
-func renderMarkdownToHtmlTemplate(c MarkdownTemplateConfig) error {
-
+func (ctx *RequestContext) renderMarkdownToHtmlTemplate(c *MarkdownTemplateConfig) error {
+	// Use the combo of the html file and md files to uniquely identify the template.
 	templateName := c.BaseHtmlFile + c.MarkdownFile
 
 	// Get the template from the cache to avoid constantly reading and parsing files from disk
 	fullPageTemplate, cacheLoaded := templateCache.Load(templateName)
 
-	if !cacheLoaded || DevelopmentMode {
+	if !cacheLoaded || ctx.DevMode {
 		// Load the markdown template file
-		markdownTemplateBytes, err := ioutil.ReadFile(c.MarkdownFile)
+		markdownTemplateBytes, err := ioutil.ReadFile(ctx.GetFilePath(c.MarkdownFile))
 		if err != nil {
 			return err
 		}
 
 		// If a title wasn't provided, get it from the H1 from the markdown file.
-		if (len(c.Title) == 0) {
+		if len(c.HtmlTitle) == 0 {
 			submatch := extractTitle.FindStringSubmatch(string(markdownTemplateBytes))
-			if (submatch != nil) {
-				c.Title = submatch[1]
+			if submatch != nil {
+				c.HtmlTitle = submatch[1]
 			}
 		}
 
@@ -64,34 +72,35 @@ func renderMarkdownToHtmlTemplate(c MarkdownTemplateConfig) error {
 		bodyHtml := string(blackfriday.Run(markdownTemplateBytes))
 
 		// Merge the markdown html into the base
-		baseHtmlTemplate, err := txtTemplate.ParseFiles(c.BaseHtmlFile)
+		baseHtmlTemplate, err := txtTemplate.ParseFiles(ctx.GetFilePath(c.BaseHtmlFile))
 		if err != nil {
 			return err
 		}
 
 		// Load the css file
-		cssFileBytes, err := ioutil.ReadFile(cssFile)
+		cssFileBytes, err := ioutil.ReadFile(ctx.GetFilePath(cssFile))
 		if err != nil {
 			return err
 		}
 
 		// Load the js file
-		jsFileBytes, err := ioutil.ReadFile(jsFile)
+		jsFileBytes, err := ioutil.ReadFile(ctx.GetFilePath(jsFile))
 		if err != nil {
 			return err
 		}
 
 		// Generate the html template by templatizing the page components and body html arguments into it
 		buffer := &bytes.Buffer{}
-		err = baseHtmlTemplate.Execute(buffer, HtmlPageParams{
+		params := HtmlPageParams{
 			Url:        c.Url,
-			Title:      c.Title,
-			Summary:    c.Summary,
+			Title:      c.HtmlTitle,
+			Summary:    c.HtmlSummary,
 			Css:        string(cssFileBytes),
 			JavaScript: string(jsFileBytes),
 			Body:       bodyHtml,
-		})
-		if (err != nil) {
+		}
+		err = baseHtmlTemplate.Execute(buffer, params)
+		if err != nil {
 			return err
 		}
 
@@ -105,5 +114,14 @@ func renderMarkdownToHtmlTemplate(c MarkdownTemplateConfig) error {
 	}
 
 	template := fullPageTemplate.(*htmlTemplate.Template)
-	return template.Execute(c.Writer, c.PerRequestParams)
+	return template.Execute(ctx.W, c.PerRequestParams)
+}
+
+func MdMessageParams(message string) *CommonMdTemplateParams {
+	return &CommonMdTemplateParams{
+		OwnerName:  ownerFirstName,
+		OwnerEmail: ownerEmail,
+		SiteName:   siteName,
+		Message:    message,
+	}
 }

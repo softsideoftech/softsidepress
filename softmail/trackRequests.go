@@ -1,6 +1,7 @@
 package softmail
 
 import (
+	"log"
 	"net/http"
 	"regexp"
 	"encoding/base64"
@@ -10,7 +11,6 @@ import (
 	"hash/fnv"
 	"strings"
 	"math/rand"
-	"os"
 	"strconv"
 )
 
@@ -24,11 +24,6 @@ var URLEncoding = base64.NewEncoding(encodeURL).WithPadding(base64.NoPadding)
 
 const cookieName = "sftml"
 
-// TODO: make these configurable
-const siteDomain = "softsideoftech.com"
-const trackingImageUrl = "https://d235962hz41e70.cloudfront.net/bear-100.png"
-const trackingPixelUrl = "https://d235962hz41e70.cloudfront.net/transparent-pixel.png"
-const FavIconUrl = "https://d235962hz41e70.cloudfront.net/favicon.ico"
 
 type TrackingRequestParams struct {
 	TrackingId TrackingHitId
@@ -81,41 +76,39 @@ func DecodeMemberCookieId(idString string) (MemberCookieId, error) {
 	return MemberCookieId(decodedId), err
 }
 
-func GenerateTrackingLink(w http.ResponseWriter, r *http.Request) {
-	targetUrl := r.URL.Query().Get("target")
-
-	ctx := NewRequestCtx(w, r)
+func GenerateTrackingLink(ctx *RequestContext) {
+	targetUrl := ctx.R.URL.Query().Get("target")
 
 	// Keep trying until we create a new short url
 	url := ""
 	for len(url) == 0 {
-		curUrl, err := ctx.TryToCreateShortTrackedUrl(targetUrl, 0)
+		curUrl, err := ctx.TryToCreateShortTrackedUrl(targetUrl, 0, false)
 
 		if err != nil {
 			panic(fmt.Errorf("Failed to generate tracking url for link: %s, err: $v", targetUrl, err))
-			http.Error(w, "Something went wrong generating the link.", http.StatusInternalServerError)
+			http.Error(ctx.W, "Something went wrong generating the link.", http.StatusInternalServerError)
 			return
 		}
 
 		url = curUrl
 	}
 
-	fmt.Fprintf(w, "<a href='%s'>%s</a>", url, url)
+	fmt.Fprintf(ctx.W, "<a href='%s'>%s</a>", url, url)
 }
 
 // TODO: use this method to replace external links in emails
-func (ctx *RequestContext) TryToCreateShortTrackedUrl(targetUrl string, sentEmailId SentEmailId) (string, error) {
+func (ctx *RequestContext) TryToCreateShortTrackedUrl(targetUrl string, sentEmailId SentEmailId, login bool) (string, error) {
 	// Randomly generate a url
 	url := "/" + EncodeId(rand.Uint32())
-	trackedUrl := &TrackedUrl{Id: UrlToId(url), SentEmailId: sentEmailId}
+	trackedUrl := &TrackedUrl{Id: UrlToId(url), SentEmailId: sentEmailId, Login: login}
 
-	err := ctx.db.Select(trackedUrl)
+	err := ctx.DB.Select(trackedUrl)
 	if err != nil {
 		// Only continue if we didn't collide with an existing url.
 		if IsPgSelectEmpty(err) {
 			trackedUrl.Url = url
 			trackedUrl.TargetUrl = targetUrl
-			err := ctx.db.Insert(trackedUrl)
+			err := ctx.DB.Insert(trackedUrl)
 			if err != nil {
 				panic(fmt.Errorf("failed to insert TrackedUrl: %s, err: %v", trackedUrl.Url, err))
 				return "", err
@@ -127,55 +120,55 @@ func (ctx *RequestContext) TryToCreateShortTrackedUrl(targetUrl string, sentEmai
 		}
 	} else {
 		// If we got here, we must have collided with another url, so try again.
-		return ctx.TryToCreateShortTrackedUrl(targetUrl, sentEmailId)
+		return ctx.TryToCreateShortTrackedUrl(targetUrl, sentEmailId, login)
 	}
 	return "", nil
 }
 
-func TrackTimeOnPage(w http.ResponseWriter, r *http.Request) {
-	trackingHitIdStr := r.URL.Query()["id"][0]
-
-	ctx := NewRequestCtx(w, r)
-
+func TrackTimeOnPage(ctx *RequestContext) {
+	trackingHitIdStr := ctx.R.URL.Query()["id"][0]
 	parsedId, err := strconv.ParseInt(trackingHitIdStr, 10, 32)
 	if err != nil {
 		fmt.Printf("Counld't parse tracking id: %s, err: %v", trackingHitIdStr, err)
 	}
 	var trackingHit TrackingHit
-	_, err = ctx.db.Model(&trackingHit).Set("time_on_page = time_on_page + 5").Where("id = ?", TrackingHitId(parsedId)).Update()
+	_, err = ctx.DB.Model(&trackingHit).Set("time_on_page = time_on_page + 5").Where("id = ?", TrackingHitId(parsedId)).Update()
 	if err != nil {
 		fmt.Printf("Counldn't update tracking hit with id: %d, err: %v", parsedId, err)
 	}
 }
 
-func HandleNormalRequest(w http.ResponseWriter, r *http.Request) {
-
-	ctx := NewRequestCtx(w, r)
-
-	rawRemoteAddr, ipString, ipInt := getIpInfo(r)
+func HandleNormalRequest(ctx *RequestContext) {
+	rawRemoteAddr, ipString, ipInt := getIpInfo(ctx.R)
 
 	var trackingHitId TrackingHitId
 	trackedUrl := &TrackedUrl{Id: 0} // Default linkId for tracking requests
 
-	urlPath := r.URL.Path
-	sentEmailId, emailTargetUrl := DecodeSentMailIdFromUri(urlPath)
-	var sentEmailListMemberId = ListMemberId(0)
+	// Try to match a page assuming there is no tracking code in the url.
+	pageTemplateCfg := ctx.matchWebPage(trackingHitId, false)
+
+	var sentEmailId SentEmailId
+	var emailTargetUrl *string
+
+	// If we couldn't find a page with the bare url, that means the url may contain a tracking id.
+	urlPath := ctx.R.URL.Path
+	if pageTemplateCfg == nil {
+		sentEmailId, emailTargetUrl = DecodeSentMailIdFromUri(urlPath)
+	}
+
+	var sentEmail *SentEmail = nil
 
 	// Don't don't bother with cookies for local requests (healthchecks, etc)
 	if ipString != "127.0.0.1" {
 
 		// Try to obtain the ListMemberId using the encoded SendEmailId in the url path if it exists.
 		var err error
-		sentEmailListMemberId, err = ctx.getListMemberIdFromSentEmail(sentEmailId)
+		sentEmail, err = ctx.GetSentEmail(sentEmailId)
 		// ignore any error and keep going
 
 		// Get the cookie from the request so we could look it up in the
 		// database and create a new record if it doesn't already exist
-		httpCookie, err := r.Cookie(cookieName)
-		memberCookie := ctx.ObtainOrCreateMemberCookie(sentEmailListMemberId, httpCookie)
-
-		// Set the cookie on the HTTP request. It might already exist, so we'll simply be refreshing the MaxAge.
-		SetHttpCookie(w, memberCookie)
+		ctx.InitMemberCookie(sentEmail.ListMemberId)
 
 		// Obtain or save the url if it's not an email tracking pixel
 		if !strings.HasSuffix(urlPath, ".png") {
@@ -188,19 +181,19 @@ func HandleNormalRequest(w http.ResponseWriter, r *http.Request) {
 			// Track the hit
 			trackingHit := TrackingHit{
 				TrackedUrlId:    trackedUrl.Id,
-				MemberCookieId:  memberCookie.Id,
-				ReferrerUrl:     r.Referer(),
+				MemberCookieId:  ctx.MemberCookie.Id,
+				ReferrerUrl:     ctx.R.Referer(),
 				IpAddress:       ipInt,
 				IpAddressString: ipString,
 				// Use the cookie as the authority on the ListMemberId because it would
 				// have either been initialized correctly or retrieved from the db
-				ListMemberId: memberCookie.ListMemberId,
+				ListMemberId: ctx.MemberCookie.ListMemberId,
 			}
-			err = ctx.db.Insert(&trackingHit)
+			err = ctx.DB.Insert(&trackingHit)
 			if err != nil {
 				err = fmt.Errorf(
 					"Problem inserting TrackingHit record. ListMemberId: : %d, Remote IP Address: %s, ReferrerURL: %s DB error: %v\n",
-					memberCookie.ListMemberId, rawRemoteAddr, r.Referer(), err)
+					ctx.MemberCookie.ListMemberId, rawRemoteAddr, ctx.R.Referer(), err)
 			} else {
 				trackingHitId = trackingHit.Id
 			}
@@ -212,76 +205,129 @@ func HandleNormalRequest(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	if ctx.serveRedirect(trackedUrl, sentEmail, emailTargetUrl, urlPath) {
+		return;
+	} else if pageTemplateCfg == nil {
+		// We're not doing a redirect, so it must be a web page. 
+		// Default to the home page if no page is matched.
+		pageTemplateCfg = ctx.matchWebPage(trackingHitId, true)
+	}
+
+	// Try to render the page
+	err := ctx.renderMarkdownToHtmlTemplate(pageTemplateCfg)
+
+	if err != nil {
+		ctx.SendUserFacingError("", err)
+	}
+}
+
+func (ctx *RequestContext) serveRedirect(trackedUrl *TrackedUrl, sentEmail *SentEmail, emailTargetUrl *string, urlPath string) bool {
+
 	// If the request is a redirect-tracking link, then redirect the request now.
 	// It's possible that trackedUrl will be nil if we had a error (db most likely)
 	if trackedUrl != nil && len(trackedUrl.TargetUrl) > 0 {
-		http.Redirect(w, r, trackedUrl.TargetUrl, http.StatusTemporaryRedirect)
-		return
+		http.Redirect(ctx.W, ctx.R, trackedUrl.TargetUrl, http.StatusTemporaryRedirect)
+		return true
 	}
 
 	// If this was an email link to an internal page, then redirect to it now
-	if sentEmailListMemberId != 0 && emailTargetUrl != nil {
-		ctx.db.Insert(&EmailAction{SentEmailId: sentEmailId, Action: "clicked", Metadata: *emailTargetUrl})
-		http.Redirect(w, r, *emailTargetUrl, http.StatusTemporaryRedirect)
-		return
+	if sentEmail != nil && sentEmail.ListMemberId != 0 && emailTargetUrl != nil {
+		ctx.DB.Insert(&EmailAction{SentEmailId: sentEmail.Id, Action: "clicked", Metadata: *emailTargetUrl})
+		http.Redirect(ctx.W, ctx.R, *emailTargetUrl, http.StatusTemporaryRedirect)
+		return true
 	}
 
 	// For now, assume all png requests are email tracking so serve up the tracking image
 	if strings.HasSuffix(urlPath, ".png") {
-		ctx.db.Insert(&EmailAction{SentEmailId: sentEmailId, Action: "opened"})
+		ctx.DB.Insert(&EmailAction{SentEmailId: sentEmail.Id, Action: "opened"})
 		var trackingUrl string
 		if strings.Contains(urlPath, trackingPixelPath) {
 			trackingUrl = trackingPixelUrl
 		} else {
 			trackingUrl = trackingImageUrl
 		}
-		http.Redirect(w, r, trackingUrl, http.StatusTemporaryRedirect)
-		return
+		http.Redirect(ctx.W, ctx.R, trackingUrl, http.StatusTemporaryRedirect)
+		return true
 	}
 
-	// Otherwise this might be a markdown page, so let's look for that.
-	templateFile := SoftsideContentPath + "/pages" + urlPath + ".md"
-	fileInfo, err := os.Stat(templateFile)
+	return false
+}
+
+func (ctx *RequestContext) matchWebPage(trackingHitId TrackingHitId, defaultToHome bool) *MarkdownTemplateConfig {
 
 	// Build the escapedUrl for pages to potentially use
-	var escapedUrl = fmt.Sprintf("https://%s%s", siteDomain, r.URL.EscapedPath())
+	var escapedUrl = fmt.Sprintf("https://%s%s", siteDomain, ctx.R.URL.EscapedPath())
 
-	// Check if we should load a regular page or the home page
-	if fileInfo != nil && !strings.Contains(templateFile, "index.html") {
-		words := strings.Split(strings.Trim(urlPath, "/"), "-")
-		summaryPhrase := strings.Join(words, " ")
-		err = renderMarkdownToHtmlTemplate(MarkdownTemplateConfig{
-			Writer:           w,
-			BaseHtmlFile:     pagesHtmlTemplate,
-			Url:              escapedUrl,
-			Summary:          summaryPhrase,
-			MarkdownFile:     templateFile,
-			PerRequestParams: TrackingRequestParams{TrackingId: trackingHitId},
-		})
+	var cfg MarkdownTemplateConfig
+
+	// Use the URL path as the summary
+	urlPath := ctx.R.URL.Path
+	pathDirName := strings.Trim(urlPath, "/")
+	cfg.HtmlSummary = strings.Join(strings.Split(pathDirName, "-"), " ")
+	trackingParams := TrackingRequestParams{TrackingId: trackingHitId}
+	cfg.PerRequestParams = trackingParams
+	cfg.Url = escapedUrl
+
+	// Look for the possible page types
+	if ctx.FileExists(ctx.getBlogPagePath(urlPath)) {
+		cfg.MarkdownFile = ctx.getBlogPagePath(urlPath)
+		cfg.BaseHtmlFile = blogPageHtmlTemplate
+
+	} else if ctx.FileExists(ctx.getCourseDescriptionPath(urlPath)) {
+		cfg.MarkdownFile = ctx.getCourseDescriptionPath(urlPath)
+		cfg.BaseHtmlFile = coursePageHtmlTemplate
+		courseParams, err := ctx.GetCoursePageParams(pathDirName, trackingParams)
+
+		// If we get an error here, it means the user must log in to view this page.
+		if err != nil {
+			switch err.(type) {
+			case NotLoggedInError:
+				// Render the login page 
+				cfg.BaseHtmlFile = mgmtPagesHtmlTemplate
+				cfg.MarkdownFile = mdTemplateLogin
+				cfg.HtmlTitle = "Please Login First"
+				cfg.PerRequestParams = MdMessageParams(courseParams.Name)
+			case NoSuchCourseError:
+				// Let the user know this course doesn't exist  
+				cfg.BaseHtmlFile = mgmtPagesHtmlTemplate
+				cfg.MarkdownFile = mdTemplateMessage
+				cfg.HtmlTitle = "Course Not Found"
+				cfg.PerRequestParams = MdMessageParams(fmt.Sprintf("I'm sorry. I couldn't find a course with the name '%s'.", pathDirName))
+			case NotRegisteredForCourseError:
+				
+			case CourseNotStartedError:
+				// Let the user know this course doesn't exist 
+				cfg.BaseHtmlFile = mgmtPagesHtmlTemplate
+				cfg.MarkdownFile = mdTemplateMessage
+				cfg.HtmlTitle = "Course Hasn't Started Yet"
+				startDateStr := err.(CourseNotStartedError).StartDate.Format("Jan 2, 2006")
+				cfg.PerRequestParams = MdMessageParams(fmt.Sprintf("I'm sorry. It looks like this course hasn't started yet. Check back in on the start date: %s.", startDateStr))
+			}
+		} else {
+			cfg.PerRequestParams = courseParams
+		}
+
+	} else if defaultToHome {
+		// Always default to the home page
+		cfg.MarkdownFile = homePageMdTemplate
+		cfg.BaseHtmlFile = homePageHtmlTemplate
+		cfg.HtmlTitle = siteName
 	} else {
-		// Didn't find a regular page so load the home page
-		err = renderMarkdownToHtmlTemplate(
-			MarkdownTemplateConfig{
-				Writer:           w,
-				BaseHtmlFile:     homePageHtmlTemplate,
-				Url:              escapedUrl,
-				Title:            "Soft Side of Tech",
-				MarkdownFile:     homePageMdTemplate,
-				PerRequestParams: TrackingRequestParams{TrackingId: trackingHitId},
-			})
+		// If we didn't match one of the pages and we're not defaulting to the home page, then return nil.
+		return nil
 	}
-	if err != nil {
-		sendUserFacingError("", err, w)
-	}
+
+	return &cfg
 }
-func SetHttpCookie(w http.ResponseWriter, memberCookie *MemberCookie) {
-	http.SetCookie(w, &http.Cookie{
-		Domain: siteDomain,
-		MaxAge: 60 * 60 * 24 * 365, // 1 year
-		Name:   cookieName,
-		Value:  EncodeId(uint32(memberCookie.Id)),
-	})
+
+func (ctx *RequestContext) getBlogPagePath(urlPath string) string {
+	return "/pages" + urlPath + ".md"
 }
+
+func (ctx *RequestContext) getCourseDescriptionPath(urlPath string) string {
+	return "/courses" + urlPath + "/content.md"
+}
+
 func getIpInfo(r *http.Request) (string, string, IpAddress) {
 	// Try to find the user's IP address in the request
 	var rawRemoteAddr string
@@ -300,12 +346,12 @@ func getIpInfo(r *http.Request) (string, string, IpAddress) {
 
 func (ctx *RequestContext) obtainOrCreateTrackedUrl(urlPath string) (*TrackedUrl, error) {
 	trackedUrl := &TrackedUrl{Id: UrlToId(urlPath)}
-	err := ctx.db.Select(trackedUrl)
+	err := ctx.DB.Select(trackedUrl)
 	if err != nil {
 		// todo: refactor checking for no results in select
 		if IsPgSelectEmpty(err) {
 			trackedUrl.Url = urlPath
-			err = ctx.db.Insert(trackedUrl)
+			err = ctx.DB.Insert(trackedUrl)
 			if err != nil {
 				return nil, fmt.Errorf("failed to insert tracked url: %s, err: %v", urlPath, err)
 			}
@@ -335,7 +381,7 @@ func DecodeSentMailIdFromUri(path string) (SentEmailId, *string) {
 		sentEmailId, err = DecodeId(submatch[2])
 	}
 	if err != nil {
-		fmt.Printf("Problem parsing SentEmailId from url: %s, error message: %v", path, err)
+		log.Printf("Problem parsing SentEmailId from url: %s, error message: %v\n", path, err)
 		// Keep going anyway so we could set the cookie and retroactive track this user later if we obtain a ListMemberId
 	}
 	return sentEmailId, targetLink
@@ -370,17 +416,23 @@ func decodeIpAddress(remoteAddr string) (string, IpAddress) {
 	return ipAddressString, (firstOctet * 16777216) + (secondOctet * 65536) + (thirdOctet * 256) + (fourthOctet)
 }
 
-func (ctx *RequestContext) getListMemberIdFromSentEmail(sentEmailId SentEmailId) (ListMemberId, error) {
-	if sentEmailId == 0 {
-		return 0, nil
+func (ctx *RequestContext) InitMemberCookie(listMemberId ListMemberId) {
+	httpCookie, err := ctx.R.Cookie(cookieName)
+
+	// Create a MemberCookie in the db to link the tracking back to the ListMember and set the browser cookie in case it wasn't already set
+	ctx.MemberCookie = ctx.ObtainOrCreateMemberCookie(listMemberId, httpCookie)
+
+	if err == nil {
+		// Set the cookie on the HTTP request. It might already exist, so we'll simply be refreshing the MaxAge.
+		http.SetCookie(ctx.W, &http.Cookie{
+			Domain: siteDomain,
+			MaxAge: 60 * 60 * 24 * 365, // 1 year
+			Name:   cookieName,
+			Value:  EncodeId(uint32(ctx.MemberCookie.Id)),
+		})
+	} else {
+		fmt.Printf("Problem obtaining or creating MemberCookie for listMemberId: %d, err: %v", listMemberId, err)
 	}
-	// Get the sent email from the db so we could find the list_member_id
-	sentEmail := SentEmail{Id: sentEmailId}
-	err := ctx.db.Select(&sentEmail)
-	if err != nil {
-		return 0, fmt.Errorf("Problem retrieving SentEmail record with id: : %d, DB error: %s\v", sentEmailId, err)
-	}
-	return sentEmail.ListMemberId, nil
 }
 
 /*
@@ -404,7 +456,7 @@ func (ctx *RequestContext) ObtainOrCreateMemberCookie(listMemberId ListMemberId,
 
 		// Only save the cookie in the db if a listMemberId is present
 		if (listMemberId != 0) {
-			ctx.db.Insert(memberCookie)
+			ctx.DB.Insert(memberCookie)
 		}
 		return memberCookie
 	} else {
@@ -415,13 +467,13 @@ func (ctx *RequestContext) ObtainOrCreateMemberCookie(listMemberId ListMemberId,
 		if err != nil {
 			fmt.Printf("Problem parsing MemberCookieId from httpCookie: %s, error message: %s", encodedCookieId, err)
 		} else {
-			err := ctx.db.Select(memberCookie)
+			err := ctx.DB.Select(memberCookie)
 			if err != nil {
 				if IsPgSelectEmpty(err) {
 					// Since we didn't find a cookie in the db, save it if a listMemberId is present
 					if (listMemberId != 0) {
 						memberCookie.ListMemberId = listMemberId
-						err = ctx.db.Insert(memberCookie)
+						err = ctx.DB.Insert(memberCookie)
 						if err != nil {
 							fmt.Printf("Problem inserting MemberCookie record with id: : %d, DB message: %s\n", memberCookieId, err)
 						}
@@ -439,7 +491,7 @@ func (ctx *RequestContext) ObtainOrCreateMemberCookie(listMemberId ListMemberId,
 					// If we already had a httpCookie that didn't have a list member id or the member id has changed, then update the httpCookie
 					memberCookie.ListMemberId = listMemberId
 					memberCookie.Updated = time.Now()
-					err := ctx.db.Update(memberCookie)
+					err := ctx.DB.Update(memberCookie)
 					if err != nil {
 						fmt.Printf("Problem updating MemberCookie record with id: %d, ListMemberId: %d, DB message: %s\n", memberCookie.Id, listMemberId, err)
 					}

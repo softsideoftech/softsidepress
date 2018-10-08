@@ -40,6 +40,7 @@ type MemberCookie struct {
 	ListMemberId ListMemberId
 	Created      time.Time
 	Updated      time.Time
+	LoggedIn     *time.Time
 }
 
 type TrackedUrlId = int64
@@ -49,6 +50,7 @@ type TrackedUrl struct {
 	Url         string
 	TargetUrl   string
 	Created     time.Time
+	Login 		bool	
 }
 
 type TrackingHitId = uint32
@@ -75,7 +77,16 @@ type EmailAction struct {
 	Metadata    string
 }
 
+type MemberGroupName = string
 type MemberGroup struct {
-	Id          string
-	ListMembers []*ListMember
+	Name         MemberGroupName
+	ListMemberId ListMemberId
+	Created      time.Time
+}
+
+type CourseCohort struct {
+	Name       MemberGroupName
+	CourseName string
+	StartDate  time.Time
+	EndDate    time.Time
 }
