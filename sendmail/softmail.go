@@ -13,17 +13,19 @@ func main() {
 			log.Printf("PANIC: %v\n", r, string(debug.Stack()))
 		}
 	})();
-	
 	args := os.Args[1:]
 	subject := args[0]
 	emailTemplateFile := args[1]
 	memberEmailOrGroupName := args[2]
 	login := args[3]
+	suffix := args[4]
 
 	softmail.NewRawRequestCtx().SendTemplatedEmail(
 		subject,
 		emailTemplateFile,
 		memberEmailOrGroupName,
-		softmail.SendEmailOpts{Login: login == "login",
+		softmail.SendEmailOpts{
+			Login:     login == "login",
+			UseSuffix: suffix == "suffix",
 		})
 }

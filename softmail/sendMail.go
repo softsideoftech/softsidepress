@@ -45,6 +45,7 @@ type LoginEmailTemplateParams struct {
 }
 
 type SendEmailOpts struct {
+	UseSuffix      bool
 	Login          bool
 	DestinationUrl string
 	PageTitle      string
@@ -274,13 +275,18 @@ func (ctx *RequestContext) SendTemplatedEmail(subject string, templateFileName s
 	// Add the SendEmailId template parameter to all internal links
 	markdownEmailBody = linkRegex.ReplaceAllString(markdownEmailBody, "($1$2-{{.SentEmailId}})")
 
-	// Load the suffix template and append it to the markdown template
-	suffixEmailBodyBytes, err := ioutil.ReadFile(ctx.GetFilePath("/emails/" + emailSuffixMdFile))
-	suffixEmailBody := string(suffixEmailBodyBytes)
-	if err != nil {
-		panic(err)
+	if opts.UseSuffix {
+		// Load the suffix template and append it to the markdown template
+		suffixEmailBodyBytes, err := ioutil.ReadFile(ctx.GetFilePath("/emails/" + emailSuffixMdFile))
+		suffixEmailBody := string(suffixEmailBodyBytes)
+		if err != nil {
+			panic(err)
+		}
+		markdownEmailBody += suffixEmailBody
+	} else {
+		trackingPrefix := obtainTrackingPrefix("{{.SentEmailId}}")
+		markdownEmailBody = trackingPrefix + markdownEmailBody
 	}
-	markdownEmailBody += suffixEmailBody
 
 	// Turn the markdown into HTML
 	htmlEmailTemplateString := string(blackfriday.Run([]byte(markdownEmailBody)))
@@ -385,9 +391,10 @@ func (ctx RequestContext) sendEmailToListMember(emailTemplateId EmailTemplateId,
 	} else {
 		destinationUrl = opts.DestinationUrl
 	}
-
+	
 	// Base64 encode the SentEmail id
 	encodedSentEmailId := EncodeId(sentEmail.Id)
+	
 	// Render the HTML template
 	buffer := &bytes.Buffer{}
 	err = parsedEmailTempalte.Execute(buffer, &EmailTemplateParams{
