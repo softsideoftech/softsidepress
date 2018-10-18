@@ -264,6 +264,8 @@ func obtainTrackingPrefix(encodedSentEmailId string) string {
 
 func (ctx *RequestContext) SendTemplatedEmail(subject string, templateFileName string, memberEmailOrGroupName string, opts SendEmailOpts) []ListMember {
 
+	log.Printf("In SendTemplatedEmail(...) with opts: %v: ", opts)
+	
 	// Load the template file
 	markdownEmailBodyBytes, err := ioutil.ReadFile(ctx.GetFilePath(templateFileName))
 	markdownEmailBody := string(markdownEmailBodyBytes)

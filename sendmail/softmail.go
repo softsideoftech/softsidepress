@@ -20,6 +20,9 @@ func main() {
 	login := args[3]
 	suffix := args[4]
 
+	log.Printf("args: %v", args)
+	log.Printf("suffix: %s", args[4])
+	
 	softmail.NewRawRequestCtx().SendTemplatedEmail(
 		subject,
 		emailTemplateFile,
