@@ -82,7 +82,7 @@ func GenerateTrackingLink(ctx *RequestContext) {
 	// Keep trying until we create a new short url
 	url := ""
 	for len(url) == 0 {
-		curUrl, err := ctx.TryToCreateShortTrackedUrl(targetUrl, 0, false)
+		curUrl, err := ctx.TryToCreateShortTrackedUrl(targetUrl, ctx.R.Host, 0, false)
 
 		if err != nil {
 			panic(fmt.Errorf("Failed to generate tracking url for link: %s, err: $v", targetUrl, err))
@@ -97,7 +97,7 @@ func GenerateTrackingLink(ctx *RequestContext) {
 }
 
 // TODO: use this method to replace external links in emails
-func (ctx *RequestContext) TryToCreateShortTrackedUrl(targetUrl string, sentEmailId SentEmailId, login bool) (string, error) {
+func (ctx *RequestContext) TryToCreateShortTrackedUrl(targetUrl string, host string, sentEmailId SentEmailId, login bool) (string, error) {
 	// Randomly generate a url
 	url := "/" + EncodeId(rand.Uint32())
 	trackedUrl := &TrackedUrl{Id: UrlToId(url), SentEmailId: sentEmailId, Login: login}
@@ -114,13 +114,20 @@ func (ctx *RequestContext) TryToCreateShortTrackedUrl(targetUrl string, sentEmai
 				return "", err
 			}
 
-			return url, nil
+			var urlScheme string;
+			if ctx.DevMode {
+				urlScheme = "http://"
+			} else {
+				urlScheme = "https://"
+			}
+			
+			return urlScheme + host + url, nil
 		} else {
 			return "", err
 		}
 	} else {
 		// If we got here, we must have collided with another url, so try again.
-		return ctx.TryToCreateShortTrackedUrl(targetUrl, sentEmailId, login)
+		return ctx.TryToCreateShortTrackedUrl(targetUrl, host, sentEmailId, login)
 	}
 	return "", nil
 }
@@ -155,11 +162,11 @@ func HandleNormalRequest(ctx *RequestContext) {
 	if pageTemplateCfg == nil {
 		sentEmailId, emailTargetUrl = DecodeSentMailIdFromUri(urlPath)
 	}
-
+	
 	var sentEmail *SentEmail = nil
 
-	// Don't don't bother with cookies for local requests (healthchecks, etc)
-	if ipString != "127.0.0.1" {
+	// Don't don't bother with cookies for local requests from the proxy (eg. Nginx healthchecks, etc)
+	if ctx.DevMode || ipString != "127.0.0.1" {
 
 		// Try to obtain the ListMemberId using the encoded SendEmailId in the url path if it exists.
 		var err error
@@ -176,9 +183,9 @@ func HandleNormalRequest(ctx *RequestContext) {
 
 		// Obtain or save the url if it's not an email tracking pixel
 		if !strings.HasSuffix(urlPath, ".png") {
-			trackedUrl, err = ctx.obtainOrCreateTrackedUrl(urlPath)
+			trackedUrl = ctx.obtainOrCreateTrackedUrl(urlPath)
 		}
-
+		
 		// Only track if we didn't have any errors (most likely db)
 		if err == nil {
 
@@ -230,6 +237,14 @@ func (ctx *RequestContext) serveRedirect(trackedUrl *TrackedUrl, sentEmail *Sent
 	// If the request is a redirect-tracking link, then redirect the request now.
 	// It's possible that trackedUrl will be nil if we had a error (db most likely)
 	if trackedUrl != nil && len(trackedUrl.TargetUrl) > 0 {
+		
+		// If this is a login redirect and the user isn't already logged in, then log them in now.
+		if trackedUrl.Login && ctx.MemberCookie.LoggedIn == nil {
+			now := time.Now()
+			ctx.MemberCookie.LoggedIn = &now
+			ctx.DB.Update(ctx.MemberCookie)
+		}
+		
 		http.Redirect(ctx.W, ctx.R, trackedUrl.TargetUrl, http.StatusTemporaryRedirect)
 		return true
 	}
@@ -282,8 +297,9 @@ func (ctx *RequestContext) matchWebPage(trackingHitId TrackingHitId, defaultToHo
 		cfg.BaseHtmlFile = coursePageHtmlTemplate
 		courseParams, err := ctx.GetCoursePageParams(pathDirName, trackingParams)
 
-		// If we get an error here, it means the user must log in to view this page.
-		if err != nil {
+		// If we get an error here AFTER MemberCookie has already been initialized, it means the user must log in to view this page.
+		// If the MemberCookie is nil, that means it will be initialized later (and we'll find out later if this user is already logged in.
+		if err != nil && ctx.MemberCookie != nil {
 			switch err.(type) {
 			case NotLoggedInError:
 				// Render the login page 
@@ -348,7 +364,7 @@ func getIpInfo(r *http.Request) (string, string, IpAddress) {
 	return rawRemoteAddr, ipString, ipInt
 }
 
-func (ctx *RequestContext) obtainOrCreateTrackedUrl(urlPath string) (*TrackedUrl, error) {
+func (ctx *RequestContext) obtainOrCreateTrackedUrl(urlPath string) *TrackedUrl {
 	trackedUrl := &TrackedUrl{Id: UrlToId(urlPath)}
 	err := ctx.DB.Select(trackedUrl)
 	if err != nil {
@@ -357,13 +373,15 @@ func (ctx *RequestContext) obtainOrCreateTrackedUrl(urlPath string) (*TrackedUrl
 			trackedUrl.Url = urlPath
 			err = ctx.DB.Insert(trackedUrl)
 			if err != nil {
-				return nil, fmt.Errorf("failed to insert tracked url: %s, err: %v", urlPath, err)
+				log.Printf("ERROR: Failed to insert tracked url: %s, err: %v", urlPath, err)
+				return nil
 			}
 		} else {
-			return nil, fmt.Errorf("failed to select from db TrackedUrlIUd: %d, err: %v", trackedUrl.Id, err)
+			log.Printf("ERROR: failed to select from db TrackedUrlIUd: %d, err: %v", trackedUrl.Id, err)
+			return nil
 		}
 	}
-	return trackedUrl, nil
+	return trackedUrl
 }
 
 func DecodeSentMailIdFromUri(path string) (SentEmailId, *string) {

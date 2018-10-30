@@ -90,7 +90,7 @@ func RequestLoginLink(ctx *RequestContext) {
 		"Login link for " + siteName, 
 		emailTemplateLoginLink, 
 		email, 
-		SendEmailOpts{Login: true, DestinationUrl: ctx.R.Referer(), PageTitle: title})
+		SendEmailOpts{Login: true, DestinationUrl: ctx.R.Referer(), HostName: ctx.R.Host, PageTitle: title})
 
 	ctx.renderMgmtPage("login-link-sent", "Check Your Email", 0, &listMembers[0], "")
 }

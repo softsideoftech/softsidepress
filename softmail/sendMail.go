@@ -24,14 +24,13 @@ import (
 const emailSuffixMdFile = "emailSuffix.md"
 const forwardedEmailSuffixMdFile = "forwardedEmailSuffix.md"
 const trackingPixelPath = "/pixie/"
-const trackingPixelMarkdown = "![](https://{{.SiteDomain}}" + trackingPixelPath + "{{.SentEmailId}}.png)"
 
 var awsSmtpUsername string = os.Getenv("AWS_SES_SMTP_USER")
 var awsSmtpPassword string = os.Getenv("AWS_SES_SMTP_PASSWORD")
 
 var linkRegExString = "\\((https://%s)(.+?)\\)";
-var extractSentEmailIdFromUrlEndSlash = regexp.MustCompile("/.*/(.*)")
 
+var extractSentEmailIdFromUrlEndSlash = regexp.MustCompile("/.*/(.*)")
 
 type EmailTemplateParams struct {
 	FirstName          string
@@ -52,6 +51,7 @@ type SendEmailOpts struct {
 	UseSuffix      bool
 	Login          bool
 	DestinationUrl string
+	HostName       string
 	PageTitle      string
 	TemplateParams PerRequestParams
 }
@@ -75,7 +75,6 @@ func emailTemplateToId(subject string, body []byte, recipient string) EmailTempl
 	hash64.Write(md5Sum)
 	return EmailTemplateId(int64(hash64.Sum64())) // make it signed to conform with the Postgres "bigint" type
 }
-
 
 type SendEmailResponse struct {
 	MessageId string `xml:"SendEmailResult>MessageId"`
@@ -265,7 +264,7 @@ func obtainTrackingPrefix(encodedSentEmailId string) string {
 func (ctx *RequestContext) SendTemplatedEmail(subject string, templateFileName string, memberEmailOrGroupName string, opts SendEmailOpts) []ListMember {
 
 	log.Printf("In SendTemplatedEmail(...) with opts: %v: ", opts)
-	
+
 	// Load the template file
 	markdownEmailBodyBytes, err := ioutil.ReadFile(ctx.GetFilePath(templateFileName))
 	markdownEmailBody := string(markdownEmailBodyBytes)
@@ -332,7 +331,7 @@ func (ctx *RequestContext) obtainListMembers(memberEmailOrGroupName string, opts
 		if err != nil {
 			panic(err)
 		}
-		
+
 		if !found {
 			// Add the email to list_members if it doesn't already exist.
 			log.Printf("Couldn't find a member with the email: %s. Creating one now.", address.Address)
@@ -389,17 +388,17 @@ func (ctx RequestContext) sendEmailToListMember(emailTemplateId EmailTemplateId,
 	// If we're logging in, then create a unique URL for the link.
 	var destinationUrl string
 	if opts.Login {
-		destinationUrl, err = ctx.TryToCreateShortTrackedUrl(opts.DestinationUrl, sentEmail.Id, opts.Login)
+		destinationUrl, err = ctx.TryToCreateShortTrackedUrl(opts.DestinationUrl, opts.HostName, sentEmail.Id, opts.Login)
 		if err != nil {
 			panic(fmt.Sprintf("ERROR obtaining TrackedUrl: %v", err))
 		}
 	} else {
 		destinationUrl = opts.DestinationUrl
 	}
-	
+
 	// Base64 encode the SentEmail id
 	encodedSentEmailId := EncodeId(sentEmail.Id)
-	
+
 	// Render the HTML template
 	buffer := &bytes.Buffer{}
 	err = parsedEmailTempalte.Execute(buffer, &EmailTemplateParams{
