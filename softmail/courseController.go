@@ -11,8 +11,13 @@ import (
 )
 
 type Session struct {
-	Name string
-	Day  int
+	Name           string
+	Day            int
+	Description    string
+	Url            string
+	VideoUrl       string
+	VideoThumbnail string
+	Course         *CourseConfig
 }
 
 type Emails struct {
@@ -21,14 +26,18 @@ type Emails struct {
 
 type CourseConfig struct {
 	Name     string
-	Sessions []Session
+	Sessions []*Session
 	Emails   Emails
+	Url      string
 }
 
-type CourseParams struct {
+type ConfigObj interface {
+}
+
+type CoursePageParams struct {
 	TrackingRequestParams
-	*CourseConfig
-	Url string
+	ConfigObj ConfigObj
+	Url       string
 }
 
 type NotLoggedInError struct {
@@ -80,8 +89,8 @@ func loadCourses(coursesDirPath string) map[string]CourseConfig {
 	}
 
 	for _, curCourseDir := range courseFiles {
-		courseName := curCourseDir.Name()
-		courseCfgPath := coursesDirPath + "/" + courseName + "/course.yml"
+		coursePathName := curCourseDir.Name()
+		courseCfgPath := coursesDirPath + "/" + coursePathName + "/course.yml"
 		courseCfgBytes, err := ioutil.ReadFile(courseCfgPath)
 		if err != nil {
 			log.Printf("ERROR reading course config file: %s, error: %v", courseCfgPath, err)
@@ -89,9 +98,20 @@ func loadCourses(coursesDirPath string) map[string]CourseConfig {
 		var course CourseConfig
 		err = yaml.Unmarshal(courseCfgBytes, &course)
 		if err != nil {
-			log.Printf("ERROR parsing course config file for course: %s, error: %v", courseName, err)
+			log.Printf("ERROR parsing course config file for course: %s, error: %v", coursePathName, err)
 		}
-		courses[courseName] = course
+
+		for _, session := range course.Sessions {
+			//lowerName := strings.ToLower(session.Name)
+			//session.Url = strings.Replace(lowerName, " ", "-", -1)
+			session.VideoUrl = fmt.Sprintf("%s/courses/%s/%s.mp4", CDNUrl, coursePathName, session.Url)
+			session.VideoThumbnail = fmt.Sprintf("%s/courses/%s/%s.jpg", CDNUrl,
+				coursePathName, session.Url)
+			session.Course = &course
+		}
+		course.Url = "/" + coursePathName
+
+		courses[coursePathName] = course
 	}
 
 	return courses
@@ -139,13 +159,11 @@ func (ctx *RequestContext) GetCourse(courseName string) *CourseConfig {
 	return &course
 }
 
-func (ctx *RequestContext) GetCoursePageParams(coursePath string, trackingParams TrackingRequestParams) (*CourseParams, error) {
-
-	courseConfig, err := ctx.GetCourseForCurListMember(coursePath)
-
-	return &CourseParams{
-		trackingParams,
-		courseConfig,
-		"/" + coursePath,
-	}, err
+func (courseConfig *CourseConfig) getSession(sessionUrlName string) *Session {
+	for _, session := range courseConfig.Sessions {
+		if session.Url == sessionUrlName {
+			return session
+		}
+	}
+	return nil
 }

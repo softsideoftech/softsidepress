@@ -17,6 +17,7 @@ type HtmlPageParams struct {
 	Css        string
 	JavaScript string
 	Body       string
+	Request    PerRequestParams
 }
 
 type PerRequestParams interface {
@@ -98,6 +99,7 @@ func (ctx *RequestContext) renderMarkdownToHtmlTemplate(c *MarkdownTemplateConfi
 			Css:        string(cssFileBytes),
 			JavaScript: string(jsFileBytes),
 			Body:       bodyHtml,
+			Request:    c.PerRequestParams,
 		}
 		err = baseHtmlTemplate.Execute(buffer, params)
 		if err != nil {

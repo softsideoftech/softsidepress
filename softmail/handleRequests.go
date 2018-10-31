@@ -225,7 +225,7 @@ func HandleNormalRequest(ctx *RequestContext) {
 	}
 
 	// Try to render the page
-	err := ctx.renderMarkdownToHtmlTemplate(pageTemplateCfg)
+		err := ctx.renderMarkdownToHtmlTemplate(pageTemplateCfg)
 
 	if err != nil {
 		ctx.SendUserFacingError("", err)
@@ -280,22 +280,21 @@ func (ctx *RequestContext) matchWebPage(trackingHitId TrackingHitId, defaultToHo
 	var cfg MarkdownTemplateConfig
 
 	// Use the URL path as the summary
-	urlPath := ctx.R.URL.Path
-	pathDirName := strings.Trim(urlPath, "/")
-	cfg.HtmlSummary = strings.Join(strings.Split(pathDirName, "-"), " ")
+	trimmedUrlPath := strings.Trim(ctx.R.URL.Path, "/")
+	cfg.HtmlSummary = strings.Join(strings.Split(trimmedUrlPath, "-"), " ")
 	trackingParams := TrackingRequestParams{TrackingId: trackingHitId}
 	cfg.PerRequestParams = trackingParams
 	cfg.Url = escapedUrl
 
 	// Look for the possible page types
-	if ctx.FileExists(ctx.getBlogPagePath(urlPath)) {
-		cfg.MarkdownFile = ctx.getBlogPagePath(urlPath)
+	if ctx.FileExists(ctx.getBlogPagePath(trimmedUrlPath)) {
+		cfg.MarkdownFile = ctx.getBlogPagePath(trimmedUrlPath)
 		cfg.BaseHtmlFile = blogPageHtmlTemplate
 
-	} else if ctx.FileExists(ctx.getCourseDescriptionPath(urlPath)) {
-		cfg.MarkdownFile = ctx.getCourseDescriptionPath(urlPath)
-		cfg.BaseHtmlFile = coursePageHtmlTemplate
-		courseParams, err := ctx.GetCoursePageParams(pathDirName, trackingParams)
+	} else if trimmedUrlPath != "" && ctx.FileExists(ctx.getCourseDirPath(trimmedUrlPath)) {
+
+		courseConfig, err := ctx.GetCourseForCurListMember(getCourseName(trimmedUrlPath))
+
 
 		// If we get an error here AFTER MemberCookie has already been initialized, it means the user must log in to view this page.
 		// If the MemberCookie is nil, that means it will be initialized later (and we'll find out later if this user is already logged in.
@@ -306,13 +305,13 @@ func (ctx *RequestContext) matchWebPage(trackingHitId TrackingHitId, defaultToHo
 				cfg.BaseHtmlFile = mgmtPagesHtmlTemplate
 				cfg.MarkdownFile = mdTemplateLogin
 				cfg.HtmlTitle = "Please Login First"
-				cfg.PerRequestParams = MdMessageParams(courseParams.Name)
+				cfg.PerRequestParams = MdMessageParams("")
 			case NoSuchCourseError:
 				// Let the user know this course doesn't exist  
 				cfg.BaseHtmlFile = mgmtPagesHtmlTemplate
 				cfg.MarkdownFile = mdTemplateMessage
 				cfg.HtmlTitle = "Course Not Found"
-				cfg.PerRequestParams = MdMessageParams(fmt.Sprintf("I'm sorry. I couldn't find a course with the name '%s'.", pathDirName))
+				cfg.PerRequestParams = MdMessageParams(fmt.Sprintf("I'm sorry. I couldn't find a course with the name '%s'.", trimmedUrlPath))
 			case NotRegisteredForCourseError:
 				
 			case CourseNotStartedError:
@@ -321,10 +320,48 @@ func (ctx *RequestContext) matchWebPage(trackingHitId TrackingHitId, defaultToHo
 				cfg.MarkdownFile = mdTemplateMessage
 				cfg.HtmlTitle = "Course Hasn't Started Yet"
 				startDateStr := err.(CourseNotStartedError).StartDate.Format("Jan 2, 2006")
-				cfg.PerRequestParams = MdMessageParams(fmt.Sprintf("I'm sorry. It looks like this course hasn't started yet. Check back in on the start date: %s.", startDateStr))
+				cfg.PerRequestParams = MdMessageParams(fmt.Sprintf(
+					"I'm sorry. It looks like this course hasn't started yet. Please check back in on the start date: %s.", startDateStr))
 			}
 		} else {
-			cfg.PerRequestParams = courseParams
+			// All the validation was ok, so look for the appropriate course page
+			session := courseConfig.getSession(getSessionUrlName(trimmedUrlPath))
+			if session == nil {
+				// If there's no session name, then go to the course page.
+				cfg.MarkdownFile = ctx.getCourseDirPath(trimmedUrlPath) + "/course-page.md"
+				cfg.BaseHtmlFile = coursePageHtmlTemplate
+				cfg.PerRequestParams = &CoursePageParams{
+					trackingParams,
+					courseConfig,
+					"/" + trimmedUrlPath,
+				}
+			} else if len(strings.Split(trimmedUrlPath, "/")) == 3 && ctx.FileExists(ctx.getCourseContentFilePath(trimmedUrlPath)){
+				// If there are 3 parts, then it must be a course content file
+				// ie. course/session/content
+				cfg.MarkdownFile = ctx.getCourseContentFilePath(trimmedUrlPath)
+				cfg.BaseHtmlFile = courseContentPageHtmlTemplate
+				
+				cfg.PerRequestParams = &CoursePageParams{
+					trackingParams,
+					session,
+					"/" + trimmedUrlPath,
+				}
+			} else if session != nil {
+				// If it's not a course or content page, it's likely a session video page.
+				cfg.MarkdownFile = ctx.getCourseDirPath(trimmedUrlPath) + "/session-video-page.md"
+				cfg.BaseHtmlFile = sessionPageHtmlTemplate
+				cfg.PerRequestParams = &CoursePageParams{
+					trackingParams,
+					session,
+					"/" + trimmedUrlPath,
+				}
+			} else {
+				// Let the user know this session doesn't exist  
+				cfg.BaseHtmlFile = mgmtPagesHtmlTemplate
+				cfg.MarkdownFile = mdTemplateMessage
+				cfg.HtmlTitle = "Course Session Not Found"
+				cfg.PerRequestParams = MdMessageParams(fmt.Sprintf("I'm sorry. I couldn't find a course session or video with the name '%s'.", trimmedUrlPath))
+			}
 		}
 
 	} else if defaultToHome {
@@ -341,11 +378,28 @@ func (ctx *RequestContext) matchWebPage(trackingHitId TrackingHitId, defaultToHo
 }
 
 func (ctx *RequestContext) getBlogPagePath(urlPath string) string {
-	return "/pages" + urlPath + ".md"
+	return "/pages/" + urlPath + ".md"
 }
 
-func (ctx *RequestContext) getCourseDescriptionPath(urlPath string) string {
-	return "/courses" + urlPath + "/content.md"
+func getCourseName(urlPath string) string {
+	urlParts := strings.Split(urlPath, "/")
+	return urlParts[0]
+}
+
+func getSessionUrlName(urlPath string) string {
+	urlParts := strings.Split(urlPath, "/")
+	if len(urlParts) >= 2 {
+		return urlParts[1] 
+	}
+	return ""
+}
+
+func (ctx *RequestContext) getCourseContentFilePath(urlPath string) string {
+	return "/courses/" + urlPath + ".md"
+}
+
+func (ctx *RequestContext) getCourseDirPath(urlPath string) string {
+	return "/courses/" + getCourseName(urlPath)
 }
 
 func getIpInfo(r *http.Request) (string, string, IpAddress) {

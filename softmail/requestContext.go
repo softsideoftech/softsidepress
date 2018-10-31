@@ -22,6 +22,8 @@ var mdTemplateMessage = "/mgmt-pages/message.md"
 var emailTemplateLoginLink = "/emails/login-link.md"
 var blogPageHtmlTemplate = "/html/pages-tmpl.html"
 var coursePageHtmlTemplate = "/html/course-tmpl.html"
+var sessionPageHtmlTemplate = "/html/session-video-tmpl.html"
+var courseContentPageHtmlTemplate = "/html/course-content-tmpl.html"
 var homePageHtmlTemplate = "/html/home-page-tmpl.html"
 var homePageMdTemplate = "/pages/purposeful-leadership-coaching.md"
 var mgmtPagesHtmlTemplate = "/html/mgmt-pages-tmpl.html"
@@ -35,6 +37,7 @@ const siteDomain = "softsideoftech.com"
 const trackingImageUrl = "https://d235962hz41e70.cloudfront.net/bear-100.png"
 const trackingPixelUrl = "https://d235962hz41e70.cloudfront.net/transparent-pixel.png"
 const FavIconUrl = "https://d235962hz41e70.cloudfront.net/favicon.ico"
+const CDNUrl = "https://d235962hz41e70.cloudfront.net"
 
 type RequestContext struct {
 	DB           *pg.DB
