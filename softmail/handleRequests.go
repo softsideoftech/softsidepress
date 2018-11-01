@@ -445,7 +445,7 @@ func (ctx *RequestContext) obtainOrCreateTrackedUrl(urlPath string) *TrackedUrl 
 				return nil
 			}
 		} else {
-			log.Printf("ERROR: failed to select from db TrackedUrlIUd: %d, err: %v", trackedUrl.Id, err)
+			log.Printf("ERROR: failed to select from db TrackedUrlId: %d, err: %v", trackedUrl.Id, err)
 			return nil
 		}
 	}
