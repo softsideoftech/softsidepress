@@ -46,7 +46,6 @@ type RequestContext struct {
 	ContentPath  string
 	DevMode      bool
 	MemberCookie *MemberCookie
-	ListMember   *ListMember
 }
 
 func NewRawRequestCtx() *RequestContext {
@@ -83,4 +82,16 @@ func (ctx RequestContext) FileExists(relativePath string) bool {
 
 func (ctx RequestContext) GetFilePath(relativePath string) string {
 	return ctx.ContentPath + relativePath
+}
+
+func (ctx RequestContext) GetCurListMember() *ListMember {
+	if ctx.MemberCookie == nil {
+		return nil
+	}
+	listMember := &ListMember{Id: ctx.MemberCookie.ListMemberId}
+	ctx.DB.Select(listMember)
+	if listMember.Email == "" {
+		return nil
+	}
+	return listMember
 }

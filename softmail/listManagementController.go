@@ -63,6 +63,7 @@ func (ctx *RequestContext) renderMgmtPage(templateName string, pageTitle string,
 		ownerEmail,
 		siteName,
 		message,
+		pageTitle,
 	}
 	config := MarkdownTemplateConfig{
 		BaseHtmlFile:     mgmtPagesHtmlTemplate,

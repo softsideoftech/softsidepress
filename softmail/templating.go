@@ -40,6 +40,7 @@ type CommonMdTemplateParams struct {
 	OwnerEmail string
 	SiteName   string
 	Message    string
+	PageTitle  string
 }
 
 var cssFile = "/html/style.css"

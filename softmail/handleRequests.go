@@ -24,7 +24,6 @@ var URLEncoding = base64.NewEncoding(encodeURL).WithPadding(base64.NoPadding)
 
 const cookieName = "sftml"
 
-
 type TrackingRequestParams struct {
 	TrackingId TrackingHitId
 }
@@ -82,7 +81,7 @@ func GenerateTrackingLink(ctx *RequestContext) {
 	// Keep trying until we create a new short url
 	url := ""
 	for len(url) == 0 {
-		curUrl, err := ctx.TryToCreateShortTrackedUrl(targetUrl, ctx.R.Host, 0, false)
+		curUrl, err := ctx.TryToCreateShortTrackedUrl(targetUrl, ctx.R.Host, 0, 0)
 
 		if err != nil {
 			panic(fmt.Errorf("Failed to generate tracking url for link: %s, err: $v", targetUrl, err))
@@ -97,10 +96,10 @@ func GenerateTrackingLink(ctx *RequestContext) {
 }
 
 // TODO: use this method to replace external links in emails
-func (ctx *RequestContext) TryToCreateShortTrackedUrl(targetUrl string, host string, sentEmailId SentEmailId, login bool) (string, error) {
+func (ctx *RequestContext) TryToCreateShortTrackedUrl(targetUrl string, host string, sentEmailId SentEmailId, loginId ListMemberId) (string, error) {
 	// Randomly generate a url
 	url := "/" + EncodeId(rand.Uint32())
-	trackedUrl := &TrackedUrl{Id: UrlToId(url), SentEmailId: sentEmailId, Login: login}
+	trackedUrl := &TrackedUrl{Id: UrlToId(url), SentEmailId: sentEmailId, LoginId: loginId}
 
 	err := ctx.DB.Select(trackedUrl)
 	if err != nil {
@@ -120,14 +119,14 @@ func (ctx *RequestContext) TryToCreateShortTrackedUrl(targetUrl string, host str
 			} else {
 				urlScheme = "https://"
 			}
-			
+
 			return urlScheme + host + url, nil
 		} else {
 			return "", err
 		}
 	} else {
 		// If we got here, we must have collided with another url, so try again.
-		return ctx.TryToCreateShortTrackedUrl(targetUrl, host, sentEmailId, login)
+		return ctx.TryToCreateShortTrackedUrl(targetUrl, host, sentEmailId, loginId)
 	}
 	return "", nil
 }
@@ -162,7 +161,7 @@ func HandleNormalRequest(ctx *RequestContext) {
 	if pageTemplateCfg == nil {
 		sentEmailId, emailTargetUrl = DecodeSentMailIdFromUri(urlPath)
 	}
-	
+
 	var sentEmail *SentEmail = nil
 
 	// Don't don't bother with cookies for local requests from the proxy (eg. Nginx healthchecks, etc)
@@ -185,7 +184,7 @@ func HandleNormalRequest(ctx *RequestContext) {
 		if !strings.HasSuffix(urlPath, ".png") {
 			trackedUrl = ctx.obtainOrCreateTrackedUrl(urlPath)
 		}
-		
+
 		// Only track if we didn't have any errors (most likely db)
 		if err == nil {
 
@@ -225,7 +224,7 @@ func HandleNormalRequest(ctx *RequestContext) {
 	}
 
 	// Try to render the page
-		err := ctx.renderMarkdownToHtmlTemplate(pageTemplateCfg)
+	err := ctx.renderMarkdownToHtmlTemplate(pageTemplateCfg)
 
 	if err != nil {
 		ctx.SendUserFacingError("", err)
@@ -237,14 +236,16 @@ func (ctx *RequestContext) serveRedirect(trackedUrl *TrackedUrl, sentEmail *Sent
 	// If the request is a redirect-tracking link, then redirect the request now.
 	// It's possible that trackedUrl will be nil if we had a error (db most likely)
 	if trackedUrl != nil && len(trackedUrl.TargetUrl) > 0 {
-		
-		// If this is a login redirect and the user isn't already logged in, then log them in now.
-		if trackedUrl.Login && ctx.MemberCookie.LoggedIn == nil {
+
+		// If this is a login redirect, then log them in now.
+		// This will override any existing logins on this cookie.
+		if trackedUrl.LoginId != 0 {
 			now := time.Now()
 			ctx.MemberCookie.LoggedIn = &now
+			ctx.MemberCookie.ListMemberId = trackedUrl.LoginId
 			ctx.DB.Update(ctx.MemberCookie)
 		}
-		
+
 		http.Redirect(ctx.W, ctx.R, trackedUrl.TargetUrl, http.StatusTemporaryRedirect)
 		return true
 	}
@@ -293,27 +294,36 @@ func (ctx *RequestContext) matchWebPage(trackingHitId TrackingHitId, defaultToHo
 
 	} else if trimmedUrlPath != "" && ctx.FileExists(ctx.getCourseDirPath(trimmedUrlPath)) {
 
-		courseConfig, err := ctx.GetCourseForCurListMember(getCourseName(trimmedUrlPath))
-
+		courseName := getCourseName(trimmedUrlPath)
+		courseConfig, courseCohort, err := ctx.GetCourseForCurListMember(courseName)
 
 		// If we get an error here AFTER MemberCookie has already been initialized, it means the user must log in to view this page.
 		// If the MemberCookie is nil, that means it will be initialized later (and we'll find out later if this user is already logged in.
-		if err != nil && ctx.MemberCookie != nil {
+		if err != nil {
+			if ctx.MemberCookie == nil {
+				return nil
+			}
+			
+			
 			switch err.(type) {
 			case NotLoggedInError:
 				// Render the login page 
 				cfg.BaseHtmlFile = mgmtPagesHtmlTemplate
 				cfg.MarkdownFile = mdTemplateLogin
-				cfg.HtmlTitle = "Please Login First"
-				cfg.PerRequestParams = MdMessageParams("")
+				cfg.HtmlTitle = "Login to " + courseConfig.Name
+				cfg.PerRequestParams = MdMessageParams("You need to log in first to get to this page. Enter your email below and I'll send you a login link straight to your email.")
 			case NoSuchCourseError:
 				// Let the user know this course doesn't exist  
 				cfg.BaseHtmlFile = mgmtPagesHtmlTemplate
 				cfg.MarkdownFile = mdTemplateMessage
 				cfg.HtmlTitle = "Course Not Found"
-				cfg.PerRequestParams = MdMessageParams(fmt.Sprintf("I'm sorry. I couldn't find a course with the name '%s'.", trimmedUrlPath))
+				cfg.PerRequestParams = MdMessageParams(fmt.Sprintf("I'm sorry. I couldn't find a course with the name '%s'.", courseName))
 			case NotRegisteredForCourseError:
-				
+				// Render the login page, just in case
+				cfg.BaseHtmlFile = mgmtPagesHtmlTemplate
+				cfg.MarkdownFile = mdTemplateLogin
+				cfg.HtmlTitle = "Login to " + courseConfig.Name
+				cfg.PerRequestParams = MdMessageParams(fmt.Sprintf("It looks like you're not registered for the course: %s. You're currently logged in with the email: %s. If you registered for the course using a different email, enter that email below to request a login link.", courseName, ctx.GetCurListMember().Email))
 			case CourseNotStartedError:
 				// Let the user know this course doesn't exist 
 				cfg.BaseHtmlFile = mgmtPagesHtmlTemplate
@@ -326,6 +336,7 @@ func (ctx *RequestContext) matchWebPage(trackingHitId TrackingHitId, defaultToHo
 		} else {
 			// All the validation was ok, so look for the appropriate course page
 			session := courseConfig.getSession(getSessionUrlName(trimmedUrlPath))
+			courseDay := int((time.Now().Sub(courseCohort.StartDate).Hours()) / 24) + 1
 			if session == nil {
 				// If there's no session name, then go to the course page.
 				cfg.MarkdownFile = ctx.getCourseDirPath(trimmedUrlPath) + "/course-page.md"
@@ -334,17 +345,19 @@ func (ctx *RequestContext) matchWebPage(trackingHitId TrackingHitId, defaultToHo
 					trackingParams,
 					courseConfig,
 					"/" + trimmedUrlPath,
+					courseDay,
 				}
-			} else if len(strings.Split(trimmedUrlPath, "/")) == 3 && ctx.FileExists(ctx.getCourseContentFilePath(trimmedUrlPath)){
+			} else if len(strings.Split(trimmedUrlPath, "/")) == 3 && ctx.FileExists(ctx.getCourseContentFilePath(trimmedUrlPath)) {
 				// If there are 3 parts, then it must be a course content file
 				// ie. course/session/content
 				cfg.MarkdownFile = ctx.getCourseContentFilePath(trimmedUrlPath)
 				cfg.BaseHtmlFile = courseContentPageHtmlTemplate
-				
+
 				cfg.PerRequestParams = &CoursePageParams{
 					trackingParams,
 					session,
 					"/" + trimmedUrlPath,
+					courseDay,
 				}
 			} else if session != nil {
 				// If it's not a course or content page, it's likely a session video page.
@@ -354,6 +367,7 @@ func (ctx *RequestContext) matchWebPage(trackingHitId TrackingHitId, defaultToHo
 					trackingParams,
 					session,
 					"/" + trimmedUrlPath,
+					courseDay,
 				}
 			} else {
 				// Let the user know this session doesn't exist  
@@ -389,7 +403,7 @@ func getCourseName(urlPath string) string {
 func getSessionUrlName(urlPath string) string {
 	urlParts := strings.Split(urlPath, "/")
 	if len(urlParts) >= 2 {
-		return urlParts[1] 
+		return urlParts[1]
 	}
 	return ""
 }

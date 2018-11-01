@@ -11,13 +11,12 @@ import (
 )
 
 type Session struct {
-	Name           string
-	Day            int
-	Description    string
-	Url            string
-	VideoUrl       string
-	VideoThumbnail string
-	Course         *CourseConfig
+	Name        string
+	Day         int
+	Description string
+	Url         string
+	VideoUrl    string
+	Course      *CourseConfig
 }
 
 type Emails struct {
@@ -38,6 +37,7 @@ type CoursePageParams struct {
 	TrackingRequestParams
 	ConfigObj ConfigObj
 	Url       string
+	CourseDay int
 }
 
 type NotLoggedInError struct {
@@ -102,11 +102,7 @@ func loadCourses(coursesDirPath string) map[string]CourseConfig {
 		}
 
 		for _, session := range course.Sessions {
-			//lowerName := strings.ToLower(session.Name)
-			//session.Url = strings.Replace(lowerName, " ", "-", -1)
-			session.VideoUrl = fmt.Sprintf("%s/courses/%s/%s.mp4", CDNUrl, coursePathName, session.Url)
-			session.VideoThumbnail = fmt.Sprintf("%s/courses/%s/%s.jpg", CDNUrl,
-				coursePathName, session.Url)
+			session.VideoUrl = fmt.Sprintf("%s/courses/%s/%s", CDNUrl, coursePathName, session.Url)
 			session.Course = &course
 		}
 		course.Url = "/" + coursePathName
@@ -117,42 +113,60 @@ func loadCourses(coursesDirPath string) map[string]CourseConfig {
 	return courses
 }
 
-func (ctx *RequestContext) GetCourseForCurListMember(courseName string) (*CourseConfig, error) {
+func (ctx *RequestContext) GetCourseForCurListMember(courseName string) (*CourseConfig, *CourseCohort, error) {
 
 	course := ctx.GetCourse(courseName)
 
 	if course == nil {
-		return nil, NoSuchCourseError{"There is no course named: " + courseName}
+		return nil, nil, NoSuchCourseError{"There is no course named: " + courseName}
 	}
 
-	if ctx.MemberCookie == nil || ctx.MemberCookie.ListMemberId == 0 || ctx.MemberCookie.LoggedIn != nil {
-		return course, NotLoggedInError{"No logged in user for current request"}
+	if ctx.MemberCookie == nil || ctx.MemberCookie.ListMemberId == 0 || ctx.MemberCookie.LoggedIn == nil {
+		return course, nil, NotLoggedInError{"No logged in user for current request"}
 	}
 
+	// Try to find a CourseCohort that matches this ListMemberId and CourseName
 	var courseCohort CourseCohort
-
-	ctx.DB.Query(&courseCohort, `
-	select c.* from member_groups g, course_cohorts c 
-	where g.name = c.cohort_name and c.course_name = ? and g.list_member_id = ?`,
+	_, err := ctx.DB.Query(&courseCohort, `
+			select c.* from member_groups g, course_cohorts c 
+			where g.name = c.name and c.course_name = ? and g.list_member_id = ?`,
 		courseName, ctx.MemberCookie.ListMemberId)
 
+	if err != nil {
+		panic(fmt.Sprintf("DB problem while retrieving course cohort named: %s for user: %d", courseName, ctx.MemberCookie.ListMemberId))
+	}
+	
 	if courseCohort.Name == "" {
-		return course, NoSuchCourseError{fmt.Sprintf("No started course named: %s for user: %d ", courseName, ctx.MemberCookie.ListMemberId)}
+
+		// See if this course exists at all
+		_, err := ctx.DB.Query(&courseCohort, "select c.* from course_cohorts c where c.course_name = ? limit 1", courseName)
+
+		if err != nil {
+			panic(fmt.Sprintf("DB problem while retrieving course cohort named: %s", courseName))
+		}
+		
+		if len(courseCohort.Name) > 0 {
+			// If at least one such CourseCohort exists, it may be that the person isn't signed up for the course or is logged in with the wrong email.
+			return course, nil, NotRegisteredForCourseError{fmt.Sprintf("Not registered for course named: %s for user: %d ", courseName, ctx.MemberCookie.ListMemberId)}	
+		} else {
+			// Otherwise, the course simply doesn't exist. 
+			return course, nil, NoSuchCourseError{fmt.Sprintf("No started course named: %s for user: %d ", courseName, ctx.MemberCookie.ListMemberId)}
+		}
 	}
 
 	if courseCohort.StartDate.After(time.Now()) {
-		return nil, CourseNotStartedError{
+		return nil, nil, CourseNotStartedError{
 			msg:       fmt.Sprintf("Course doesn't start until a future date for cohort: %s", courseCohort.Name),
 			StartDate: courseCohort.StartDate}
 	}
 
-	return course, nil
+	return course, &courseCohort, nil
 }
 
 func (ctx *RequestContext) GetCourse(courseName string) *CourseConfig {
 	confMux.Lock()
 	defer confMux.Unlock()
-	if courses == nil {
+	if courses == nil || ctx.DevMode {
 		courses = loadCourses(ctx.GetFilePath("/courses"))
 	}
 	course := courses[courseName]

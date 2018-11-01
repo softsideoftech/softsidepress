@@ -50,7 +50,7 @@ type TrackedUrl struct {
 	Url         string
 	TargetUrl   string
 	Created     time.Time
-	Login 		bool	
+	LoginId 	ListMemberId
 }
 
 type TrackingHitId = uint32

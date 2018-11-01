@@ -35,6 +35,7 @@ var extractSentEmailIdFromUrlEndSlash = regexp.MustCompile("/.*/(.*)")
 type EmailTemplateParams struct {
 	FirstName          string
 	SentEmailId        string
+	SiteName           string
 	SiteDomain         string
 	SiteOwnerFirstName string
 	DestinationUrl     string
@@ -249,6 +250,7 @@ func (ctx *RequestContext) obtainTrackingSuffix(encodedSentEmailId string) strin
 	buffer := &bytes.Buffer{}
 	template.Execute(buffer, &EmailTemplateParams{
 		SentEmailId:        encodedSentEmailId,
+		SiteName:           siteName,
 		SiteDomain:         siteDomain,
 		SiteOwnerFirstName: ownerFirstName,
 	})
@@ -388,7 +390,11 @@ func (ctx RequestContext) sendEmailToListMember(emailTemplateId EmailTemplateId,
 	// If we're logging in, then create a unique URL for the link.
 	var destinationUrl string
 	if opts.Login {
-		destinationUrl, err = ctx.TryToCreateShortTrackedUrl(opts.DestinationUrl, opts.HostName, sentEmail.Id, opts.Login)
+		var loginId ListMemberId = 0
+		if (opts.Login) {
+			loginId = listMember.Id
+		}
+		destinationUrl, err = ctx.TryToCreateShortTrackedUrl(opts.DestinationUrl, opts.HostName, sentEmail.Id, loginId)
 		if err != nil {
 			panic(fmt.Sprintf("ERROR obtaining TrackedUrl: %v", err))
 		}
@@ -404,6 +410,7 @@ func (ctx RequestContext) sendEmailToListMember(emailTemplateId EmailTemplateId,
 	err = parsedEmailTempalte.Execute(buffer, &EmailTemplateParams{
 		SentEmailId:        encodedSentEmailId,
 		FirstName:          listMember.FirstName,
+		SiteName:           siteName,
 		SiteDomain:         siteDomain,
 		SiteOwnerFirstName: ownerFirstName,
 		PageTitle:          opts.PageTitle,
