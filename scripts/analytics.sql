@@ -33,3 +33,10 @@ select subject,to_char(created, 'YYYY-MM-DD HH24:MI') sent, open_date from opens
 with asd as 
 (select t.id, min(a.created) open_date from email_templates t, sent_emails s, email_actions a where s.email_template_id = t.id and a.sent_email_id = s.id and a.action = 'opened' group by t.id order by t.created desc limit 50)
 select * from asd;
+
+-- Locations of all list members
+with user_ips as (select list_member_id, ip_address from tracking_hits where list_member_id is not null),
+    user_ips2 as (select list_member_id, mode() within group (order by ip_address)
+                  from user_ips
+                  group by list_member_id)
+select list_member_id, ip.country_code, ip.country_name, ip.region_name, ip.city_name, ip.time_zone from user_ips2 u, ip2location ip where u.mode >= ip.ip_from and u.mode <= ip_to;

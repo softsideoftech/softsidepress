@@ -129,6 +129,10 @@ insert into list_member_locations (with user_ips as (select list_member_id, ip_a
                   group by list_member_id)
 select list_member_id, ip.country_code, ip.country_name, ip.region_name, ip.city_name, ip.time_zone from user_ips2 u, ip2location ip where u.mode >= ip.ip_from and u.mode <= ip_to);
 
+insert into list_member_locations (select 1,  ip.country_code, ip.country_name, ip.region_name, ip.city_name, ip.time_zone from ip2location ip where 1386970622 >= ip_from and 1386970622 <= ip_to);
+
+delete from list_member_locations where id = 1;
+
 select region_name, count(*) from list_member_locations group by region_name order by count(*) desc;
 
 select count(*) from list_member_locations;

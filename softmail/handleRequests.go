@@ -145,7 +145,7 @@ func TrackTimeOnPage(ctx *RequestContext) {
 }
 
 func HandleNormalRequest(ctx *RequestContext) {
-	rawRemoteAddr, ipString, ipInt := getIpInfo(ctx.R)
+	rawRemoteAddr, ipString, ipInt := ctx.GetIpInfo()
 
 	var trackingHitId TrackingHitId
 	trackedUrl := &TrackedUrl{Id: 0} // Default linkId for tracking requests
@@ -218,7 +218,7 @@ func HandleNormalRequest(ctx *RequestContext) {
 
 	// We're not doing a redirect, so it must be a web page. 
 	// Default to the home page if no page is matched.
-	// TODO: We're calling this a second time. Maybe refactor this 
+	// TODO: We're calling this function a second time and it does some DB calls under the hood. Consider refactoring this... 
 	pageTemplateCfg := ctx.matchWebPage(trackingHitId, true)
 
 	// Try to render the page
@@ -414,21 +414,6 @@ func (ctx *RequestContext) getCourseDirPath(urlPath string) string {
 	return "/courses/" + getCourseName(urlPath)
 }
 
-func getIpInfo(r *http.Request) (string, string, IpAddress) {
-	// Try to find the user's IP address in the request
-	var rawRemoteAddr string
-	realIp := r.Header.Get("X-Real-IP")
-	if len(realIp) == 0 {
-		realIp = r.Header.Get("X-Forwarded-For")
-	}
-	if len(realIp) > 0 {
-		rawRemoteAddr = realIp
-	} else {
-		rawRemoteAddr = r.RemoteAddr
-	}
-	ipString, ipInt := decodeIpAddress(rawRemoteAddr)
-	return rawRemoteAddr, ipString, ipInt
-}
 
 func (ctx *RequestContext) obtainOrCreateTrackedUrl(urlPath string) *TrackedUrl {
 	trackedUrl := &TrackedUrl{Id: UrlToId(urlPath)}

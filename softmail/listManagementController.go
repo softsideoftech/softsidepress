@@ -147,6 +147,10 @@ func Join(ctx *RequestContext) {
 		err = ctx.DB.Update(listMember)
 	} else {
 		err = ctx.DB.Insert(listMember)
+
+		// Also record this ListMember's location
+		_, _, ipAddress := ctx.GetIpInfo()
+		ctx.DB.Exec("insert into list_member_locations (select ?,  ip.country_code, ip.country_name, ip.region_name, ip.city_name, ip.time_zone from ip2location ip where ? >= ip_from and ? <= ip_to)", listMember.Id, ipAddress, ipAddress)
 	}
 
 	if (err != nil) {
@@ -157,4 +161,20 @@ func Join(ctx *RequestContext) {
 
 		// todo: send a confirmation/double-opt-in email
 	}
+}
+
+func (ctx RequestContext) GetIpInfo() (string, string, IpAddress) {
+	// Try to find the user's IP address in the request
+	var rawRemoteAddr string
+	realIp := ctx.R.Header.Get("X-Real-IP")
+	if len(realIp) == 0 {
+		realIp = ctx.R.Header.Get("X-Forwarded-For")
+	}
+	if len(realIp) > 0 {
+		rawRemoteAddr = realIp
+	} else {
+		rawRemoteAddr = ctx.R.RemoteAddr
+	}
+	ipString, ipInt := decodeIpAddress(rawRemoteAddr)
+	return rawRemoteAddr, ipString, ipInt
 }
