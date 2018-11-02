@@ -52,7 +52,6 @@ type SendEmailOpts struct {
 	UseSuffix      bool
 	Login          bool
 	DestinationUrl string
-	HostName       string
 	PageTitle      string
 	TemplateParams PerRequestParams
 }
@@ -394,7 +393,7 @@ func (ctx RequestContext) sendEmailToListMember(emailTemplateId EmailTemplateId,
 		if (opts.Login) {
 			loginId = listMember.Id
 		}
-		destinationUrl, err = ctx.TryToCreateShortTrackedUrl(opts.DestinationUrl, opts.HostName, sentEmail.Id, loginId)
+		destinationUrl, err = ctx.TryToCreateShortTrackedUrl(opts.DestinationUrl, siteDomain, sentEmail.Id, loginId)
 		if err != nil {
 			panic(fmt.Sprintf("ERROR obtaining TrackedUrl: %v", err))
 		}

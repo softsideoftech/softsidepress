@@ -76,35 +76,28 @@ select * from list_members where id = 2 and created < now();
 
 select * from sent_emails where id = 13;
 
--- additions for video course
-alter table member_groups ADD COLUMN created TIMESTAMP DEFAULT current_timestamp NOT NULL;
-alter table member_groups ADD PRIMARY KEY (list_member_id, name);
-CREATE INDEX member_groups__list_member_id ON member_groups (list_member_id);
-CREATE TABLE course_cohorts (
-  course_name VARCHAR(128) NOT NULL,
-  start_date  TIMESTAMP    NOT NULL,
-  end_date    TIMESTAMP    NOT NULL,
-  PRIMARY KEY (course_name, start_date)
-);
-
 
 select * from course_cohorts;
 
+
+
 select id, first_name, last_name, email from list_members l where email in ('akilburn924@gmail.com', 'gregsilin@gmail.com', 'myblake@gmail.com', 'julie.michelle.smith@gmail.com', 'michael.dore@gmail.com', 'dustin@dustinbuss.com', 'ferhat.hatay@gmail.com', 'alexcloudcto@gmail.com', 'kringotime@me.com', 'cshenoy@gmail.com', 'benvnguyen@gmail.com', 'john.celenza@gmail.com', 'brendan.hayes@gmail.com', 'shane.kelly@gmail.com', 'evan.hourigan@gmail.com', 'endre.soos@gmail.com', 'armen.abrahamian@gmail.com');
 
-update list_members set first_name = 'Alex' where email = 'alexcloudcto@gmail.com';
+select *, l.*  from member_groups g, list_members l where g.list_member_id = l.id and g.name = 'inner-leadership-2018-nov';
 
-select * from member_groups;
+select * from course_cohorts;
 
+delete from member_groups g where list_member_id in (9129, 6671, 6911, 6995, 6996, 7021) and g.name = 'inner-leadership-2018-nov';
 
+select s.list_member_id, l.first_name, l.email, t.subject, t.id, t.created from list_members l, sent_emails s, email_templates t where s.list_member_id in (9129, 6671, 6911, 6995, 6996, 7021) and t.id = s.email_template_id and l.id = s.list_member_id and t.id = 2871018535200300250 order by created desc;
+
+select t.subject, count(*) from sent_emails s, email_templates t where t.id = s.email_template_id group by t.subject order by count(*) desc;
+ 
+
+select * from email_templates where id = 2630011874810195904;
 
 select * from tracking_hits where referrer_url is not null limit 10;
 
-country_code CHARACTER(2)           NOT NULL,
-country_name CHARACTER VARYING(64)  NOT NULL,
-region_name  CHARACTER VARYING(128) NOT NULL,
-city_name    CHARACTER VARYING(128) NOT NULL,
-time_zone
 
 explain verbose select ip.country_code, ip.country_name, ip.region_name, ip.city_name, ip.time_zone, ip_address, list_member_id from tracking_hits h, ip2location ip where ip_address >= ip.ip_from and ip_address <= ip_to and list_member_id is not null limit 20;
 
