@@ -81,7 +81,7 @@ func GenerateTrackingLink(ctx *RequestContext) {
 	// Keep trying until we create a new short url
 	url := ""
 	for len(url) == 0 {
-		curUrl, err := ctx.TryToCreateShortTrackedUrl(targetUrl, ctx.R.Host, 0, 0)
+		curUrl, err := ctx.TryToCreateShortTrackedUrl(targetUrl, siteDomain, 0, 0)
 
 		if err != nil {
 			panic(fmt.Errorf("Failed to generate tracking url for link: %s, err: $v", targetUrl, err))
@@ -96,7 +96,7 @@ func GenerateTrackingLink(ctx *RequestContext) {
 }
 
 // TODO: use this method to replace external links in emails
-func (ctx *RequestContext) TryToCreateShortTrackedUrl(targetUrl string, host string, sentEmailId SentEmailId, loginId ListMemberId) (string, error) {
+func (ctx *RequestContext) TryToCreateShortTrackedUrl(targetUrl string, siteDomain string, sentEmailId SentEmailId, loginId ListMemberId) (string, error) {
 	// Randomly generate a url
 	url := "/" + EncodeId(rand.Uint32())
 	trackedUrl := &TrackedUrl{Id: UrlToId(url), SentEmailId: sentEmailId, LoginId: loginId}
@@ -120,13 +120,13 @@ func (ctx *RequestContext) TryToCreateShortTrackedUrl(targetUrl string, host str
 				urlScheme = "https://"
 			}
 
-			return urlScheme + host + url, nil
+			return urlScheme + siteDomain + url, nil
 		} else {
 			return "", err
 		}
 	} else {
 		// If we got here, we must have collided with another url, so try again.
-		return ctx.TryToCreateShortTrackedUrl(targetUrl, host, sentEmailId, loginId)
+		return ctx.TryToCreateShortTrackedUrl(targetUrl, siteDomain, sentEmailId, loginId)
 	}
 	return "", nil
 }
