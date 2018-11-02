@@ -85,7 +85,11 @@ select id, first_name, last_name, email from list_members l where email in ('aki
 
 select *, l.*  from member_groups g, list_members l where g.list_member_id = l.id and g.name = 'inner-leadership-2018-nov';
 
+-- 2018-11-01 12:18:42.670602
+
 select * from course_cohorts;
+
+insert into course_cohorts values ('inner-leadership-2018-nov', 'inner-leadership', to_date('2018-11-06', 'YYYY-MM-DD'), to_date('2019-02-15', 'YYYY-MM-DD'));
 
 delete from member_groups g where list_member_id in (9129, 6671, 6911, 6995, 6996, 7021) and g.name = 'inner-leadership-2018-nov';
 
