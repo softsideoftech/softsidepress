@@ -120,7 +120,8 @@ func (ctx *RequestContext) TryToCreateShortTrackedUrl(targetUrl string, siteDoma
 				urlScheme = "https://"
 			}
 
-			return urlScheme + siteDomain + url, nil
+			//return urlScheme + siteDomain + url, nil
+			return urlScheme + "foobar.com" + url, nil
 		} else {
 			return "", err
 		}

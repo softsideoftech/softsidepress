@@ -337,7 +337,7 @@ func (ctx *RequestContext) obtainListMembers(memberEmailOrGroupName string, opts
 			// Add the email to list_members if it doesn't already exist.
 			log.Printf("Couldn't find a member with the email: %s. Creating one now.", address.Address)
 
-			// Only subscribe the list member if they are logging in (that means they're interested)
+			// Only subscribe the list member if they are logging in (that must mean we already know they're interested)
 			listMember = createListMember(address, opts.Login)
 		}
 		listMembers = append(listMembers, *listMember)
