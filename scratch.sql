@@ -95,3 +95,40 @@ select id, first_name, last_name, email from list_members l where email in ('aki
 update list_members set first_name = 'Alex' where email = 'alexcloudcto@gmail.com';
 
 select * from member_groups;
+
+
+
+select * from tracking_hits where referrer_url is not null limit 10;
+
+country_code CHARACTER(2)           NOT NULL,
+country_name CHARACTER VARYING(64)  NOT NULL,
+region_name  CHARACTER VARYING(128) NOT NULL,
+city_name    CHARACTER VARYING(128) NOT NULL,
+time_zone
+
+explain verbose select ip.country_code, ip.country_name, ip.region_name, ip.city_name, ip.time_zone, ip_address, list_member_id from tracking_hits h, ip2location ip where ip_address >= ip.ip_from and ip_address <= ip_to and list_member_id is not null limit 20;
+
+with hits as (select list_member_id, ip_address, count(*) from tracking_hits where list_member_id is not null group by list_member_id, ip_address),
+user_locations as (select ip.country_code, ip.country_name, ip.region_name, ip.city_name, ip.time_zone, ip_address, list_member_id from hits h, ip2location ip where ip_address >= ip.ip_from and ip_address <= ip_to)
+select city_name, list_member_id, count(*) from user_locations group by city_name, list_member_id limit 20;
+
+
+with user_ips as (select list_member_id, ip_address from tracking_hits where list_member_id is not null),
+    user_ips2 as (select list_member_id, mode() within group (order by ip_address)
+    from user_ips
+    group by list_member_id)
+select list_member_id, ip.country_code, ip.country_name, ip.region_name, ip.city_name, ip.time_zone from user_ips2 u, ip2location ip where u.mode >= ip.ip_from and u.mode <= ip_to limit 10;
+
+select * from list_member_locations;
+
+truncate table list_member_locations;
+
+insert into list_member_locations (with user_ips as (select list_member_id, ip_address from tracking_hits where list_member_id is not null),
+    user_ips2 as (select list_member_id, mode() within group (order by ip_address)
+                  from user_ips
+                  group by list_member_id)
+select list_member_id, ip.country_code, ip.country_name, ip.region_name, ip.city_name, ip.time_zone from user_ips2 u, ip2location ip where u.mode >= ip.ip_from and u.mode <= ip_to);
+
+select region_name, count(*) from list_member_locations group by region_name order by count(*) desc;
+
+select count(*) from list_member_locations;

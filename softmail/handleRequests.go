@@ -150,15 +150,12 @@ func HandleNormalRequest(ctx *RequestContext) {
 	var trackingHitId TrackingHitId
 	trackedUrl := &TrackedUrl{Id: 0} // Default linkId for tracking requests
 
-	// Try to match a page assuming there is no tracking code in the url.
-	pageTemplateCfg := ctx.matchWebPage(trackingHitId, false)
-
 	var sentEmailId SentEmailId
 	var emailTargetUrl *string
 
-	// If we couldn't find a page with the bare url, that means the url may contain a tracking id.
 	urlPath := ctx.R.URL.Path
-	if pageTemplateCfg == nil {
+	// Check is there is a page that matches the url. If not, then the url may contain an email tracking id.
+	if ctx.matchWebPage(trackingHitId, false) == nil {
 		sentEmailId, emailTargetUrl = DecodeSentMailIdFromUri(urlPath)
 	}
 
@@ -217,11 +214,12 @@ func HandleNormalRequest(ctx *RequestContext) {
 
 	if ctx.serveRedirect(trackedUrl, sentEmail, emailTargetUrl, urlPath) {
 		return;
-	} else if pageTemplateCfg == nil {
-		// We're not doing a redirect, so it must be a web page. 
-		// Default to the home page if no page is matched.
-		pageTemplateCfg = ctx.matchWebPage(trackingHitId, true)
-	}
+	} 
+
+	// We're not doing a redirect, so it must be a web page. 
+	// Default to the home page if no page is matched.
+	// TODO: We're calling this a second time. Maybe refactor this 
+	pageTemplateCfg := ctx.matchWebPage(trackingHitId, true)
 
 	// Try to render the page
 	err := ctx.renderMarkdownToHtmlTemplate(pageTemplateCfg)
