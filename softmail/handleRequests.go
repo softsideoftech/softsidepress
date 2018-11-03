@@ -81,7 +81,7 @@ func GenerateTrackingLink(ctx *RequestContext) {
 	// Keep trying until we create a new short url
 	url := ""
 	for len(url) == 0 {
-		curUrl, err := ctx.TryToCreateShortTrackedUrl(targetUrl, siteDomain, 0, 0)
+		curUrl, err := ctx.TryToCreateShortTrackedUrl(targetUrl, 0, 0)
 
 		if err != nil {
 			panic(fmt.Errorf("Failed to generate tracking url for link: %s, err: $v", targetUrl, err))
@@ -96,16 +96,16 @@ func GenerateTrackingLink(ctx *RequestContext) {
 }
 
 // TODO: use this method to replace external links in emails
-func (ctx *RequestContext) TryToCreateShortTrackedUrl(targetUrl string, siteDomain string, sentEmailId SentEmailId, loginId ListMemberId) (string, error) {
+func (ctx *RequestContext) TryToCreateShortTrackedUrl(targetUrl string, sentEmailId SentEmailId, loginId ListMemberId) (string, error) {
 	// Randomly generate a url
-	url := "/" + EncodeId(rand.Uint32())
-	trackedUrl := &TrackedUrl{Id: UrlToId(url), SentEmailId: sentEmailId, LoginId: loginId}
+	uri := "/" + EncodeId(rand.Uint32())
+	trackedUrl := &TrackedUrl{Id: UrlToId(uri), SentEmailId: sentEmailId, LoginId: loginId}
 
 	err := ctx.DB.Select(trackedUrl)
 	if err != nil {
 		// Only continue if we didn't collide with an existing url.
 		if IsPgSelectEmpty(err) {
-			trackedUrl.Url = url
+			trackedUrl.Url = uri
 			trackedUrl.TargetUrl = targetUrl
 			err := ctx.DB.Insert(trackedUrl)
 			if err != nil {
@@ -113,20 +113,13 @@ func (ctx *RequestContext) TryToCreateShortTrackedUrl(targetUrl string, siteDoma
 				return "", err
 			}
 
-			var urlScheme string;
-			if ctx.DevMode {
-				urlScheme = "http://"
-			} else {
-				urlScheme = "https://"
-			}
-
-			return urlScheme + siteDomain + url, nil
+			return ctx.BuildUrl(uri), nil
 		} else {
 			return "", err
 		}
 	} else {
 		// If we got here, we must have collided with another url, so try again.
-		return ctx.TryToCreateShortTrackedUrl(targetUrl, siteDomain, sentEmailId, loginId)
+		return ctx.TryToCreateShortTrackedUrl(targetUrl, sentEmailId, loginId)
 	}
 	return "", nil
 }
@@ -334,7 +327,7 @@ func (ctx *RequestContext) matchWebPage(trackingHitId TrackingHitId, defaultToHo
 		} else {
 			// All the validation was ok, so look for the appropriate course page
 			session := courseConfig.getSession(getSessionUrlName(trimmedUrlPath))
-			courseDay := int((time.Now().Sub(courseCohort.StartDate).Hours()) / 24) + 1
+			courseDay := courseCohort.GetCourseDay()
 			if session == nil {
 				// If there's no session name, then go to the course page.
 				cfg.MarkdownFile = ctx.getCourseDirPath(trimmedUrlPath) + "/course-page.md"

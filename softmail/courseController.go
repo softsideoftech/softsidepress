@@ -11,12 +11,13 @@ import (
 )
 
 type Session struct {
-	Name        string
-	Day         int
-	Description string
-	Url         string
-	VideoUrl    string
-	Course      *CourseConfig
+	Name     string
+	Day      int
+	Video    string
+	Url      string
+	Email    string
+	VideoUrl string
+	Course   *CourseConfig
 }
 
 type Emails struct {
@@ -24,10 +25,11 @@ type Emails struct {
 }
 
 type CourseConfig struct {
-	Name     string
-	Sessions []*Session
-	Emails   Emails
-	Url      string
+	Name      string
+	Shortname string
+	Sessions  []*Session
+	Emails    Emails
+	Url       string
 }
 
 type ConfigObj interface {
@@ -102,7 +104,10 @@ func loadCourses(coursesDirPath string) map[string]CourseConfig {
 		}
 
 		for _, session := range course.Sessions {
-			session.VideoUrl = fmt.Sprintf("%s/courses/%s/%s", CDNUrl, coursePathName, session.Url)
+			// Only create a VideoUrl if a Viedo description exists
+			if session.Video != "" {
+				session.VideoUrl = fmt.Sprintf("%s/courses/%s/%s", CDNUrl, coursePathName, session.Url)	
+			}
 			session.Course = &course
 		}
 		course.Url = "/" + coursePathName
@@ -135,7 +140,7 @@ func (ctx *RequestContext) GetCourseForCurListMember(courseName string) (*Course
 	if err != nil {
 		panic(fmt.Sprintf("DB problem while retrieving course cohort named: %s for user: %d", courseName, ctx.MemberCookie.ListMemberId))
 	}
-	
+
 	if courseCohort.Name == "" {
 
 		// See if this course exists at all
@@ -144,10 +149,10 @@ func (ctx *RequestContext) GetCourseForCurListMember(courseName string) (*Course
 		if err != nil {
 			panic(fmt.Sprintf("DB problem while retrieving course cohort named: %s", courseName))
 		}
-		
+
 		if len(courseCohort.Name) > 0 {
 			// If at least one such CourseCohort exists, it may be that the person isn't signed up for the course or is logged in with the wrong email.
-			return course, nil, NotRegisteredForCourseError{fmt.Sprintf("Not registered for course named: %s for user: %d ", courseName, ctx.MemberCookie.ListMemberId)}	
+			return course, nil, NotRegisteredForCourseError{fmt.Sprintf("Not registered for course named: %s for user: %d ", courseName, ctx.MemberCookie.ListMemberId)}
 		} else {
 			// Otherwise, the course simply doesn't exist. 
 			return course, nil, NoSuchCourseError{fmt.Sprintf("No started course named: %s for user: %d ", courseName, ctx.MemberCookie.ListMemberId)}
@@ -163,14 +168,33 @@ func (ctx *RequestContext) GetCourseForCurListMember(courseName string) (*Course
 	return course, &courseCohort, nil
 }
 
+func (ctx *RequestContext) GetCurrentCohorts() ([]CourseCohort, error) {
+	var courseCohorts []CourseCohort
+	_, err := ctx.DB.Query(&courseCohorts, "select * from course_cohorts c where c.start_date <= now() and end_date > now()")
+	return courseCohorts, err
+}
+
+func (ctx *RequestContext) GetCohortMemberLocations(cohortName MemberGroupName) ([]ListMemberLocation, error) {
+	var listMemberLocations []ListMemberLocation
+	_, err := ctx.DB.Query(
+		&listMemberLocations, 
+		"select l.* from list_member_locations l, member_groups g where g.name = ? and g.list_member_id = l.id", 
+		cohortName)
+	return listMemberLocations, err
+}
+
 func (ctx *RequestContext) GetCourse(courseName string) *CourseConfig {
+	course := ctx.GetCourses()[courseName]
+	return &course
+}
+
+func (ctx *RequestContext) GetCourses() map[string]CourseConfig {
 	confMux.Lock()
 	defer confMux.Unlock()
 	if courses == nil || ctx.DevMode {
 		courses = loadCourses(ctx.GetFilePath("/courses"))
 	}
-	course := courses[courseName]
-	return &course
+	return courses
 }
 
 func (courseConfig *CourseConfig) getSession(sessionUrlName string) *Session {
@@ -180,4 +204,8 @@ func (courseConfig *CourseConfig) getSession(sessionUrlName string) *Session {
 		}
 	}
 	return nil
+}
+
+func (courseCohort CourseCohort) GetCourseDay() int {
+	return int((time.Now().Sub(courseCohort.StartDate).Hours())/24) + 1
 }

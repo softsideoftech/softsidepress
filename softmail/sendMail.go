@@ -1,24 +1,25 @@
 package softmail
 
 import (
-	"io/ioutil"
-	"fmt"
-	"gopkg.in/russross/blackfriday.v2"
-	"crypto/md5"
-	"hash/fnv"
-	"strings"
-	"regexp"
-	"encoding/xml"
-	htmlTemplate "html/template"
 	"bytes"
+	"crypto/md5"
+	"encoding/xml"
+	"fmt"
 	"github.com/jaytaylor/html2text"
-	"github.com/veqryn/go-email/email"
 	"github.com/sourcegraph/go-ses"
+	"github.com/veqryn/go-email/email"
+	"gopkg.in/russross/blackfriday.v2"
+	"hash/fnv"
+	htmlTemplate "html/template"
+	txtTemplate "text/template"
+	"io/ioutil"
 	"log"
+	"net/mail"
 	"net/smtp"
 	"os"
+	"regexp"
+	"strings"
 	"time"
-	"net/mail"
 )
 
 const emailSuffixMdFile = "emailSuffix.md"
@@ -51,6 +52,7 @@ type LoginEmailTemplateParams struct {
 type SendEmailOpts struct {
 	UseSuffix      bool
 	Login          bool
+	DontDoubleSend bool
 	DestinationUrl string
 	PageTitle      string
 	TemplateParams PerRequestParams
@@ -238,13 +240,13 @@ func createListMember(address *mail.Address, subscribed bool) *ListMember {
 func (ctx *RequestContext) obtainTrackingSuffix(encodedSentEmailId string) string {
 	suffixEmailBodyBytes, err := ioutil.ReadFile(ctx.GetFilePath("/emails/" + forwardedEmailSuffixMdFile))
 	if err != nil {
-		panic(err)
+		log.Panic(err)
 	}
 	suffixEmailBody := string(suffixEmailBodyBytes)
 	// Parse and render the suffix template
 	template, err := htmlTemplate.New(forwardedEmailSuffixMdFile).Parse(suffixEmailBody)
 	if err != nil {
-		panic(err)
+		log.Panic(err)
 	}
 	buffer := &bytes.Buffer{}
 	template.Execute(buffer, &EmailTemplateParams{
@@ -262,16 +264,30 @@ func obtainTrackingPrefix(encodedSentEmailId string) string {
 	return fmt.Sprintf("<img src=\"https://softsideoftech.com/pixie/%s.png\"/>", encodedSentEmailId);
 }
 
+func (ctx *RequestContext) SendTemplatedEmailToId(subject string, templateFileName string, listMemberId ListMemberId, opts SendEmailOpts) ListMember {
+	listMember, _ := ctx.GetListMemberById(listMemberId)
+	ctx.SendTemplatedEmailToListMembers(subject, templateFileName, opts, []ListMember{*listMember})
+	return *listMember
+}
+
 func (ctx *RequestContext) SendTemplatedEmail(subject string, templateFileName string, memberEmailOrGroupName string, opts SendEmailOpts) []ListMember {
 
-	log.Printf("In SendTemplatedEmail(...) with opts: %v: ", opts)
+	// Load the email list
+	listMembers := ctx.obtainListMembers(memberEmailOrGroupName, opts)
 
+	fmt.Printf("Sending email to listMembers: %v\n", listMembers)
+
+	ctx.SendTemplatedEmailToListMembers(subject, templateFileName, opts, listMembers)
+	
+	return listMembers
+}
+
+func (ctx *RequestContext) SendTemplatedEmailToListMembers(subject string, templateFileName string, opts SendEmailOpts, listMembers []ListMember) {
 	// Load the template file
 	markdownEmailBodyBytes, err := ioutil.ReadFile(ctx.GetFilePath(templateFileName))
 	markdownEmailBody := string(markdownEmailBodyBytes)
 	if err != nil {
-		fmt.Printf("Error reading file: %s\n", err)
-		panic(err)
+		log.Panicf("Error reading file: %s\n", err)
 	}
 
 	emailTemplateId := obtainEmailTemplateId(subject, markdownEmailBody, "")
@@ -285,7 +301,7 @@ func (ctx *RequestContext) SendTemplatedEmail(subject string, templateFileName s
 		suffixEmailBodyBytes, err := ioutil.ReadFile(ctx.GetFilePath("/emails/" + emailSuffixMdFile))
 		suffixEmailBody := string(suffixEmailBodyBytes)
 		if err != nil {
-			panic(err)
+			log.Panic(err)
 		}
 		markdownEmailBody += suffixEmailBody
 	} else {
@@ -296,13 +312,12 @@ func (ctx *RequestContext) SendTemplatedEmail(subject string, templateFileName s
 	// Turn the markdown into HTML
 	htmlEmailTemplateString := string(blackfriday.Run([]byte(markdownEmailBody)))
 
-	// Create the HTML template (must be HTML and not TEXT to escape user supplied values such as FirstName)
-	parsedEmailTempalte, err := htmlTemplate.New(templateFileName).Parse(htmlEmailTemplateString)
+	// Create the template 
+	// NOTE: We're using a text template, so we could include HTML in our own parameters. But it means
+	// user supplied values like FirstName will NOT be escaped. This should be safe here because email 
+	// clients already prevent code execution. 
+	parsedEmailTempalte, err := txtTemplate.New(templateFileName).Parse(htmlEmailTemplateString)
 
-	// Load the email list
-	listMembers := ctx.obtainListMembers(memberEmailOrGroupName, opts)
-
-	fmt.Printf("Sending email to listMembers: %v\n", listMembers)
 
 	// For each member
 	// 		Create a SentEmail record
@@ -314,23 +329,22 @@ func (ctx *RequestContext) SendTemplatedEmail(subject string, templateFileName s
 	for _, listMember := range listMembers {
 		ctx.sendEmailToListMember(emailTemplateId, listMember, parsedEmailTempalte, fromEmail, subject, opts)
 	}
-
-	return listMembers
 }
+
 
 func (ctx *RequestContext) obtainListMembers(memberEmailOrGroupName string, opts SendEmailOpts) []ListMember {
 	var err error = nil
 	var listMembers []ListMember
 	if memberEmailOrGroupName == "all" {
 		// Select all members where unsubscribed is nil (ie, they never explicitly unsubscribed)
-		err = SoftsideDB.Model(&listMembers).Where("unsubscribed IS NULL", nil).Select()
+		err = ctx.DB.Model(&listMembers).Where("unsubscribed IS NULL", nil).Select()
 	} else if strings.Contains(memberEmailOrGroupName, "@") {
 		address, _ := mail.ParseAddress(memberEmailOrGroupName)
 
 		// If an email was supplied, then select that member.
 		listMember, found, err := ctx.GetListMemberByEmail(address.Address)
 		if err != nil {
-			panic(err)
+			log.Panic(err)
 		}
 
 		if !found {
@@ -342,14 +356,14 @@ func (ctx *RequestContext) obtainListMembers(memberEmailOrGroupName string, opts
 		}
 		listMembers = append(listMembers, *listMember)
 	} else {
-		_, err = SoftsideDB.Query(&listMembers, `
+		_, err = ctx.DB.Query(&listMembers, `
 		select l.* from list_members l, member_groups g 
 		where l.id = g.list_member_id and g.name = ? AND l.unsubscribed IS NULL`, memberEmailOrGroupName)
 	}
 
 	// Not ok to have an error here. Just do a hard failure.
 	if err != nil {
-		panic(err)
+		log.Panic(err)
 	}
 
 	return listMembers
@@ -366,7 +380,7 @@ func obtainEmailTemplateId(subject string, emailBody string, recipient string) (
 			emailTemplate.Body = emailBody
 			err = SoftsideDB.Insert(&emailTemplate)
 			if err != nil {
-				panic(err)
+				log.Panic(err)
 			}
 		} else {
 			log.Panicf("Problem obtaining email template ID: %v", err)
@@ -375,7 +389,20 @@ func obtainEmailTemplateId(subject string, emailBody string, recipient string) (
 	return emailTemplateId
 }
 
-func (ctx RequestContext) sendEmailToListMember(emailTemplateId EmailTemplateId, listMember ListMember, parsedEmailTempalte *htmlTemplate.Template, fromEmail string, subject string, opts SendEmailOpts) {
+func (ctx RequestContext) sendEmailToListMember(emailTemplateId EmailTemplateId, listMember ListMember, parsedEmailTempalte *txtTemplate.Template, fromEmail string, subject string, opts SendEmailOpts) bool {
+
+	if opts.DontDoubleSend {
+		// Check if we've sent this email to this list member before
+		var sentEmail SentEmail
+		_, err := ctx.DB.Query(&sentEmail, "select * from sent_emails where email_template_id = ? and list_member_id = ?", emailTemplateId, listMember.Id)
+		if err != nil {
+			log.Panicf("Problem obtaining SentEmail for template: %d, listMember: %s, error: %v", emailTemplateId, listMember.Email, err)
+		}
+		if sentEmail.Id > 0 {
+			return false
+		}
+	}
+	
 	// Create a SentEmail record
 	sentEmail := &SentEmail{
 		EmailTemplateId: emailTemplateId,
@@ -383,7 +410,7 @@ func (ctx RequestContext) sendEmailToListMember(emailTemplateId EmailTemplateId,
 	}
 	err := ctx.DB.Insert(sentEmail)
 	if err != nil {
-		panic(err)
+		log.Panic(err)
 	}
 
 	// If we're logging in, then create a unique URL for the link.
@@ -393,9 +420,9 @@ func (ctx RequestContext) sendEmailToListMember(emailTemplateId EmailTemplateId,
 		if (opts.Login) {
 			loginId = listMember.Id
 		}
-		destinationUrl, err = ctx.TryToCreateShortTrackedUrl(opts.DestinationUrl, siteDomain, sentEmail.Id, loginId)
+		destinationUrl, err = ctx.TryToCreateShortTrackedUrl(opts.DestinationUrl, sentEmail.Id, loginId)
 		if err != nil {
-			panic(fmt.Sprintf("ERROR obtaining TrackedUrl: %v", err))
+			log.Panicf("ERROR obtaining TrackedUrl: %v", err)
 		}
 	} else {
 		destinationUrl = opts.DestinationUrl
@@ -417,32 +444,35 @@ func (ctx RequestContext) sendEmailToListMember(emailTemplateId EmailTemplateId,
 		Params:             opts.TemplateParams,
 	})
 	if err != nil {
-		panic(err)
+		log.Panic(err)
 	}
-	htmlEmailString := buffer.String()
+
 	// Convert the HTML to plaintext
+	htmlEmailString := buffer.String()
 	textEmailString, err := html2text.FromString(htmlEmailString)
 	if err != nil {
-		panic(err)
+		log.Panic(err)
 	}
+
 	// Send the email
 	awsResponse, err := ses.EnvConfig.SendEmailHTML(fromEmail, listMember.Email, subject, textEmailString, htmlEmailString)
 
-	// Unmarshall the response
+	// Process and record the response
 	err, awsMessageId := unmarshallAwsResponse(err, awsResponse)
 	if err != nil {
-		panic(err)
+		log.Panic(err)
 	}
-
 	processSentEmail(err, htmlEmailString, textEmailString, awsMessageId, sentEmail, &listMember)
+	return true
 }
 
 func processSentEmail(err error, htmlEmailString string, textEmailString string, awsMessageId string, sentEmail *SentEmail, listMember *ListMember) {
 	if err == nil {
 		fmt.Printf("Sent email to: %s,\n\nhtml: %s\n\n\n%s\n\n\nawsMessageId: %s\n", listMember.Email, htmlEmailString, textEmailString, awsMessageId)
 	} else {
-		panic(fmt.Sprintf("ERROR sending email: %v\n", err))
+		log.Panic(fmt.Sprintf("ERROR sending email: %v\n", err))
 	}
+	
 	// Record the email sent event if we didn't get an error from AWS
 	SoftsideDB.Insert(&EmailAction{SentEmailId: sentEmail.Id, Action: "sent"})
 

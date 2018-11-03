@@ -23,6 +23,8 @@ var emailTemplateLoginLink = "/emails/login-link.md"
 var blogPageHtmlTemplate = "/html/pages-tmpl.html"
 var coursePageHtmlTemplate = "/html/course-tmpl.html"
 var sessionPageHtmlTemplate = "/html/session-video-tmpl.html"
+var courseVideoEmailTemplate = "/emails/course-video-email.md"
+var courseDayEmailTemplate = "/emails/course-day-email.md"
 var courseContentPageHtmlTemplate = "/html/course-content-tmpl.html"
 var homePageHtmlTemplate = "/html/home-page-tmpl.html"
 var homePageMdTemplate = "/pages/purposeful-leadership-coaching.md"
@@ -75,6 +77,18 @@ func NewRequestCtx(w http.ResponseWriter, r *http.Request, initCtx bool) *Reques
 	return ctx
 }
 
+func (ctx RequestContext) BuildUrl(uri string) string {
+	var urlScheme string;
+	if ctx.DevMode {
+		urlScheme = "http://"
+	} else {
+		urlScheme = "https://"
+	}
+
+	return urlScheme + siteDomain + uri
+}
+
+
 func (ctx RequestContext) FileExists(relativePath string) bool {
 	fileInfo, _ := os.Stat(ctx.GetFilePath(relativePath))
 	return fileInfo != nil
@@ -88,10 +102,6 @@ func (ctx RequestContext) GetCurListMember() *ListMember {
 	if ctx.MemberCookie == nil {
 		return nil
 	}
-	listMember := &ListMember{Id: ctx.MemberCookie.ListMemberId}
-	ctx.DB.Select(listMember)
-	if listMember.Email == "" {
-		return nil
-	}
+	listMember, _ := ctx.GetListMemberById(ctx.MemberCookie.ListMemberId)
 	return listMember
 }

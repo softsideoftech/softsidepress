@@ -16,13 +16,17 @@ func main() {
 func runService() {
 	log.Println("Starting website")
 
-	if !softmail.NewRawRequestCtx().DevMode {
+	rawCtx := softmail.NewRawRequestCtx()
+	if !rawCtx.DevMode {
 		// Start processing SQS messages from SES in the background
 		go softmail.StartSqs()
 
 		// Start the SMTP server for forwarding emails
 		go forwardEmail.StartSmtpServer()
 	}
+	
+	// We send scheduled emails even in DevMode.
+	go rawCtx.StartEmailScheduler()
 
 	// Start the website
 	startWebsite()

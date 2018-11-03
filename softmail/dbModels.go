@@ -50,7 +50,7 @@ type TrackedUrl struct {
 	Url         string
 	TargetUrl   string
 	Created     time.Time
-	LoginId 	ListMemberId
+	LoginId     ListMemberId
 }
 
 type TrackingHitId = uint32
@@ -89,4 +89,13 @@ type CourseCohort struct {
 	CourseName string
 	StartDate  time.Time
 	EndDate    time.Time
+}
+
+type ListMemberLocation struct {
+	Id          ListMemberId
+	CountryCode string
+	CountryName string
+	RegionName  string
+	CityName    string
+	TimeZone    string
 }

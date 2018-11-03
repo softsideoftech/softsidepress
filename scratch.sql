@@ -79,11 +79,16 @@ select * from sent_emails where id = 13;
 
 select * from course_cohorts;
 
-
+select * from course_cohorts c where c.start_date <= now() and end_date > now();
 
 select id, first_name, last_name, email from list_members l where email in ('akilburn924@gmail.com', 'gregsilin@gmail.com', 'myblake@gmail.com', 'julie.michelle.smith@gmail.com', 'michael.dore@gmail.com', 'dustin@dustinbuss.com', 'ferhat.hatay@gmail.com', 'alexcloudcto@gmail.com', 'kringotime@me.com', 'cshenoy@gmail.com', 'benvnguyen@gmail.com', 'john.celenza@gmail.com', 'brendan.hayes@gmail.com', 'shane.kelly@gmail.com', 'evan.hourigan@gmail.com', 'endre.soos@gmail.com', 'armen.abrahamian@gmail.com');
 
 select *, l.*  from member_groups g, list_members l where g.list_member_id = l.id and g.name = 'inner-leadership-2018-nov';
+
+
+select * from member_groups;
+
+insert into member_groups values ('inner-leadership-2018-nov', 1);
 
 -- 2018-11-01 12:18:42.670602
 
@@ -103,33 +108,25 @@ select * from email_templates where id = 2630011874810195904;
 select * from tracking_hits where referrer_url is not null limit 10;
 
 
-explain verbose select ip.country_code, ip.country_name, ip.region_name, ip.city_name, ip.time_zone, ip_address, list_member_id from tracking_hits h, ip2location ip where ip_address >= ip.ip_from and ip_address <= ip_to and list_member_id is not null limit 20;
+select l.* from list_member_locations l, member_groups g where g.name = 'inner-leadership-2018-nov' and g.list_member_id = l.id;
 
-with hits as (select list_member_id, ip_address, count(*) from tracking_hits where list_member_id is not null group by list_member_id, ip_address),
-user_locations as (select ip.country_code, ip.country_name, ip.region_name, ip.city_name, ip.time_zone, ip_address, list_member_id from hits h, ip2location ip where ip_address >= ip.ip_from and ip_address <= ip_to)
-select city_name, list_member_id, count(*) from user_locations group by city_name, list_member_id limit 20;
-
-
-with user_ips as (select list_member_id, ip_address from tracking_hits where list_member_id is not null),
-    user_ips2 as (select list_member_id, mode() within group (order by ip_address)
-    from user_ips
-    group by list_member_id)
-select list_member_id, ip.country_code, ip.country_name, ip.region_name, ip.city_name, ip.time_zone from user_ips2 u, ip2location ip where u.mode >= ip.ip_from and u.mode <= ip_to limit 10;
+select l.* from list_member_locations l, member_groups g where g.name = 'test_course_1' and g.list_member_id = l.id;
 
 select * from list_member_locations;
 
-truncate table list_member_locations;
+select * from member_groups where name = 'test_course_1';
 
-insert into list_member_locations (with user_ips as (select list_member_id, ip_address from tracking_hits where list_member_id is not null),
-    user_ips2 as (select list_member_id, mode() within group (order by ip_address)
-                  from user_ips
-                  group by list_member_id)
-select list_member_id, ip.country_code, ip.country_name, ip.region_name, ip.city_name, ip.time_zone from user_ips2 u, ip2location ip where u.mode >= ip.ip_from and u.mode <= ip_to);
+select * from member_groups;
 
-insert into list_member_locations (select 1,  ip.country_code, ip.country_name, ip.region_name, ip.city_name, ip.time_zone from ip2location ip where 1386970622 >= ip_from and 1386970622 <= ip_to);
+insert into list_member_locations values (2, 'a', 'a', 'a', 'a', '+01:00'), (3, '', '', '', '', '-08:00');
 
-delete from list_member_locations where id = 1;
+select * from list_member_locations where id < 10;
 
-select region_name, count(*) from list_member_locations group by region_name order by count(*) desc;
+select * from sent_emails order by created desc;
 
-select count(*) from list_member_locations;
+update sent_emails set list_member_id = 30 where id > 170;
+
+delete from email_actions where sent_email_id > 170;
+
+delete from tracked_urls where sent_email_id > 170;
+

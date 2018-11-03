@@ -5,6 +5,16 @@ import (
 	"strings"
 )
 
+
+func (ctx RequestContext) GetListMemberById(listMemberId ListMemberId) (*ListMember, error) {
+	listMember := &ListMember{Id: listMemberId}
+	err := ctx.DB.Select(listMember)
+	if listMember.Email == "" {
+		return nil, err
+	}
+	return listMember, nil
+}
+
 func (ctx RequestContext) GetListMemberByEmail(email string) (*ListMember, bool, error) {
 	listMember := &ListMember{}
 	err := ctx.DB.Model(listMember).Column("list_member.*").Where("list_member.email = ?", email).Select()

@@ -34,7 +34,7 @@ with asd as
 (select t.id, min(a.created) open_date from email_templates t, sent_emails s, email_actions a where s.email_template_id = t.id and a.sent_email_id = s.id and a.action = 'opened' group by t.id order by t.created desc limit 50)
 select * from asd;
 
--- Locations of all list members
+-- Locations of all list members (used this to originally populate ListMemberLocations)
 with user_ips as (select list_member_id, ip_address from tracking_hits where list_member_id is not null),
     user_ips2 as (select list_member_id, mode() within group (order by ip_address)
                   from user_ips
