@@ -136,6 +136,8 @@ select * from list_member_locations where id = 1;
 
 select * from list_member_locations;
 
-update list_member_locations set time_zone = '+12:00' where id = 2;
+update list_member_locations set time_zone = '+11:00' where id = 1;
 
 select * from member_cookies;
+
+select * from list_members where id = 1;

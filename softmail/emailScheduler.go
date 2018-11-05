@@ -29,15 +29,13 @@ func (ctx RequestContext) StartEmailScheduler() {
 			for _, memberLocation := range memberLocations {
 
 				
-				memberTimeLocation := ctx.GetMemberTime(memberLocation).Location()
+				var memberTime = ctx.GetMemberTime(memberLocation)
 
-				timeAtLocation := time.Now().In(memberTimeLocation)
-
-				if timeAtLocation.Hour() == course.Emails.SendHour {
+				if memberTime.Hour() == course.Emails.SendHour {
 
 					// If today is the day for this session in this cohort, 
 					// then see if we have any emails to send
-					courseDay := courseCohort.GetCourseDay(timeAtLocation)
+					courseDay := courseCohort.GetCourseDay(memberTime)
 					sessionDay := session.Day
 					if sessionDay == courseDay {
 
