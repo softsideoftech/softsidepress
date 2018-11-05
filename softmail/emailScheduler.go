@@ -12,13 +12,14 @@ func (ctx RequestContext) StartEmailScheduler() {
 	if ctx.DevMode {
 		time.Sleep(time.Second)
 	} else {
-		time.Sleep(time.Minute)
+		time.Sleep(time.Second * 5)
 	}
 
 	cohorts, err := ctx.GetCurrentCohorts()
 	if err != nil {
 		ctx.SendOwnerErrorEmail("Problem retrieving current course cohorts.", err)
 	}
+	log.Printf("DEBUG: Course cohorts: %v", cohorts)
 
 	for _, courseCohort := range cohorts {
 		course := ctx.GetCourse(courseCohort.CourseName)
