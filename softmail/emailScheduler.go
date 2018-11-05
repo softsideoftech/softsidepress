@@ -19,7 +19,7 @@ func (ctx RequestContext) StartEmailScheduler() {
 	if err != nil {
 		ctx.SendOwnerErrorEmail("Problem retrieving current course cohorts.", err)
 	}
-	log.Printf("DEBUG: Course cohorts: %v", cohorts)
+	//log.Printf("DEBUG: Course cohorts: %v", cohorts)
 
 	for _, courseCohort := range cohorts {
 		course := ctx.GetCourse(courseCohort.CourseName)
@@ -34,7 +34,7 @@ func (ctx RequestContext) StartEmailScheduler() {
 //				log.Printf("DEBUG member time: %v", memberTime)
 				memberHour := memberTime.Hour()
 				sendHour := course.Emails.SendHour
-				log.Printf("DEBUG: emailController - memberHour: %d, sendHour: %d", memberHour, sendHour)
+				//log.Printf("DEBUG: emailController - memberHour: %d, sendHour: %d", memberHour, sendHour)
 				if memberHour == sendHour {
 
 					// If today is the day for this session in this cohort, 
@@ -42,7 +42,7 @@ func (ctx RequestContext) StartEmailScheduler() {
 					courseDay := courseCohort.GetCourseDay(memberTime)
 					sessionDay := session.Day
 
-					log.Printf("DEBUG: emailController - courseDay: %d, sessionDay: %d", courseDay, sessionDay)
+					//log.Printf("DEBUG: emailController - courseDay: %d, sessionDay: %d", courseDay, sessionDay)
 					if sessionDay == courseDay && courseDay > 0 {
 
 						subject := fmt.Sprintf("%s Day %d: %s", course.Shortname, sessionDay, session.Name)
