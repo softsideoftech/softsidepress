@@ -30,7 +30,7 @@ func (ctx RequestContext) StartEmailScheduler() {
 			if sessionDay == courseDay {
 
 				subject := fmt.Sprintf("%s Day %d: %s", course.Shortname, sessionDay, session.Name)
-				opts := SendEmailOpts{DontDoubleSend: true, TemplateParams: session}
+				opts := SendEmailOpts{DontDoubleSend: true, TemplateParams: session, Login: true}
 				var emailTemplate string
 				if session.VideoUrl != "" {
 					emailTemplate = courseVideoEmailTemplate

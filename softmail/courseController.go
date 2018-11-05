@@ -199,7 +199,7 @@ func (ctx *RequestContext) GetCourses() map[string]CourseConfig {
 
 func (courseConfig *CourseConfig) getSession(sessionUrlName string) *Session {
 	for _, session := range courseConfig.Sessions {
-		if session.Url == sessionUrlName {
+		if session.Url != "" && session.Url == sessionUrlName {
 			return session
 		}
 	}
