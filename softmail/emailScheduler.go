@@ -33,8 +33,10 @@ func (ctx RequestContext) StartEmailScheduler() {
 				opts := SendEmailOpts{DontDoubleSend: true, TemplateParams: session, Login: true}
 				var emailTemplate string
 				if session.VideoUrl != "" {
+					// It's ok to use a relative URL here because it's first going to be 
+					// turned into a fully qualified login URL (makes debugging easier)
+					opts.DestinationUrl = course.Url + "/" + session.Url
 					emailTemplate = courseVideoEmailTemplate
-					opts.DestinationUrl = ctx.BuildUrl(course.Url + "/" + session.Url) 
 				} else {
 					emailTemplate = courseDayEmailTemplate
 				}

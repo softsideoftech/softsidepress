@@ -124,9 +124,14 @@ select * from list_member_locations where id < 10;
 
 select * from sent_emails order by created desc;
 
-update sent_emails set list_member_id = 30 where id > 170;
+update sent_emails set list_member_id = 5 where id >= 183;
 
-delete from email_actions where sent_email_id > 170;
+delete from email_actions where sent_email_id > 183;
 
-delete from tracked_urls where sent_email_id > 170;
+delete from tracked_urls where sent_email_id > 183;
 
+select * from sent_emails where email_template_id = -436652262288456380;
+
+select * from member_cookies;
+
+update member_cookies set list_member_id = 5;

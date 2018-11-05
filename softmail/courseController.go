@@ -2,6 +2,7 @@ package softmail
 
 import (
 	"fmt"
+	"gopkg.in/russross/blackfriday.v2"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"log"
@@ -109,6 +110,8 @@ func loadCourses(coursesDirPath string) map[string]CourseConfig {
 				session.VideoUrl = fmt.Sprintf("%s/courses/%s/%s", CDNUrl, coursePathName, session.Url)	
 			}
 			session.Course = &course
+			// Convert the Email field from Markdown to HTML for inclusion in emails later
+			session.Email = string(blackfriday.Run([]byte(session.Email)))
 		}
 		course.Url = "/" + coursePathName
 
