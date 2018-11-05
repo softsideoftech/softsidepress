@@ -30,7 +30,7 @@ func (ctx RequestContext) StartEmailScheduler() {
 
 				
 				var memberTime = ctx.GetMemberTime(memberLocation)
-
+//				log.Printf("DEBUG member time: %v", memberTime)
 				if memberTime.Hour() == course.Emails.SendHour {
 
 					// If today is the day for this session in this cohort, 

@@ -141,3 +141,5 @@ update list_member_locations set time_zone = '+11:00' where id = 1;
 select * from member_cookies;
 
 select * from list_members where id = 1;
+
+select * from course_cohorts;

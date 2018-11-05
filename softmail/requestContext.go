@@ -122,9 +122,9 @@ func (ctx *RequestContext) GetCurMemberTime() *time.Time {
 }
 
 func (ctx *RequestContext) GetMemberTime(memberLocation ListMemberLocation) time.Time {
-	timeLayout := "Mon Jan 2 15:04:05 %s MST 2006"
-	timeFormat := fmt.Sprintf(timeLayout, "-07:00")
-	memberTimeStr := fmt.Sprintf(timeLayout, memberLocation.TimeZone)
+	timeLayout := "Mon Jan 2 15:04:05 %s %s 2006"
+	timeFormat := fmt.Sprintf(timeLayout, "-07:00", "MST")
+	memberTimeStr := fmt.Sprintf(timeLayout, memberLocation.TimeZone, "GMT")
 	memberTime, _ := time.Parse(timeFormat, memberTimeStr)
 	return time.Now().In(memberTime.Location())
 }
