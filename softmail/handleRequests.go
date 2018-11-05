@@ -1,6 +1,7 @@
 package softmail
 
 import (
+	"errors"
 	"log"
 	"net/http"
 	"regexp"
@@ -29,7 +30,7 @@ type TrackingRequestParams struct {
 }
 
 // TODO: Move to util?
-func EncodeId(sentEmailId uint32) string {
+func EncodeSentEmailId(sentEmailId SentEmailId) string {
 	var buf [4]byte
 	buf[0] = byte(sentEmailId >> 24)
 	buf[1] = byte(sentEmailId >> 16)
@@ -42,9 +43,9 @@ func EncodeId(sentEmailId uint32) string {
 	return str
 }
 
-func DecodeId(idString string) (uint32, error) {
+func DecodeSentEmailId(idString string) (SentEmailId, error) {
 
-	// Add back the leading A's that were stripped out in EncodeId().
+	// Add back the leading A's that were stripped out in EncodeSentEmailId().
 	if len(idString) < 6 {
 		idString = strings.Repeat("A", 6-len(idString)) + idString
 	}
@@ -61,6 +62,53 @@ func DecodeId(idString string) (uint32, error) {
 	return decodedId, nil
 }
 
+// TODO: Move to util?
+func EncodeCookieId(sentEmailId MemberCookieId) string {
+	var buf [8]byte
+	buf[0] = byte(sentEmailId >> 56)
+	buf[1] = byte(sentEmailId >> 48)
+	buf[2] = byte(sentEmailId >> 40)
+	buf[3] = byte(sentEmailId >> 32)
+	buf[4] = byte(sentEmailId >> 24)
+	buf[5] = byte(sentEmailId >> 16)
+	buf[6] = byte(sentEmailId >> 8)
+	buf[7] = byte(sentEmailId)
+	return URLEncoding.EncodeToString(buf[:])
+}
+
+func DecodeCookieId(idString string) (MemberCookieId, error) {
+	defer func() (MemberCookieId, error) {
+		errMsg := recover()
+		if errMsg != nil {
+			msg := fmt.Sprintf("ERROR parsing cookie: %s, error: %v", idString, errMsg)
+			log.Println(msg)
+			return 0, errors.New(msg)
+		} else {
+			return 0, nil
+		}
+	}()
+	
+	// Add back the leading A's that might have been missing in previous encodings
+	if len(idString) < 11 {
+		idString = strings.Repeat("A", 11-len(idString)) + idString
+	}
+
+	buf, err := URLEncoding.DecodeString(idString)
+	if err != nil {
+		return 0, err
+	}
+	decodedId := uint64(0)
+	decodedId |= uint64(buf[0]) << 56
+	decodedId |= uint64(buf[1]) << 48
+	decodedId |= uint64(buf[2]) << 40
+	decodedId |= uint64(buf[3]) << 32
+	decodedId |= uint64(buf[4]) << 24
+	decodedId |= uint64(buf[5]) << 16
+	decodedId |= uint64(buf[6]) << 8
+	decodedId |= uint64(buf[7])
+	return MemberCookieId(decodedId), nil
+}
+
 func UrlToId(url string) TrackedUrlId {
 	hash := md5.New()
 	hash.Write([]byte(url))
@@ -68,11 +116,6 @@ func UrlToId(url string) TrackedUrlId {
 	hash64 := fnv.New64()
 	hash64.Write(md5Sum)
 	return int64(hash64.Sum64()) // make it signed to conform with the Postgres "bigint" type
-}
-
-func DecodeMemberCookieId(idString string) (MemberCookieId, error) {
-	decodedId, err := DecodeId(idString)
-	return MemberCookieId(decodedId), err
 }
 
 func GenerateTrackingLink(ctx *RequestContext) {
@@ -98,7 +141,7 @@ func GenerateTrackingLink(ctx *RequestContext) {
 // TODO: use this method to replace external links in emails
 func (ctx *RequestContext) TryToCreateShortTrackedUrl(targetUrl string, sentEmailId SentEmailId, loginId ListMemberId) (string, error) {
 	// Randomly generate a url
-	uri := "/" + EncodeId(rand.Uint32())
+	uri := "/" + EncodeSentEmailId(rand.Uint32())
 	trackedUrl := &TrackedUrl{Id: UrlToId(uri), SentEmailId: sentEmailId, LoginId: loginId}
 
 	err := ctx.DB.Select(trackedUrl)
@@ -234,7 +277,14 @@ func (ctx *RequestContext) serveRedirect(trackedUrl *TrackedUrl, sentEmail *Sent
 			now := time.Now()
 			ctx.MemberCookie.LoggedIn = &now
 			ctx.MemberCookie.ListMemberId = trackedUrl.LoginId
-			ctx.DB.Update(ctx.MemberCookie)
+			message := ctx.DB.Update(ctx.MemberCookie)
+			
+			// It's possible the cookie didn't exist in the DB because there was no ListMemberId before. 
+			// In that case, we'll create it now.
+			if (IsPgSelectEmpty(message)) {
+				ctx.DB.Insert(ctx.MemberCookie)
+			}
+			log.Println(message)
 		}
 
 		http.Redirect(ctx.W, ctx.R, trackedUrl.TargetUrl, http.StatusTemporaryRedirect)
@@ -327,7 +377,8 @@ func (ctx *RequestContext) matchWebPage(trackingHitId TrackingHitId, defaultToHo
 		} else {
 			// All the validation was ok, so look for the appropriate course page
 			session := courseConfig.getSession(getSessionUrlName(trimmedUrlPath))
-			courseDay := courseCohort.GetCourseDay()
+			
+			courseDay := courseCohort.GetCourseDay(*ctx.GetCurMemberTime())
 			if session == nil {
 				// If there's no session name, then go to the course page.
 				cfg.MarkdownFile = ctx.getCourseDirPath(trimmedUrlPath) + "/course-page.md"
@@ -436,7 +487,7 @@ func DecodeSentMailIdFromUri(path string) (SentEmailId, *string) {
 
 	// Try to get the sentEmailId assuming this is a tracking pixel
 	if submatch != nil {
-		sentEmailId, err = DecodeId(submatch[1])
+		sentEmailId, err = DecodeSentEmailId(submatch[1])
 	} else {
 		// Otherwise, assume this is an email link to a site page and try to get the id from there
 		submatch = extractSentEmailIdFromUrlEndDash.FindStringSubmatch(path)
@@ -444,7 +495,7 @@ func DecodeSentMailIdFromUri(path string) (SentEmailId, *string) {
 			return 0, nil
 		}
 		targetLink = &(submatch[1])
-		sentEmailId, err = DecodeId(submatch[2])
+		sentEmailId, err = DecodeSentEmailId(submatch[2])
 	}
 	if err != nil {
 		log.Printf("Problem parsing SentEmailId from url: %s, error message: %v\n", path, err)
@@ -488,13 +539,13 @@ func (ctx *RequestContext) InitMemberCookie(listMemberId ListMemberId) {
 	// Create a MemberCookie in the db to link the tracking back to the ListMember and set the browser cookie in case it wasn't already set
 	ctx.MemberCookie = ctx.ObtainOrCreateMemberCookie(listMemberId, httpCookie)
 
-	if err == nil {
+	if err == nil || err.Error() == "http: named cookie not present" {
 		// Set the cookie on the HTTP request. It might already exist, so we'll simply be refreshing the MaxAge.
 		http.SetCookie(ctx.W, &http.Cookie{
 			Domain: siteDomain,
 			MaxAge: 60 * 60 * 24 * 365, // 1 year
 			Name:   cookieName,
-			Value:  EncodeId(uint32(ctx.MemberCookie.Id)),
+			Value:  EncodeCookieId(ctx.MemberCookie.Id),
 		})
 	} else {
 		fmt.Printf("Problem obtaining or creating MemberCookie for listMemberId: %d, err: %v", listMemberId, err)
@@ -517,10 +568,14 @@ If a listMemberId is present and either the httpCookie or dbCookie exist but don
 func (ctx *RequestContext) ObtainOrCreateMemberCookie(listMemberId ListMemberId, httpCookie *http.Cookie) *MemberCookie {
 	if httpCookie == nil {
 		// If there's no httpCookie, then randomly generate an id and return a new one. We're taking a small chance of a collision, but that's ok.
+		// TODO: try again if there's a collision!
 		randomCookieId := MemberCookieId(rand.Uint64())
 		memberCookie := &MemberCookie{Id: randomCookieId, ListMemberId: listMemberId}
 
-		// Only save the cookie in the db if a listMemberId is present
+		// Only save the cookie in the db if a listMemberId is present to save on the cookie database.
+		// We do this because all kinds of bots hit the sites and I'd rather not pollute the cookies table.
+		// We still track the http cookie ID in the tracking_hits, so those will get associated back with 
+		// the user if they ever sign up.
 		if (listMemberId != 0) {
 			ctx.DB.Insert(memberCookie)
 		}
@@ -528,7 +583,7 @@ func (ctx *RequestContext) ObtainOrCreateMemberCookie(listMemberId ListMemberId,
 	} else {
 		// Since we have an httpCookie, try to retrieve the dbCookie if it exists
 		encodedCookieId := httpCookie.Value
-		memberCookieId, err := DecodeMemberCookieId(encodedCookieId)
+		memberCookieId, err := DecodeCookieId(encodedCookieId)
 		memberCookie := &MemberCookie{Id: memberCookieId}
 		if err != nil {
 			fmt.Printf("Problem parsing MemberCookieId from httpCookie: %s, error message: %s", encodedCookieId, err)

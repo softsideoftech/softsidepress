@@ -1,9 +1,12 @@
 package softmail
 
 import (
+	"fmt"
 	"github.com/go-pg/pg"
+	"log"
 	"net/http"
 	"os"
+	"time"
 )
 
 var SoftsideDB = pg.Connect(&pg.Options{
@@ -104,4 +107,24 @@ func (ctx RequestContext) GetCurListMember() *ListMember {
 	}
 	listMember, _ := ctx.GetListMemberById(ctx.MemberCookie.ListMemberId)
 	return listMember
+}
+func (ctx *RequestContext) GetCurMemberTime() *time.Time {
+	if ctx.MemberCookie == nil || ctx.MemberCookie.ListMemberId == 0 {
+		return nil
+	}
+	var memberLocation = ListMemberLocation{Id: ctx.MemberCookie.ListMemberId}
+	err := ctx.DB.Select(&memberLocation)
+	if memberLocation.TimeZone == "" {
+		log.Printf("ERROR: Missing ListMemberLocation for list_member_id: %d, error: ", ctx.MemberCookie.ListMemberId, err)
+	}
+	memberTime := ctx.GetMemberTime(memberLocation)
+	return &memberTime
+}
+
+func (ctx *RequestContext) GetMemberTime(memberLocation ListMemberLocation) time.Time {
+	timeLayout := "Mon Jan 2 15:04:05 %s MST 2006"
+	timeFormat := fmt.Sprintf(timeLayout, "-07:00")
+	memberTimeStr := fmt.Sprintf(timeLayout, memberLocation.TimeZone)
+	memberTime, _ := time.Parse(timeFormat, memberTimeStr)
+	return time.Now().In(memberTime.Location())
 }

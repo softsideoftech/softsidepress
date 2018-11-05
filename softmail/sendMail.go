@@ -88,7 +88,7 @@ func decodeSendMailIdFromUriEnd(path string) SentEmailId {
 	if submatch == nil {
 		return 0
 	}
-	sentEmailId, err := DecodeId(submatch[1])
+	sentEmailId, err := DecodeSentEmailId(submatch[1])
 	if err != nil {
 		log.Printf("Problem parsing SentEmailId from url: %s, error: %v", path, err)
 		return 0
@@ -180,7 +180,7 @@ func (ctx RequestContext) ForwardEmail(sender string, recipient string, msg *ema
 		log.Printf("ERROR inserting sendEmail into DB: %v\n", err)
 	}
 	// Base64 encode the SentEmail id
-	encodedSentEmailId := EncodeId(sentEmail.Id)
+	encodedSentEmailId := EncodeSentEmailId(sentEmail.Id)
 
 	// Load the tracking prefix
 	renderedPrefix := obtainTrackingPrefix(encodedSentEmailId)
@@ -429,7 +429,7 @@ func (ctx RequestContext) sendEmailToListMember(emailTemplateId EmailTemplateId,
 	}
 
 	// Base64 encode the SentEmail id
-	encodedSentEmailId := EncodeId(sentEmail.Id)
+	encodedSentEmailId := EncodeSentEmailId(sentEmail.Id)
 
 	// Render the HTML template
 	buffer := &bytes.Buffer{}

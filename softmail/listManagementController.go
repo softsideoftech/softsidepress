@@ -58,7 +58,7 @@ func (ctx *RequestContext) renderMgmtPage(templateName string, pageTitle string,
 	listMemberParams := CommonMdTemplateParams{
 		listMember.FirstName,
 		listMember.Email,
-		EncodeId(sentEmailId),
+		EncodeSentEmailId(sentEmailId),
 		ownerFirstName,
 		ownerEmail,
 		siteName,

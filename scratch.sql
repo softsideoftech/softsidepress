@@ -124,14 +124,18 @@ select * from list_member_locations where id < 10;
 
 select * from sent_emails order by created desc;
 
+-- for resetting sent_emails or member_cookies in local dev
 update sent_emails set list_member_id = 5 where id >= 183;
+update member_cookies set list_member_id = 5;
 
-delete from email_actions where sent_email_id > 183;
+select * from course_cohorts;
 
-delete from tracked_urls where sent_email_id > 183;
+select * from member_groups where name = 'inner-leadership-2018-nov';
 
-select * from sent_emails where email_template_id = -436652262288456380;
+select * from list_member_locations where id = 1;
+
+select * from list_member_locations;
+
+update list_member_locations set time_zone = '+12:00' where id = 2;
 
 select * from member_cookies;
-
-update member_cookies set list_member_id = 5;

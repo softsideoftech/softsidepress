@@ -209,6 +209,6 @@ func (courseConfig *CourseConfig) getSession(sessionUrlName string) *Session {
 	return nil
 }
 
-func (courseCohort CourseCohort) GetCourseDay() int {
-	return int((time.Now().Sub(courseCohort.StartDate).Hours())/24) + 1
+func (courseCohort CourseCohort) GetCourseDay(currentTime time.Time) int {
+	return int((currentTime.Sub(courseCohort.StartDate).Hours())/24) + 1
 }
