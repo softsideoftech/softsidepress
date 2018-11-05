@@ -12,7 +12,7 @@ func (ctx RequestContext) StartEmailScheduler() {
 	if ctx.DevMode {
 		time.Sleep(time.Second)
 	} else {
-		time.Sleep(time.Second * 5)
+		time.Sleep(time.Minute * 5)
 	}
 
 	cohorts, err := ctx.GetCurrentCohorts()
