@@ -176,7 +176,8 @@ func (ctx *RequestContext) GetCourseForCurListMember(courseName string) (*Course
 
 func (ctx *RequestContext) GetCurrentCohorts() ([]CourseCohort, error) {
 	var courseCohorts []CourseCohort
-	_, err := ctx.DB.Query(&courseCohorts, "select * from course_cohorts c where c.start_date <= now() and end_date > now()")
+	_, err := ctx.DB.Query(&courseCohorts, "select * from course_cohorts c where end_date > now()")
+	// TODO: find a way to filter out future courses.
 	return courseCohorts, err
 }
 

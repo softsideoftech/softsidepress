@@ -43,7 +43,7 @@ func (ctx RequestContext) StartEmailScheduler() {
 					sessionDay := session.Day
 
 					log.Printf("DEBUG: emailController - courseDay: %d, sessionDay: %d", courseDay, sessionDay)
-					if sessionDay == courseDay {
+					if sessionDay == courseDay && courseDay > 0 {
 
 						subject := fmt.Sprintf("%s Day %d: %s", course.Shortname, sessionDay, session.Name)
 						opts := SendEmailOpts{DontDoubleSend: true, TemplateParams: session, Login: true}
