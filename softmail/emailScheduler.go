@@ -31,12 +31,17 @@ func (ctx RequestContext) StartEmailScheduler() {
 				
 				var memberTime = ctx.GetMemberTime(memberLocation)
 //				log.Printf("DEBUG member time: %v", memberTime)
-				if memberTime.Hour() == course.Emails.SendHour {
+				memberHour := memberTime.Hour()
+				sendHour := course.Emails.SendHour
+				log.Printf("DEBUG: emailController - memberHour: %d, sendHour: %d", memberHour, sendHour)
+				if memberHour == sendHour {
 
 					// If today is the day for this session in this cohort, 
 					// then see if we have any emails to send
 					courseDay := courseCohort.GetCourseDay(memberTime)
 					sessionDay := session.Day
+
+					log.Printf("DEBUG: emailController - courseDay: %d, sessionDay: %d", courseDay, sessionDay)
 					if sessionDay == courseDay {
 
 						subject := fmt.Sprintf("%s Day %d: %s", course.Shortname, sessionDay, session.Name)
