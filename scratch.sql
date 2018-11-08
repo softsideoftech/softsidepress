@@ -143,3 +143,13 @@ select * from member_cookies;
 select * from list_members where id = 1;
 
 select * from course_cohorts;
+
+select * from list_members where first_name = 'Ryan';
+
+update list_members set email = 'ryan@newtabinc.com' where id = 8857;
+
+select * from email_templates where subject = 'Inner Leadership Day 3: Your Brain on Meditation';
+
+select * from sent_emails where email_template_id = -8691343093265726362;
+
+select * from tracked_urls where url = '/m0Ab9w';
