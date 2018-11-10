@@ -3,6 +3,7 @@ package softside
 import (
 	"softside/softmail"
 	"testing"
+	"time"
 )
 
 func TestCourseYmlUnmarshall(t *testing.T) {
@@ -27,5 +28,34 @@ func TestCourseYmlUnmarshall(t *testing.T) {
 			c2.Emails.SendHour != 2 {
 			t.Errorf("Failed to parse config for sampleCourseTwo: %v", c2)
 		}
+	}
+}
+
+func TestGetCourseDay(t *testing.T) {
+	day := time.Hour * 24
+	fiveDays := day * 5
+	fiveDaysAgo := time.Now().Add(fiveDays * -1)
+	c := softmail.CourseCohort{
+		StartDate: fiveDaysAgo,
+	}
+
+	
+	now := time.Now()
+	doCourseDayTest(c, now, t)
+
+	memberLocation := softmail.ListMemberLocation{
+		TimeZone: "+11:00",
+	}
+	systemTime := softmail.SystemTime{now}
+	memberTime := systemTime.GetMemberTime(memberLocation)
+	doCourseDayTest(c, memberTime, t)
+}
+
+func doCourseDayTest(c softmail.CourseCohort, currentTime time.Time, t *testing.T) {
+	courseDay := c.GetCourseDay(currentTime)
+	// Note, we consider the 0th day to be "course day 1".
+	expectedCourseDay := 6
+	if courseDay != expectedCourseDay {
+		t.Errorf("Expected courseDay to be %d, but instead was %d.", expectedCourseDay, courseDay)
 	}
 }

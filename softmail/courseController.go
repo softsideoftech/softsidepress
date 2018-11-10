@@ -214,5 +214,11 @@ func (courseConfig *CourseConfig) getSession(sessionUrlName string) *Session {
 }
 
 func (courseCohort CourseCohort) GetCourseDay(currentTime time.Time) int {
-	return int((currentTime.Sub(courseCohort.StartDate).Hours())/24) + 1
+	startDate := courseCohort.StartDate
+
+	startTime2 := time.Date(startDate.Year(), startDate.Month(), startDate.Day(), startDate.Hour(), startDate.Minute(), 0, 0, time.UTC)
+	curTime2 := time.Date(currentTime.Year(), currentTime.Month(), currentTime.Day(), currentTime.Hour(), currentTime.Minute(), 0, 0, time.UTC)
+
+	diff := curTime2.UTC().Sub(startTime2.UTC())
+	return int((float64(diff.Hours())/24) + 1)
 }

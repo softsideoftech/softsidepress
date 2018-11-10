@@ -30,7 +30,7 @@ func (ctx RequestContext) StartEmailScheduler() {
 			for _, memberLocation := range memberLocations {
 
 				
-				var memberTime = ctx.GetMemberTime(memberLocation)
+				var memberTime = SystemTime{time.Now()}.GetMemberTime(memberLocation)
 //				log.Printf("DEBUG member time: %v", memberTime)
 				memberHour := memberTime.Hour()
 				sendHour := course.Emails.SendHour

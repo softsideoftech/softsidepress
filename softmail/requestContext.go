@@ -44,6 +44,9 @@ const trackingPixelUrl = "https://d235962hz41e70.cloudfront.net/transparent-pixe
 const FavIconUrl = "https://d235962hz41e70.cloudfront.net/favicon.ico"
 const CDNUrl = "https://d235962hz41e70.cloudfront.net"
 
+type SystemTime struct {
+	time.Time
+}
 type RequestContext struct {
 	DB           *pg.DB
 	W            http.ResponseWriter
@@ -117,14 +120,14 @@ func (ctx *RequestContext) GetCurMemberTime() *time.Time {
 	if memberLocation.TimeZone == "" {
 		log.Printf("ERROR: Missing ListMemberLocation for list_member_id: %d, error: ", ctx.MemberCookie.ListMemberId, err)
 	}
-	memberTime := ctx.GetMemberTime(memberLocation)
+	memberTime := SystemTime{time.Now()}.GetMemberTime(memberLocation)
 	return &memberTime
 }
 
-func (ctx *RequestContext) GetMemberTime(memberLocation ListMemberLocation) time.Time {
+func (systemTime SystemTime) GetMemberTime(memberLocation ListMemberLocation) time.Time {
 	timeLayout := "Mon Jan 2 15:04:05 %s %s 2006"
 	timeFormat := fmt.Sprintf(timeLayout, "-07:00", "MST")
 	memberTimeStr := fmt.Sprintf(timeLayout, memberLocation.TimeZone, "GMT")
 	memberTime, _ := time.Parse(timeFormat, memberTimeStr)
-	return time.Now().In(memberTime.Location())
+	return systemTime.In(memberTime.Location())
 }
