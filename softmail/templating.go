@@ -49,7 +49,7 @@ var extractTitle = regexp.MustCompile("^# (.+)")
 var templateCache = sync.Map{}
 
 func (ctx *RequestContext) renderMarkdownToHtmlTemplate(c *MarkdownTemplateConfig) error {
-	// Use the combo of the html file, md file, and url to uniquely identify the template.
+	// Use the combo of the html file, md file, and url to uniquely identify the template. //todo: remove url and move video content to md files
 	templateName := c.BaseHtmlFile + c.MarkdownFile + c.Url
 
 	// Get the template from the cache to avoid constantly reading and parsing files from disk
