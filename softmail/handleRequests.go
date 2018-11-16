@@ -219,6 +219,9 @@ func HandleNormalRequest(ctx *RequestContext) {
 		}
 
 		// Only track if we didn't have any errors (most likely db)
+		// TODO: Tight now we only track hits that come via emails. Otherwise  
+		// TODO: the call to GetSentEmail(...) errors out and we skip this code.
+		// TODO: Is this what we really want?
 		if err == nil {
 
 			// Track the hit
