@@ -83,18 +83,18 @@ select * from course_cohorts c where c.start_date <= now() and end_date > now();
 
 select id, first_name, last_name, email from list_members l where email in ('akilburn924@gmail.com', 'gregsilin@gmail.com', 'myblake@gmail.com', 'julie.michelle.smith@gmail.com', 'michael.dore@gmail.com', 'dustin@dustinbuss.com', 'ferhat.hatay@gmail.com', 'alexcloudcto@gmail.com', 'kringotime@me.com', 'cshenoy@gmail.com', 'benvnguyen@gmail.com', 'john.celenza@gmail.com', 'brendan.hayes@gmail.com', 'shane.kelly@gmail.com', 'evan.hourigan@gmail.com', 'endre.soos@gmail.com', 'armen.abrahamian@gmail.com');
 
-select *, l.*  from member_groups g, list_members l where g.list_member_id = l.id and g.name = 'inner-leadership-2018-nov';
+select *, l.*  from member_groups g, list_members l where g.list_member_id = l.id and g.name = 'inner-leadership-test-no-email';
 
 
 select * from member_groups;
 
 insert into member_groups values ('inner-leadership-2018-nov', 1);
 
--- 2018-11-01 12:18:42.670602
-
 select * from course_cohorts;
 
 insert into course_cohorts values ('inner-leadership-2018-nov', 'inner-leadership', to_date('2018-11-06', 'YYYY-MM-DD'), to_date('2019-02-15', 'YYYY-MM-DD'));
+
+insert into course_cohorts values ('inner-leadership-test-no-email', 'inner-leadership', to_date('2017-11-06', 'YYYY-MM-DD'), to_date('2059-02-15', 'YYYY-MM-DD'));
 
 delete from member_groups g where list_member_id in (9129, 6671, 6911, 6995, 6996, 7021) and g.name = 'inner-leadership-2018-nov';
 
@@ -152,4 +152,6 @@ select * from email_templates where subject = 'Inner Leadership Day 3: Your Brai
 
 select * from sent_emails where email_template_id = -8691343093265726362;
 
-select * from tracked_urls where url = '/m0Ab9w';
+select * from tracked_urls where url = '/+psdPw';
+
+select * from tracked_urls where target_url = '/inner-leadership/meditation';
