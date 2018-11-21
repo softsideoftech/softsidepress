@@ -238,7 +238,7 @@ func HandleNormalRequest(ctx *RequestContext) {
 			err = ctx.DB.Insert(&trackingHit)
 			if err != nil {
 				err = fmt.Errorf(
-					"Problem inserting TrackingHit record. ListMemberId: : %d, Remote IP Address: %s, url: %s, ReferrerURL: %s DB error: %v",
+					"Problem inserting TrackingHit record. ListMemberId: : %d, Remote IP Address: %s, url: %s, ReferrerURL: %s DB error: %v ",
 					ctx.MemberCookie.ListMemberId, rawRemoteAddr, urlPath, ctx.R.Referer(), err)
 			} else {
 				trackingHitId = trackingHit.Id
