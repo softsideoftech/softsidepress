@@ -155,3 +155,10 @@ select * from sent_emails where email_template_id = -8691343093265726362;
 select * from tracked_urls where url = '/+psdPw';
 
 select * from tracked_urls where target_url = '/inner-leadership/meditation';
+
+select * from tracked_urls limit 5;
+
+insert into tracked_urls values (-1, '', null, null, now(), null);
+
+
+select * from tracking_hits order by created desc limit 1000;

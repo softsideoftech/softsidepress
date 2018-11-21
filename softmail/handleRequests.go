@@ -238,8 +238,8 @@ func HandleNormalRequest(ctx *RequestContext) {
 			err = ctx.DB.Insert(&trackingHit)
 			if err != nil {
 				err = fmt.Errorf(
-					"Problem inserting TrackingHit record. ListMemberId: : %d, Remote IP Address: %s, ReferrerURL: %s DB error: %v\n",
-					ctx.MemberCookie.ListMemberId, rawRemoteAddr, ctx.R.Referer(), err)
+					"Problem inserting TrackingHit record. ListMemberId: : %d, Remote IP Address: %s, url: %s, ReferrerURL: %s DB error: %v\n",
+					ctx.MemberCookie.ListMemberId, rawRemoteAddr, urlPath, ctx.R.Referer(), err)
 			} else {
 				trackingHitId = trackingHit.Id
 			}
@@ -478,7 +478,7 @@ func (ctx *RequestContext) obtainOrCreateTrackedUrl(urlPath string) *TrackedUrl 
 			log.Printf("ERROR: failed to select from db TrackedUrlId: %d, err: %v", trackedUrl.Id, err)
 			return nil
 		}
-	}
+	}		
 	return trackedUrl
 }
 
