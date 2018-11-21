@@ -467,7 +467,7 @@ func (ctx *RequestContext) obtainOrCreateTrackedUrl(urlPath string) *TrackedUrl 
 	err := ctx.DB.Select(trackedUrl)
 	if err != nil {
 		// todo: refactor checking for no results in select
-		if IsPgSelectEmpty(err) {
+		if trackedUrl.Url == "" {
 			trackedUrl.Url = urlPath
 			err = ctx.DB.Insert(trackedUrl)
 			if err != nil {

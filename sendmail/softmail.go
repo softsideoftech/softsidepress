@@ -30,5 +30,6 @@ func main() {
 		softmail.SendEmailOpts{
 			Login:     login == "login",
 			UseSuffix: suffix == "suffix",
+			DontDoubleSend: true,
 		})
 }
