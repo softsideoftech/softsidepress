@@ -81,6 +81,8 @@ select * from course_cohorts;
 
 select * from course_cohorts c where c.start_date <= now() and end_date > now();
 
+update course_cohorts set start_date = to_date('2018-01-06', 'YYYY-MM-DD');
+
 select id, first_name, last_name, email from list_members l where email in ('akilburn924@gmail.com', 'gregsilin@gmail.com', 'myblake@gmail.com', 'julie.michelle.smith@gmail.com', 'michael.dore@gmail.com', 'dustin@dustinbuss.com', 'ferhat.hatay@gmail.com', 'alexcloudcto@gmail.com', 'kringotime@me.com', 'cshenoy@gmail.com', 'benvnguyen@gmail.com', 'john.celenza@gmail.com', 'brendan.hayes@gmail.com', 'shane.kelly@gmail.com', 'evan.hourigan@gmail.com', 'endre.soos@gmail.com', 'armen.abrahamian@gmail.com');
 
 select *, l.*  from member_groups g, list_members l where g.list_member_id = l.id and g.name = 'inner-leadership-test-no-email';
@@ -148,7 +150,7 @@ select * from list_members where first_name = 'Ryan';
 
 update list_members set email = 'ryan@newtabinc.com' where id = 8857;
 
-select * from email_templates where subject = 'Inner Leadership Day 3: Your Brain on Meditation';
+select * from email_templates where subject = 'Inner Leadership Day 17: Body vs Mind';
 
 select * from sent_emails where email_template_id = -8691343093265726362;
 
@@ -162,3 +164,4 @@ insert into tracked_urls values (-1, '', null, null, now(), null);
 
 
 select * from tracking_hits order by created desc limit 1000;
+

@@ -302,7 +302,7 @@ func (ctx *RequestContext) serveRedirect(trackedUrl *TrackedUrl, sentEmail *Sent
 	}
 
 	// For now, assume all png requests are email tracking so serve up the tracking image
-	if strings.HasSuffix(urlPath, ".png") {
+	if strings.HasSuffix(urlPath, ".png") && sentEmail != nil {
 		ctx.DB.Insert(&EmailAction{SentEmailId: sentEmail.Id, Action: "opened"})
 		var trackingUrl string
 		if strings.Contains(urlPath, trackingPixelPath) {
