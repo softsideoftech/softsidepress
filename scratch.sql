@@ -150,9 +150,9 @@ select * from list_members where first_name = 'Ryan';
 
 update list_members set email = 'ryan@newtabinc.com' where id = 8857;
 
-select * from email_templates where subject = 'Inner Leadership Day 17: Body vs Mind';
+select * from email_templates where subject like 'Inner Leadership Day 30%';
 
-select * from sent_emails where email_template_id = -8691343093265726362;
+select * from sent_emails where email_template_id = -776341860615925297;
 
 select * from tracked_urls where url = '/+psdPw';
 
