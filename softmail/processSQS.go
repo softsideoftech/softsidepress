@@ -56,6 +56,28 @@ type Mail struct {
 	CommonHeaders    map[string]interface{} `json commonHeaders`
 }
 
+
+
+// An emptyCtx is never canceled, has no values, and has no deadline. It is not
+// struct{}, since vars of this type must have distinct addresses.
+type emptyCtx int
+
+func (*emptyCtx) Deadline() (deadline time.Time, ok bool) {
+	return
+}
+
+func (*emptyCtx) Done() <-chan struct{} {
+	return nil
+}
+
+func (*emptyCtx) Err() error {
+	return nil
+}
+
+func (*emptyCtx) Value(key interface{}) interface{} {
+	return nil
+}
+
 func StartSqs() error {
 
 	sess, err := session.NewSession(&aws.Config{Region: aws.String("us-west-2")})
@@ -69,7 +91,8 @@ func StartSqs() error {
 	// set the queue url
 	worker.QueueURL = "https://sqs.us-west-2.amazonaws.com/249869178481/softside-ses-q"
 	// start the worker
-	worker.Start(svc, worker.HandlerFunc(handleSqsMessage))
+	
+	worker.Start(new(emptyCtx), svc, worker.HandlerFunc(handleSqsMessage))
 
 	return nil
 }
