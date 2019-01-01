@@ -164,7 +164,7 @@ func (ctx *RequestContext) GetCourseForCurListMember(courseName string) (*Course
 
 	startDate := courseCohort.StartDate
 	memberTime := *ctx.GetCurMemberTime()
-	if startDate.Year() > memberTime.Year() || startDate.YearDay() > memberTime.YearDay() {
+	if startDate.Year() > memberTime.Year() || (startDate.Year() == memberTime.Year() && startDate.YearDay() > memberTime.YearDay()) {
 		return nil, nil, CourseNotStartedError{
 			msg:       fmt.Sprintf("Course doesn't start until a future date for cohort: %s", courseCohort.Name),
 			StartDate: courseCohort.StartDate}
