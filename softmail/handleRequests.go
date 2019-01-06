@@ -384,7 +384,11 @@ func (ctx *RequestContext) matchWebPage(trackingHitId TrackingHitId, defaultToHo
 			courseDay := courseCohort.GetCourseDay(*ctx.GetCurMemberTime())
 			
 			// TODO DEBUG
-			log.Printf("session.Day: %d. CourseDay: $d", session.Day, courseDay)
+			var sessionDayDebug = -1
+			if session != nil {
+				sessionDayDebug = session.Day
+			}
+			log.Printf("session.Day: %d. CourseDay: $d", sessionDayDebug, courseDay)
 			
 			if session == nil {
 				// If there's no session name, then go to the course page.
