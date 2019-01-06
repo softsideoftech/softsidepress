@@ -382,6 +382,10 @@ func (ctx *RequestContext) matchWebPage(trackingHitId TrackingHitId, defaultToHo
 			session := courseConfig.getSession(getSessionUrlName(trimmedUrlPath))
 			
 			courseDay := courseCohort.GetCourseDay(*ctx.GetCurMemberTime())
+			
+			// TODO DEBUG
+			log.Printf("session.Day: %d. CourseDay: $d", session.Day, courseDay)
+			
 			if session == nil {
 				// If there's no session name, then go to the course page.
 				cfg.MarkdownFile = ctx.getCourseDirPath(trimmedUrlPath) + "/course-page.md"
