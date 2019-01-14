@@ -134,6 +134,8 @@ select * from course_cohorts;
 
 select * from member_groups where name = 'inner-leadership-2018-nov';
 
+insert into member_groups values ('inner-leadership-2018-nov', 9116)
+
 select * from list_member_locations where id = 1;
 
 select * from list_member_locations;
@@ -146,7 +148,9 @@ select * from list_members where id = 1;
 
 select * from course_cohorts;
 
-select * from list_members where first_name = 'Ryan';
+select * from list_members where first_name = 'Barzel';
+
+
 
 update list_members set email = 'ryan@newtabinc.com' where id = 8857;
 
@@ -164,4 +168,6 @@ insert into tracked_urls values (-1, '', null, null, now(), null);
 
 
 select * from tracking_hits order by created desc limit 1000;
+
+
 
