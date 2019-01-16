@@ -171,3 +171,8 @@ select * from tracking_hits order by created desc limit 1000;
 
 
 
+select * from email_templates where subject like '%71%';
+
+select * from sent_emails where email_template_id = 3161273452814789506;
+
+select now();
